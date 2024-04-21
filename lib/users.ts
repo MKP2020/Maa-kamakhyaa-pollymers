@@ -10,3 +10,9 @@ export const getUserRole = (role: number) => {
 
   return "client";
 };
+
+export const getVendorType = (type: number) => {
+  if (type === 0) return "Seller";
+
+  return "Buyer";
+};

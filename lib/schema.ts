@@ -22,17 +22,20 @@ export const users = pgTable("users", {
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 256 }).notNull(),
-  createdAt: timestamp("createdAt").defaultNow(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export type TCategory = typeof categories.$inferSelect;
 
 export const bankDetails = pgTable("bankDetails", {
   id: serial("id").primaryKey(),
   accountNumber: text("accountNumber").notNull(),
   ifsc: text("ifsc").notNull(),
   branch: text("branch").notNull(),
-  venderId: integer("venderId").notNull(),
-  createdAt: timestamp("createdAt").defaultNow(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export type TBankingDetails = typeof bankDetails.$inferSelect;
 
 export const addresses = pgTable("addresses", {
   id: serial("id").primaryKey(),
@@ -42,14 +45,14 @@ export const addresses = pgTable("addresses", {
   district: text("district").notNull(),
   state: text("state").notNull(),
   pinCode: varchar("pinCode", { length: 12 }).notNull(),
-  gstNumber: text("gstNumber").unique().notNull(),
-  pan: varchar("pan", { length: 10 }).notNull(),
-  venderId: integer("venderId").notNull(),
+
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
-export const venders = pgTable(
-  "venders",
+export type TAddress = typeof addresses.$inferSelect;
+
+export const vendors = pgTable(
+  "vendors",
   {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
@@ -61,43 +64,39 @@ export const venders = pgTable(
     addressId: integer("addressId")
       .notNull()
       .references(() => addresses.id),
-    bankDerailsId: integer("bankDerailsId")
+    bankDetailsId: integer("bankDetailsId")
       .notNull()
       .references(() => bankDetails.id),
     createdAt: timestamp("createdAt").defaultNow(),
+    gstNumber: text("gstNumber").unique().notNull(),
+    pan: varchar("pan", { length: 10 }).notNull(),
   },
-  (venders) => {
+  (vendors) => {
     return {
-      nameIdx: index("name").on(venders.name),
+      nameIdx: index("name").on(vendors.name),
     };
   }
 );
 
-export const vendersRelations = relations(venders, ({ one }) => ({
+export type TVendors = typeof vendors.$inferSelect;
+
+export const vendorsRelations = relations(vendors, ({ one }) => ({
   category: one(categories, {
-    fields: [venders.categoryId],
+    fields: [vendors.categoryId],
     references: [categories.id],
   }),
   address: one(addresses, {
-    fields: [venders.addressId],
+    fields: [vendors.addressId],
     references: [addresses.id],
   }),
-  bankDerails: one(bankDetails, {
-    fields: [venders.bankDerailsId],
+  bankDetails: one(bankDetails, {
+    fields: [vendors.bankDetailsId],
     references: [bankDetails.id],
   }),
 }));
 
-export const addressesRelations = relations(addresses, ({ one }) => ({
-  vender: one(venders, {
-    fields: [addresses.venderId],
-    references: [venders.id],
-  }),
-}));
-
-export const bankDetailsRelations = relations(bankDetails, ({ one }) => ({
-  vender: one(venders, {
-    fields: [bankDetails.venderId],
-    references: [venders.id],
-  }),
-}));
+export type TVendorsFull = typeof vendors.$inferSelect & {
+  category: TCategory;
+  bankDetails: TBankingDetails;
+  address: TAddress;
+};

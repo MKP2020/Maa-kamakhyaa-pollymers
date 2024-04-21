@@ -52,6 +52,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const title = initialData ? "Edit User" : "Create New User";
   const description = initialData ? "Edit user details." : "Add a new user";
   const toastMessage = initialData ? "User updated." : "User created.";

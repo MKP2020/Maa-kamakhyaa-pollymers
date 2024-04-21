@@ -19,9 +19,11 @@ import {
   LucideProps,
   Moon,
   MoreVertical,
+  Network,
   Pizza,
   Plus,
   Settings,
+  Store,
   SunMedium,
   Trash,
   Twitter,
@@ -38,6 +40,7 @@ export const Icons = {
   logo: Command,
   login: LogIn,
   close: X,
+  store: Store,
   profile: User2Icon,
   spinner: Loader2,
   kanban: CircuitBoardIcon,
@@ -60,6 +63,7 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  category: Network,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
