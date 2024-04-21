@@ -1,15 +1,14 @@
 import { getCategories } from "@/actions/category";
 import { getVendorById } from "@/actions/vendor";
 import BreadCrumb from "@/components/breadcrumb";
-import { CreateUserForm } from "@/components/forms/create-user-form";
 import { CreteVendorForm } from "@/components/forms/create-vendor-form";
 // import { ProductForm } from "@/components/forms/product-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React from "react";
 
 const breadcrumbItems = [
-  { title: "User", link: "/dashboard/user" },
-  { title: "Create", link: "/dashboard/user/create" },
+  { title: "User", link: "/dashboard/vendor" },
+  { title: "Create", link: "/dashboard/vendor/create" },
 ];
 
 type paramsProps = {
