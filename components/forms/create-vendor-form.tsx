@@ -28,12 +28,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { TCategory } from "@/lib/schema";
+import { TCategory, TVendorsFull } from "@/lib/schema";
 import { getUserRole, getVendorType } from "@/lib/users";
 import { useToast } from "../ui/use-toast";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createVendor } from "@/actions/vendor";
+import { createVendor, deleteVendor } from "@/actions/vendor";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 export const IMG_MAX_LIMIT = 3;
 
@@ -61,7 +71,7 @@ const formSchema = z.object({
 type UserFormValues = z.infer<typeof formSchema>;
 
 interface UserFormProps {
-  initialData: any | null;
+  initialData?: TVendorsFull;
   categories: TCategory[];
 }
 
@@ -69,7 +79,6 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
   initialData,
   categories,
 }) => {
-  const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -79,15 +88,34 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
   const toastMessage = initialData ? "Vendor updated." : "Vendor created.";
   const action = initialData ? "Save changes" : "Create";
 
-  const [selectedState, setSelectedState] = useState<string>();
-  const defaultValues = initialData
-    ? initialData
-    : {
+  const [selectedState, setSelectedState] = useState<string>(
+    initialData?.address?.state || ""
+  );
+  const defaultValues: typeof formSchema._type = !!initialData
+    ? {
+        type: initialData.type.toString(),
+        name: initialData.name,
+        contactNumber: initialData.contactNumber,
+        email: initialData.emailId,
+        category: initialData.categoryId.toString(),
+        addressLine1: initialData.address.addressLine1,
+        addressLine2: initialData.address.addressLine2 || undefined,
+        city: initialData.address.city.toLowerCase(),
+        district: initialData.address.district,
+        state: initialData.address.state,
+        pinCode: initialData.address.pinCode,
+        accountNumber: initialData.bankDetails.accountNumber,
+        ifsc: initialData.bankDetails.ifsc,
+        pan: initialData.pan,
+        gstNumber: initialData.gstNumber,
+        branch: initialData.bankDetails.branch,
+      }
+    : ({
         type: "0",
         name: "",
         contactNumber: "",
         email: "",
-      };
+      } as any);
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
@@ -97,17 +125,13 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
   console.log("selectedState", selectedState);
 
   const states = useMemo(() => State.getStatesOfCountry("IN"), []);
+
   const cities = useMemo(
     () =>
       !selectedState
         ? []
         : City.getCitiesOfState("IN", (selectedState || "").toUpperCase()),
     [selectedState]
-  );
-
-  console.log(
-    " form.formState.dirtyFields.state",
-    form.formState.dirtyFields.state
   );
 
   const onSubmit = async (data: UserFormValues) => {
@@ -125,8 +149,10 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
       router.refresh();
       router.push(`/dashboard/vendor`);
       toast({
-        title: "Created!",
-        description: "Vendor successfully created",
+        title: toastMessage,
+        description: !initialData
+          ? "Vendor successfully created"
+          : "Vendor successfully updated",
       });
     } catch (error: any) {
       console.log(error);
@@ -142,12 +168,36 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
 
   return (
     <>
-      {/* <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      /> */}
+      <AlertDialog open={open}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                setOpen(false);
+                // TODO: delete
+                await deleteVendor(initialData!.id);
+                router.push("/dashboard/vendor");
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (

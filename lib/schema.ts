@@ -55,6 +55,7 @@ export const vendors = pgTable(
   "vendors",
   {
     id: serial("id").primaryKey(),
+    type: integer("type").notNull().default(0),
     name: text("name").notNull(),
     contactNumber: varchar("contactNumber", { length: 12 }).notNull(),
     emailId: text("emailId").unique().notNull(),

@@ -2,7 +2,8 @@
 
 import { db } from "@/lib/db";
 import { TVendorsFull, addresses, bankDetails, vendors } from "@/lib/schema";
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const getVendors = async () => {
   const total = await db.select({ count: count() }).from(vendors);
@@ -91,4 +92,30 @@ export const createVendor = async (newVendor: TNewVendor) => {
     gstNumber,
     pan,
   });
+};
+
+export const getVendorById = async (vendorId: number) => {
+  "use server";
+  return db.query.vendors.findFirst({
+    where: eq(vendors.id, vendorId),
+    with: {
+      category: true,
+      address: true,
+      bankDetails: true,
+    },
+  });
+};
+export const deleteVendor = async (vendorId: number) => {
+  "use server";
+  const deletedVendor = await db
+    .delete(vendors)
+    .where(eq(vendors.id, vendorId))
+    .returning();
+  await db
+    .delete(bankDetails)
+    .where(eq(bankDetails.id, deletedVendor[0].bankDetailsId));
+  await db
+    .delete(addresses)
+    .where(eq(addresses.id, deletedVendor[0].addressId));
+  revalidatePath("/");
 };
