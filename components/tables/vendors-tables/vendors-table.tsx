@@ -11,7 +11,6 @@ import {
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -31,13 +30,29 @@ import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
-import { ChevronLeftIcon, ChevronRightIcon, Plus } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Plus,
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import DownloadPDF from "@/components/pdf-downloaders/vedor-pdf-downloader";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { DateRange } from "react-day-picker";
+import { TVendorsFull } from "@/lib/schema";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+  columns: ColumnDef<TVendorsFull>[];
   data: TData[];
   searchKey: string;
   pageNo: number;
@@ -48,6 +63,8 @@ interface DataTableProps<TData, TValue> {
     [key: string]: string | string[] | undefined;
   };
   loading?: boolean;
+  from?: string;
+  to?: string;
 }
 
 export function VendorTable<TData, TValue>({
@@ -59,10 +76,17 @@ export function VendorTable<TData, TValue>({
   loading,
   pageCount,
   pageSizeOptions = [10, 20, 30, 40, 50],
+  from,
+  to,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: from ? new Date(from) : undefined,
+    to: to ? new Date(to) : undefined,
+  });
+
   // Search params
   const page = searchParams?.get("page") ?? "1";
   const pageAsNumber = Number(page);
@@ -129,57 +153,79 @@ export function VendorTable<TData, TValue>({
     manualFiltering: true,
   });
 
-  const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
-
-  React.useEffect(() => {
-    if (searchValue?.length > 0) {
-      router.push(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: searchValue,
-        })}`,
-        {
-          scroll: false,
-        }
-      );
-    }
-    if (searchValue?.length === 0 || searchValue === undefined) {
-      router.push(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: null,
-        })}`,
-        {
-          scroll: false,
-        }
-      );
-    }
-
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
-
   return (
     <>
       <div className="flex items-start justify-between">
-        <Input
-          disabled={loading}
-          placeholder={`Search ${searchKey}...`}
-          value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn(searchKey)?.setFilterValue(event.target.value)
-          }
-          className="w-full md:max-w-sm"
-        />
-        <Button
-          className="text-xs md:text-sm"
-          onClick={() => router.push(`/dashboard/vendor/new`)}
-        >
-          <Plus className="mr-2 h-4 w-4" /> Add New
-        </Button>
+        <div className="flex gap-4">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="date"
+                variant={"outline"}
+                className={cn(
+                  "w-[300px] justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, "LLL dd, y")} -{" "}
+                      {format(date.to, "LLL dd, y")}
+                    </>
+                  ) : (
+                    format(date.from, "LLL dd, y")
+                  )
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={date?.from}
+                selected={date}
+                onSelect={setDate}
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
+          <Button
+            onClick={() => {
+              router.push(
+                `${pathname}?${
+                  !date
+                    ? ""
+                    : createQueryString({
+                        from: date?.from
+                          ? format(date?.from, "yyyy-MM-dd")
+                          : null,
+                        to: date?.to ? format(date?.to, "yyyy-MM-dd") : null,
+                        page: 0,
+                      })
+                }`,
+                {
+                  scroll: false,
+                }
+              );
+            }}
+          >
+            Search
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <DownloadPDF columns={columns} data={data as any} />
+          <Button
+            className="text-xs md:text-sm"
+            onClick={() => router.push(`/dashboard/vendor/new`)}
+          >
+            <Plus className="mr-2 h-4 w-4" /> Add New
+          </Button>
+        </div>
       </div>
       <ScrollArea className="rounded-md border h-[calc(80vh-220px)] overflow-x-scroll w-full">
         <Table className="relative">

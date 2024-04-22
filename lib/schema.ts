@@ -45,7 +45,6 @@ export const addresses = pgTable("addresses", {
   district: text("district").notNull(),
   state: text("state").notNull(),
   pinCode: varchar("pinCode", { length: 12 }).notNull(),
-
   createdAt: timestamp("createdAt").defaultNow(),
 });
 

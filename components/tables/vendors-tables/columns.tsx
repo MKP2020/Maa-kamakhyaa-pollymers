@@ -1,9 +1,7 @@
 "use client";
-import { Checkbox } from "@/components/ui/checkbox";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { TVendorsFull } from "@/lib/schema";
 import { format } from "date-fns";
-import { Label } from "@/components/ui/label";
 import { CellAction } from "./cell-action";
 
 export const columns: ColumnDef<TVendorsFull>[] = [

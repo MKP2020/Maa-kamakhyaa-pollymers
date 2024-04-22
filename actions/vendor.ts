@@ -2,19 +2,53 @@
 
 import { db } from "@/lib/db";
 import { TVendorsFull, addresses, bankDetails, vendors } from "@/lib/schema";
-import { count, eq } from "drizzle-orm";
+import { and, count, eq, gte, lte } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-export const getVendors = async () => {
+export const getVendors = async (
+  limit: number,
+  offset: number,
+  from?: string,
+  to?: string
+) => {
   const total = await db.select({ count: count() }).from(vendors);
-  const response = await db.query.vendors.findMany({
-    with: {
-      category: true,
-      address: true,
-      bankDetails: true,
-    },
-  });
 
+  // const query = db.select().from(vendors);
+
+  // if (from && !to) {
+  //   query.where(gte(vendors.createdAt, new Date(from)));
+  // } else if (to && !from) {
+  //   query.where(lte(vendors.createdAt, new Date(to)));
+  // } else if (!!to && !!from) {
+  //   query.where(
+  //     and(
+  //       gte(vendors.createdAt, new Date(from)),
+  //       lte(vendors.createdAt, new Date(to))
+  //     )
+  //   );
+  // }
+  const response = await db.query.vendors.findMany({
+    where: !(!!to && !!from)
+      ? undefined
+      : (vendors, { gte, lte, and }) =>
+          from && !to
+            ? gte(vendors.createdAt, new Date(from))
+            : to && !from
+            ? lte(vendors.createdAt, new Date(to))
+            : and(
+                gte(vendors.createdAt, new Date(from)),
+                lte(vendors.createdAt, new Date(to))
+              ),
+    with: { address: true, bankDetails: true },
+    limit: limit,
+    offset,
+  });
+  // query.fullJoin(bankDetails, eq(bankDetails.id, vendors.bankDetailsId));
+  // query.limit(10);
+  // query.offset(page * 10);
+  // const response = await query;
+
+  console.log("response", response);
   return {
     total: total[0].count,
     data: response,
