@@ -56,6 +56,12 @@ export const navItems: NavItem[] = [
     label: "vendor",
   },
   {
+    title: "Table List",
+    href: "/dashboard/table-list",
+    icon: "table",
+    label: "vendor",
+  },
+  {
     title: "Employee",
     href: "/dashboard/employee",
     icon: "employee",

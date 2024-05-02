@@ -1,0 +1,1 @@
+ALTER TABLE "tableList" ADD CONSTRAINT "tableList_name_unique" UNIQUE("name");

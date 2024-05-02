@@ -100,3 +100,39 @@ export type TVendorsFull = typeof vendors.$inferSelect & {
   bankDetails: TBankingDetails;
   address: TAddress;
 };
+
+export const departments = pgTable("departments", {
+  id: serial("id").primaryKey().notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const fabrics = pgTable("fabrics", {
+  id: serial("id").primaryKey().notNull(),
+  name: integer("grade").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const tableList = pgTable("tableList", {
+  id: serial("id").primaryKey().notNull(),
+  categoryId: integer("categoryId")
+    .notNull()
+    .references(() => categories.id),
+  name: text("name").notNull().unique(),
+  minQuantity: integer("minQuantity").notNull(),
+  unit: varchar("unit", { length: 256 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TTableList = typeof tableList.$inferSelect;
+
+export type TNewTableList = typeof tableList.$inferInsert;
+
+export type TTableListFull = TTableList & { category: TCategory };
+
+export const tableListRelations = relations(tableList, ({ one }) => ({
+  category: one(categories, {
+    fields: [tableList.categoryId],
+    references: [categories.id],
+  }),
+}));
