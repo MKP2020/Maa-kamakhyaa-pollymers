@@ -19,7 +19,6 @@ type paramsProps = {
 
 export default async function Page(props: paramsProps) {
   const { params } = props;
-  console.log("searchParams", params?.venderId);
   const vendorId = params?.venderId !== "new" ? params?.venderId : undefined;
   const isUpdate = vendorId !== "new";
   const vendorDetails = !!vendorId

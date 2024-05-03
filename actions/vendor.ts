@@ -39,7 +39,7 @@ export const getVendors = async (
                 gte(vendors.createdAt, new Date(from)),
                 lte(vendors.createdAt, new Date(to))
               ),
-    with: { address: true, bankDetails: true },
+    with: { address: true, bankDetails: true, category: true },
     limit: limit,
     offset,
   });
@@ -48,7 +48,6 @@ export const getVendors = async (
   // query.offset(page * 10);
   // const response = await query;
 
-  console.log("response", response);
   return {
     total: total[0].count,
     data: response,
