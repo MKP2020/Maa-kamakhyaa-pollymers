@@ -3,6 +3,8 @@ import { users } from "./schema";
 
 export type NewUser = typeof users.$inferInsert;
 
+export type TUser = typeof users.$inferSelect;
+
 export const getUserRole = (role: number) => {
   if (role === 0) return "admin";
 

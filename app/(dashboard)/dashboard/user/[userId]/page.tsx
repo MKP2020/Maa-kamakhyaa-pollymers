@@ -1,19 +1,26 @@
+import { getUserById } from "@/actions/users";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreateUserForm } from "@/components/forms/create-user-form";
 // import { ProductForm } from "@/components/forms/product-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React from "react";
 
-export default function Page() {
-  const breadcrumbItems = [
-    { title: "User", link: "/dashboard/user" },
-    { title: "Create", link: "/dashboard/user/create" },
-  ];
+const breadcrumbItems = [
+  { title: "User", link: "/dashboard/user" },
+  { title: "Create", link: "/dashboard/user/create" },
+];
+
+export default async function Page({ params }: any) {
+  const userId = params?.userId !== "new" ? params?.userId : undefined;
+
+  const user = !!userId ? await getUserById(userId) : undefined;
+
+  console.log("user", params, user);
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
-        <CreateUserForm initialData={null} />
+        <CreateUserForm initialData={user} />
         {/* <ProductForm
           categories={[
             { _id: "shirts", name: "shirts" },

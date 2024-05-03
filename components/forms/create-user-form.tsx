@@ -28,7 +28,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "../ui/use-toast";
 import { getUserRole } from "@/lib/users";
-import { createUser } from "@/actions/users";
+import { createUser, updateUser } from "@/actions/users";
 
 export const IMG_MAX_LIMIT = 3;
 
@@ -59,7 +59,11 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
   const action = initialData ? "Save changes" : "Create";
 
   const defaultValues = initialData
-    ? initialData
+    ? {
+        ...initialData,
+        password: "",
+        role: initialData.role.toString(),
+      }
     : {
         firstName: "",
         lastName: "",
@@ -67,6 +71,8 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
         password: "",
         role: "1",
       };
+
+  console.log("defaultValues", defaultValues);
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
@@ -76,7 +82,16 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
   const onSubmit = async (data: UserFormValues) => {
     try {
       setLoading(true);
-      if (initialData) {
+      if (!!initialData) {
+        await updateUser({
+          id: initialData.id,
+          clerkId: initialData.clerkId,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          password: data.password,
+          role: parseInt(data.role),
+        });
         // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
       } else {
         await createUser({
@@ -180,24 +195,26 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Email"
-                      type="email"
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!!initialData ? null : (
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Email"
+                        type="email"
+                        disabled={loading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="password"
