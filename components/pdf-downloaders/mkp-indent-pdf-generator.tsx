@@ -107,14 +107,7 @@ export const generateIndentHTML = (data: TIndent) => {
         </thead>
         <tbody>
           <!-- Add your table rows dynamically here -->
-          ${data.items.map((item, index) => (
-            <tr>
-              <td>{index + 1}</td>
-              <td>{item.item.name}</td>
-              <td>{item.indentedQty}</td>
-              <td>{item.approvedQty || ""}</td>
-            </tr>
-          ))}
+          
           <!-- Add more rows as needed -->
         </tbody>
       </table>

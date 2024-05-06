@@ -1,8 +1,4 @@
-import { getCategories } from "@/actions/category";
-import { getDepartments } from "@/actions/department";
-import { getIndentById, getIndents } from "@/actions/indent";
 import BreadCrumb from "@/components/breadcrumb";
-import { CreateIndentForm } from "@/components/forms/create-indent-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const getBreadcrumbItems = (id?: string) => [
@@ -20,7 +16,7 @@ type paramsProps = {
   };
 };
 
-export default async function (props: paramsProps) {
+export default async function Page(props: paramsProps) {
   const indentId = props.params?.id !== "new" ? props.params?.id : undefined;
 
   const breadcrumbItems = getBreadcrumbItems(indentId);
