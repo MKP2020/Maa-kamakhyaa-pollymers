@@ -205,7 +205,7 @@ export function TableListTable({
         <div className="flex items-center gap-4">
           <Button
             className="text-xs md:text-sm"
-            onClick={() => router.push(`/dashboard/table-list/new`)}
+            onClick={() => router.push(`/dashboard/item/new`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>

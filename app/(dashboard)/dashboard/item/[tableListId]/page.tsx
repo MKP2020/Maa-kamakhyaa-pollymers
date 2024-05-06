@@ -6,8 +6,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import React from "react";
 
 const breadcrumbItems = [
-  { title: "Table List", link: "/dashboard/table-list" },
-  { title: "Create", link: "/dashboard/table-list/new" },
+  { title: "Item", link: "/dashboard/item" },
+  { title: "New Item", link: "/dashboard/item/new" },
 ];
 
 type paramsProps = {

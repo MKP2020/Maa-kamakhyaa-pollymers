@@ -35,6 +35,11 @@ export const getTableList = async (
   return { data: res, total: listCount[0].count };
 };
 
+export const getTableListByCategory = async (id: number) => {
+  return db.query.tableList.findMany({
+    where: eq(tableList.categoryId, id),
+  });
+};
 export const createTableListItem = async (item: TNewTableList) => {
   const exists = await db
     .select()

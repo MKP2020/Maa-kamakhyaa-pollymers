@@ -103,13 +103,13 @@ export type TVendorsFull = typeof vendors.$inferSelect & {
 
 export const departments = pgTable("departments", {
   id: serial("id").primaryKey().notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
+  name: varchar("name", { length: 256 }).notNull().unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const fabrics = pgTable("fabrics", {
   id: serial("id").primaryKey().notNull(),
-  name: integer("grade").notNull(),
+  grade: text("grade").notNull().unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -136,3 +136,60 @@ export const tableListRelations = relations(tableList, ({ one }) => ({
     references: [categories.id],
   }),
 }));
+
+export const indentItems = pgTable("indentItems", {
+  id: serial("id").primaryKey().notNull(),
+  indentId: integer("indentId")
+    .notNull()
+    .references(() => indents.id),
+
+  itemId: integer("itemId")
+    .notNull()
+    .references(() => tableList.id),
+
+  indentedQty: integer("indentedQty").notNull(),
+  approvedQty: integer("approvedQty"),
+});
+
+export const indents = pgTable("indents", {
+  id: serial("id").primaryKey().notNull(),
+  indentNumber: varchar("indentNumber", { length: 30 }).unique().notNull(),
+  departmentId: integer("departmentId")
+    .notNull()
+    .references(() => departments.id),
+  categoryId: integer("categoryId")
+    .references(() => categories.id)
+    .notNull(),
+  date: timestamp("date").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  note: text("note"),
+});
+
+export const indentItemsRelation = relations(indentItems, ({ one }) => ({
+  indent: one(indents, {
+    fields: [indentItems.indentId],
+    references: [indents.id],
+  }),
+  item: one(tableList, {
+    fields: [indentItems.itemId],
+    references: [tableList.id],
+  }),
+}));
+
+export const indentsRelation = relations(indents, ({ many, one }) => ({
+  items: many(indentItems),
+  department: one(departments, {
+    fields: [indents.departmentId],
+    references: [departments.id],
+  }),
+  category: one(categories, {
+    fields: [indents.categoryId],
+    references: [categories.id],
+  }),
+}));
+
+export const indentNumbers = pgTable("indentNumber", {
+  id: serial("id").primaryKey().notNull(),
+  year: integer("year").notNull(),
+  currentCount: integer("currentCount").notNull(),
+});

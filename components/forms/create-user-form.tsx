@@ -72,8 +72,6 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
         role: "1",
       };
 
-  console.log("defaultValues", defaultValues);
-
   const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,

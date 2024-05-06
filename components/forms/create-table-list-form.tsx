@@ -65,13 +65,9 @@ export const CreateTableListForm: React.FC<UserFormProps> = ({
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const title = initialData ? "Edit Table List" : "Create Table List";
-  const description = initialData
-    ? "Edit table list details."
-    : "Add a new table list item";
-  const toastMessage = initialData
-    ? "Table List updated."
-    : "Table List created.";
+  const title = initialData ? "Edit Item" : "Create Item";
+  const description = initialData ? "Edit item details." : "Add a new item";
+  const toastMessage = initialData ? "Item updated." : "Item created.";
   const action = initialData ? "Save changes" : "Create";
 
   const defaultValues: typeof formSchema._type = {} as any;
@@ -99,8 +95,8 @@ export const CreateTableListForm: React.FC<UserFormProps> = ({
       toast({
         title: toastMessage,
         description: !initialData
-          ? "Table List Item successfully created"
-          : "Table List Item successfully updated",
+          ? "Item successfully created"
+          : "Item successfully updated",
       });
     } catch (error: any) {
       console.log(error);
@@ -121,8 +117,8 @@ export const CreateTableListForm: React.FC<UserFormProps> = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              table list and remove your data from our servers.
+              This action cannot be undone. This will permanently delete this
+              item.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -138,7 +134,8 @@ export const CreateTableListForm: React.FC<UserFormProps> = ({
                 setOpen(false);
                 // TODO: delete
                 await deleteVendor(initialData!.id);
-                router.push("/dashboard/table-list");
+                router.push("/dashboard/item");
+                router.refresh();
               }}
             >
               Continue

@@ -20,8 +20,10 @@ import {
   Moon,
   MoreVertical,
   Network,
+  Newspaper,
   Pizza,
   Plus,
+  Scroll,
   Settings,
   Store,
   SunMedium,
@@ -66,6 +68,9 @@ export const Icons = {
   moon: Moon,
   laptop: Laptop,
   category: Network,
+  network: Network,
+  scroll: Scroll,
+  newspaper: Newspaper,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

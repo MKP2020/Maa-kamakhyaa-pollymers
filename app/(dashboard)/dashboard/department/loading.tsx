@@ -1,9 +1,9 @@
 import BreadCrumb from "@/components/breadcrumb";
-import { columns } from "@/components/tables/table-list-tables/columns";
-import { TableListTable } from "@/components/tables/table-list-tables/table-list-table";
+import { columns } from "@/components/tables/category-tables/columns";
+import { DepartmentTable } from "@/components/tables/department-table/department-table";
 
 const breadcrumbItems = [
-  { title: "Table List", link: "/dashboard/table-list" },
+  { title: "Departments", link: "/dashboard/department" },
 ];
 
 export default function Loading() {
@@ -11,12 +11,12 @@ export default function Loading() {
   return (
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
       <BreadCrumb items={breadcrumbItems} />
-      <TableListTable
+      <DepartmentTable
+        pageNo={1}
+        totalCategories={0}
         pageCount={0}
-        total={0}
-        loading
-        pageNo={0}
         searchKey="name"
+        loading
         columns={columns}
         data={[]}
       />

@@ -1,0 +1,1 @@
+ALTER TABLE "indents" ADD COLUMN "date" timestamp DEFAULT now() NOT NULL;

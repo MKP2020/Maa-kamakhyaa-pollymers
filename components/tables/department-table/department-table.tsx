@@ -50,7 +50,7 @@ interface DataTableProps<TData, TValue> {
   loading?: boolean;
 }
 
-export function CategoryTable<TData, TValue>({
+export function DepartmentTable<TData, TValue>({
   columns,
   data,
   pageNo,
@@ -58,6 +58,7 @@ export function CategoryTable<TData, TValue>({
   totalCategories,
   loading,
   pageCount,
+
   pageSizeOptions = [10, 20, 30, 40, 50],
 }: DataTableProps<TData, TValue>) {
   const router = useRouter();
@@ -123,6 +124,7 @@ export function CategoryTable<TData, TValue>({
     state: {
       pagination: { pageIndex, pageSize },
     },
+
     onPaginationChange: setPagination,
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
@@ -131,49 +133,77 @@ export function CategoryTable<TData, TValue>({
 
   const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
 
-  React.useEffect(() => {
-    if (searchValue?.length > 0) {
-      router.push(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: searchValue,
-        })}`,
-        {
-          scroll: false,
-        }
-      );
-    }
-    if (searchValue?.length === 0 || searchValue === undefined) {
-      router.push(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: null,
-        })}`,
-        {
-          scroll: false,
-        }
-      );
-    }
+  // React.useEffect(() => {
+  //   if (debounceValue.length > 0) {
+  //     router.push(
+  //       `${pathname}?${createQueryString({
+  //         [selectedOption.value]: `${debounceValue}${
+  //           debounceValue.length > 0 ? `.${filterVariety}` : ""
+  //         }`,
+  //       })}`,
+  //       {
+  //         scroll: false,
+  //       }
+  //     )
+  //   }
 
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
+  //   if (debounceValue.length === 0) {
+  //     router.push(
+  //       `${pathname}?${createQueryString({
+  //         [selectedOption.value]: null,
+  //       })}`,
+  //       {
+  //         scroll: false,
+  //       }
+  //     )
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [debounceValue, filterVariety, selectedOption.value])
 
   return (
     <>
-      <Input
-        disabled={loading}
-        placeholder={`Search ${searchKey}...`}
-        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn(searchKey)?.setFilterValue(event.target.value)
-        }
-        className="w-full md:max-w-sm"
-      />
+      {" "}
+      <div className="flex items-start justify-between">
+        <div className="flex gap-10">
+          <Input
+            defaultValue={searchParams.get("search") ?? ""}
+            disabled={loading}
+            placeholder={`Search ${searchKey}...`}
+            // value={
+            //   (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
+            // }
+            onChange={(event) =>
+              table.getColumn(searchKey)?.setFilterValue(event.target.value)
+            }
+            className="w-full md:max-w-sm"
+          />
+          <Button
+            onClick={() => {
+              router.push(
+                `${pathname}?${createQueryString({
+                  page: null,
+                  limit: null,
+                  search: searchValue || null,
+                })}`,
+                {
+                  scroll: false,
+                }
+              );
+            }}
+          >
+            Search
+          </Button>
+        </div>
 
+        <div className="flex items-center gap-4">
+          <Button
+            className="text-xs md:text-sm"
+            onClick={() => router.push(`/dashboard/department/new`)}
+          >
+            <Plus className="mr-2 h-4 w-4" /> Add New
+          </Button>
+        </div>
+      </div>
       <ScrollArea className="rounded-md border h-[calc(80vh-220px)]">
         <Table className="relative">
           <TableHeader>
@@ -229,7 +259,6 @@ export function CategoryTable<TData, TValue>({
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-
       <div className="flex flex-col gap-2 sm:flex-row items-center justify-end space-x-2 py-4">
         <div className="flex items-center justify-between w-full">
           <div className="flex-1 text-sm text-muted-foreground">

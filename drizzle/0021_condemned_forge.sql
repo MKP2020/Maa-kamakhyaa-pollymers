@@ -1,0 +1,1 @@
+ALTER TABLE "indents" ADD COLUMN "note" text;

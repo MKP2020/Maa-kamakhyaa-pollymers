@@ -1,12 +1,9 @@
-import { getCategories } from "@/actions/category";
-import { getTableList } from "@/actions/table-list";
+import { getFabrics } from "@/actions/fabric";
 import BreadCrumb from "@/components/breadcrumb";
-import { columns } from "@/components/tables/table-list-tables/columns";
-import { TableListTable } from "@/components/tables/table-list-tables/table-list-table";
+import { columns } from "@/components/tables/fabric-table/columns";
+import { FabricTable } from "@/components/tables/fabric-table/fabric-table";
 
-const breadcrumbItems = [
-  { title: "Table List", link: "/dashboard/table-list" },
-];
+const breadcrumbItems = [{ title: "Fabric", link: "/dashboard/fabric" }];
 
 type paramsProps = {
   searchParams: {
@@ -20,23 +17,21 @@ export default async function Page({ searchParams }: paramsProps) {
   const search = searchParams.search || null;
   const offset = (page - 1) * pageLimit;
 
-  const data = await getTableList(offset, pageLimit, search as string | null);
+  const { data, total } = await getFabrics(offset, pageLimit, search as string);
 
-  const total = data.total; //1000
   const pageCount = Math.ceil(total / pageLimit);
 
   return (
     <>
       <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
         <BreadCrumb items={breadcrumbItems} />
-        <TableListTable
-          columns={columns}
-          data={data.data}
-          pageNo={page}
-          searchKey="name"
-          total={total}
-          loading={false}
+        <FabricTable
           pageCount={pageCount}
+          total={total}
+          pageNo={page}
+          searchKey="grade"
+          columns={columns}
+          data={data}
         />
       </div>
     </>

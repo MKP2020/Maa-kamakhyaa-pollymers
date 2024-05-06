@@ -31,35 +31,54 @@ import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
-import { ChevronLeftIcon, ChevronRightIcon, Plus } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Plus,
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DateRange } from "react-day-picker";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { TIndent } from "@/lib/types";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  columns: ColumnDef<TIndent, any>[];
+  data: TIndent[];
   searchKey: string;
   pageNo: number;
-  totalCategories: number;
+  total: number;
   pageSizeOptions?: number[];
   pageCount: number;
   searchParams?: {
     [key: string]: string | string[] | undefined;
   };
   loading?: boolean;
+  from?: string | null;
+  to?: string | null;
 }
 
-export function CategoryTable<TData, TValue>({
+export function IndentTable({
   columns,
   data,
   pageNo,
   searchKey,
-  totalCategories,
+  total,
   loading,
   pageCount,
   pageSizeOptions = [10, 20, 30, 40, 50],
-}: DataTableProps<TData, TValue>) {
+  from,
+  to,
+}: DataTableProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -71,6 +90,11 @@ export function CategoryTable<TData, TValue>({
   const per_page = searchParams?.get("limit") ?? "10";
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
+
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: from ? new Date(from) : undefined,
+    to: to ? new Date(to) : undefined,
+  });
 
   /* this can be used to get the selectedrows 
   console.log("value", table.getFilteredSelectedRowModel()); */
@@ -131,48 +155,90 @@ export function CategoryTable<TData, TValue>({
 
   const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
 
-  React.useEffect(() => {
-    if (searchValue?.length > 0) {
-      router.push(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: searchValue,
-        })}`,
-        {
-          scroll: false,
-        }
-      );
-    }
-    if (searchValue?.length === 0 || searchValue === undefined) {
-      router.push(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: null,
-        })}`,
-        {
-          scroll: false,
-        }
-      );
-    }
-
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
-
   return (
     <>
-      <Input
-        disabled={loading}
-        placeholder={`Search ${searchKey}...`}
-        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn(searchKey)?.setFilterValue(event.target.value)
-        }
-        className="w-full md:max-w-sm"
-      />
+      <div id="table-indent" className="flex items-start justify-between">
+        <div className="flex gap-4">
+          <Input
+            disabled={loading}
+            placeholder={`Search Indent Number...`}
+            value={
+              (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn(searchKey)?.setFilterValue(event.target.value)
+            }
+            className="w-full md:max-w-sm"
+          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="date"
+                variant={"outline"}
+                className={cn(
+                  "w-[300px] justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, "LLL dd, y")} -{" "}
+                      {format(date.to, "LLL dd, y")}
+                    </>
+                  ) : (
+                    format(date.from, "LLL dd, y")
+                  )
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={date?.from}
+                selected={date}
+                onSelect={setDate}
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
+          <Button
+            onClick={() => {
+              router.push(
+                `${pathname}?${
+                  !date
+                    ? ""
+                    : createQueryString({
+                        search: searchValue || null,
+                        from: date?.from
+                          ? format(date?.from, "yyyy-MM-dd")
+                          : null,
+                        to: date?.to ? format(date?.to, "yyyy-MM-dd") : null,
+                        page: 0,
+                      })
+                }`,
+                {
+                  scroll: false,
+                }
+              );
+            }}
+          >
+            Search
+          </Button>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button
+            className="text-xs md:text-sm"
+            onClick={() => router.push(`/dashboard/indent/new`)}
+          >
+            <Plus className="mr-2 h-4 w-4" /> Add New
+          </Button>
+        </div>
+      </div>
 
       <ScrollArea className="rounded-md border h-[calc(80vh-220px)]">
         <Table className="relative">
