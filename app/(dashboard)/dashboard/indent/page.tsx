@@ -24,7 +24,6 @@ export default async function Page({ searchParams }: paramsProps) {
   const total = data.total; //1000
   const pageCount = Math.ceil(total / pageLimit);
 
-  console.log("data", data.data);
   return (
     <>
       <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">

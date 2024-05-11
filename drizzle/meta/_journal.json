@@ -155,6 +155,27 @@
       "when": 1714942923222,
       "tag": "0021_condemned_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1714989933240,
+      "tag": "0022_petite_jetstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1714990035399,
+      "tag": "0023_stiff_black_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1714990169333,
+      "tag": "0024_omniscient_black_tom",
+      "breakpoints": true
     }
   ]
 }

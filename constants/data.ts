@@ -80,10 +80,10 @@ export const navItems: NavItem[] = [
     label: "indent",
   },
   {
-    title: "Employee",
-    href: "/dashboard/employee",
-    icon: "employee",
-    label: "employee",
+    title: "Purchase Order",
+    href: "/dashboard/purchase-order",
+    icon: "newspaper",
+    label: "indent",
   },
   {
     title: "Profile",

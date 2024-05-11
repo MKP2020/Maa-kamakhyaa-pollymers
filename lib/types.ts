@@ -1,9 +1,12 @@
 import {
   TCategory,
+  TVendors,
   departments,
   fabrics,
   indentItems,
   indents,
+  purchaseOrderItems,
+  purchaseOrders,
   tableList,
 } from "./schema";
 
@@ -30,3 +33,16 @@ export type TIndent = typeof indents.$inferSelect & {
 };
 
 export type TNewIndent = typeof indents.$inferInsert;
+
+export type TNewPurchaseOrderItem = typeof purchaseOrderItems.$inferInsert;
+
+export type TPurchaseOrderItem = typeof purchaseOrderItems.$inferInsert;
+
+export type TNewPurchaseOrder = typeof purchaseOrders.$inferInsert;
+
+export type TPurchaseOrder = typeof purchaseOrders.$inferSelect & {
+  indent: TIndent;
+  vendor: TVendors;
+  items: TPurchaseOrderItem[];
+  seller: TVendors;
+};

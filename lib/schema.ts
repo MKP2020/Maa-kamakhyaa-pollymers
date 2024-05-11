@@ -193,3 +193,68 @@ export const indentNumbers = pgTable("indentNumber", {
   year: integer("year").notNull(),
   currentCount: integer("currentCount").notNull(),
 });
+
+export const purchaseOrderItems = pgTable("purchaseOrderItems", {
+  id: serial("id").primaryKey().notNull(),
+  poId: integer("poId")
+    .notNull()
+    .references(() => purchaseOrders.id),
+  itemId: integer("itemId")
+    .notNull()
+    .references(() => indentItems.id),
+  price: integer("price").notNull(),
+});
+
+export const purchaseOrders = pgTable("purchaseOrders", {
+  id: serial("id").primaryKey().notNull(),
+  poNumber: varchar("poNumber", { length: 30 }).unique().notNull(),
+  sellerId: integer("sellerId")
+    .notNull()
+    .references(() => vendors.id),
+  indentId: integer("indentId")
+    .notNull()
+    .references(() => indents.id),
+  date: timestamp("date").defaultNow().notNull(),
+
+  taxType: varchar("taxType", { length: 10 }).notNull(),
+  taxPercentage: integer("taxPercentage").notNull(),
+
+  approvalStatus: integer("approvalStatus").default(0).notNull(),
+  status: integer("status").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const purchaseOrderItemsRelation = relations(
+  purchaseOrderItems,
+  ({ one }) => ({
+    po: one(purchaseOrders, {
+      fields: [purchaseOrderItems.poId],
+      references: [purchaseOrders.id],
+    }),
+    item: one(indentItems, {
+      fields: [purchaseOrderItems.itemId],
+      references: [indentItems.id],
+    }),
+  })
+);
+
+export const purchaseOrdersRelations = relations(
+  purchaseOrders,
+  ({ many, one }) => ({
+    items: many(purchaseOrderItems),
+    seller: one(vendors, {
+      fields: [purchaseOrders.sellerId],
+      references: [vendors.id],
+    }),
+    indent: one(indents, {
+      fields: [purchaseOrders.indentId],
+      references: [indents.id],
+    }),
+  })
+);
+
+export const purchaseOrderNumbers = pgTable("purchaseOrderNumbers", {
+  id: serial("id").primaryKey().notNull(),
+  year: integer("year").notNull(),
+  currentCount: integer("currentCount").notNull(),
+});
