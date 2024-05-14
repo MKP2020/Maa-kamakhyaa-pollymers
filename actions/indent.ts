@@ -1,9 +1,14 @@
 "use server";
 import { db } from "@/lib/db";
-import { indentItems, indentNumbers, indents } from "@/lib/schema";
-import { TIndentItem, TNewIndent, TNewIndentItem } from "@/lib/types";
+import {
+  indentItems,
+  indentNumbers,
+  indents,
+  purchaseOrders,
+} from "@/lib/schema";
+import { TIndent, TIndentItem, TNewIndent, TNewIndentItem } from "@/lib/types";
 import { getYear } from "date-fns";
-import { and, count, eq, gte, lte } from "drizzle-orm";
+import { and, count, eq, gte, lte, notExists } from "drizzle-orm";
 
 export const createIndent = async (
   newIndent: TNewIndent,
@@ -36,11 +41,14 @@ export const createIndent = async (
 
     const indent = res[0];
 
-    await db
-      .update(indentNumbers)
-      .set({ currentCount: (count?.currentCount || 0) + 1 })
-      .where(eq(indentNumbers.year, year));
-
+    if (!count) {
+      await db.insert(indentNumbers).values({ currentCount: 1, year });
+    } else {
+      await db
+        .update(indentNumbers)
+        .set({ currentCount: (count?.currentCount || 0) + 1 })
+        .where(eq(indentNumbers.year, year));
+    }
     if (indent) {
       const itemList: TIndentItem[] = [];
 

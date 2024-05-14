@@ -8,7 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -147,10 +147,9 @@ export function PurchaseOrderTable({
     manualFiltering: true,
   });
 
-  const searchValue =
-    (table.getColumn(searchKey)?.getFilterValue() as string) ||
-    (searchParams.get("search") as any) ||
-    "";
+  const [search, setSearch] = useState(
+    (searchParams.get("search") as any) || ""
+  );
 
   return (
     <>
@@ -160,10 +159,8 @@ export function PurchaseOrderTable({
             defaultValue={(searchParams.get("search") as any) || ""}
             disabled={loading}
             placeholder={`Search PO Number...`}
-            value={searchValue ?? ""}
-            onChange={(event) =>
-              table.getColumn(searchKey)?.setFilterValue(event.target.value)
-            }
+            // value={searchValue ?? ""}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full md:max-w-sm"
           />
           <Popover>
@@ -193,9 +190,10 @@ export function PurchaseOrderTable({
           </Popover>
           <Button
             onClick={() => {
+              console.log("searchValue", search);
               router.push(
                 `${pathname}?${createQueryString({
-                  search: searchValue || null,
+                  search: search || null,
                   date: date ? format(date, "yyyy-MM-dd") : null,
                   page: 0,
                 })}`,
@@ -211,7 +209,7 @@ export function PurchaseOrderTable({
         <div className="flex items-center gap-4">
           <Button
             className="text-xs md:text-sm"
-            onClick={() => router.push(`/dashboard/indent/new`)}
+            onClick={() => router.push(`/dashboard/purchase-order/new`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>

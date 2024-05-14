@@ -11,14 +11,21 @@ export const getIndentNumber = (date: Date) => {
   return `MKP${year}IN`;
 };
 
-const ApprovalStatusText: Record<number, string> = {
-  0: "Pending",
-  1: "Approved",
-  2: "Disapproved",
+export const getPONumber = (date: Date) => {
+  const year = getYear(date);
+  return `MKP${year}PO`;
 };
 
-export const getApprovalStatusText = (index: number) =>
-  ApprovalStatusText[index];
+const ApprovalStatusText: Record<number, string> = {
+  // 0: "Pending",
+  0: "Approved",
+  1: "Disapproved",
+};
+
+export const getApprovalStatusText = (index: number | string) => {
+  const ind = typeof index === "string" ? Number(index) : index;
+  return ApprovalStatusText[ind];
+};
 
 const POStatusText: Record<number, string> = {
   0: "Open",

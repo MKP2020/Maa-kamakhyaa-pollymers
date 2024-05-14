@@ -1,7 +1,13 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { TVendorsFull, addresses, bankDetails, vendors } from "@/lib/schema";
+import {
+  TVendors,
+  TVendorsFull,
+  addresses,
+  bankDetails,
+  vendors,
+} from "@/lib/schema";
 import { and, count, eq, gte, lte } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -137,6 +143,12 @@ export const getVendorById = async (vendorId: number) => {
       bankDetails: true,
     },
   });
+};
+
+export const getVendorsByType = async (type: number) => {
+  return db.query.vendors.findMany({
+    where: eq(vendors.type, type),
+  }) as any as TVendors[];
 };
 export const deleteVendor = async (vendorId: number) => {
   "use server";
