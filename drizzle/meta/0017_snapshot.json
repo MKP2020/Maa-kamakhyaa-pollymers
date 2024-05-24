@@ -1,10 +1,8 @@
 {
-  "id": "d20b19a4-9610-4880-aaaa-5cc63f59a2b2",
-  "prevId": "d0f94aae-330a-4923-b10d-d215c0c7be94",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "addresses": {
+    "public.addresses": {
       "name": "addresses",
       "schema": "",
       "columns": {
@@ -63,7 +61,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "bankDetails": {
+    "public.bankDetails": {
       "name": "bankDetails",
       "schema": "",
       "columns": {
@@ -104,7 +102,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "categories": {
+    "public.categories": {
       "name": "categories",
       "schema": "",
       "columns": {
@@ -133,7 +131,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "departments": {
+    "public.departments": {
       "name": "departments",
       "schema": "",
       "columns": {
@@ -163,14 +161,14 @@
       "uniqueConstraints": {
         "departments_name_unique": {
           "name": "departments_name_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "fabrics": {
+    "public.fabrics": {
       "name": "fabrics",
       "schema": "",
       "columns": {
@@ -200,14 +198,14 @@
       "uniqueConstraints": {
         "fabrics_grade_unique": {
           "name": "fabrics_grade_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "grade"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "indentItems": {
+    "public.indentItems": {
       "name": "indentItems",
       "schema": "",
       "columns": {
@@ -241,34 +239,34 @@
         "indentItems_indentId_indents_id_fk": {
           "name": "indentItems_indentId_indents_id_fk",
           "tableFrom": "indentItems",
-          "tableTo": "indents",
           "columnsFrom": [
             "indentId"
           ],
+          "tableTo": "indents",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "indentItems_indentId_tableList_id_fk": {
           "name": "indentItems_indentId_tableList_id_fk",
           "tableFrom": "indentItems",
-          "tableTo": "tableList",
           "columnsFrom": [
             "indentId"
           ],
+          "tableTo": "tableList",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "indents": {
+    "public.indents": {
       "name": "indents",
       "schema": "",
       "columns": {
@@ -309,42 +307,42 @@
         "indents_departmentId_departments_id_fk": {
           "name": "indents_departmentId_departments_id_fk",
           "tableFrom": "indents",
-          "tableTo": "departments",
           "columnsFrom": [
             "departmentId"
           ],
+          "tableTo": "departments",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "indents_categoryId_categories_id_fk": {
           "name": "indents_categoryId_categories_id_fk",
           "tableFrom": "indents",
-          "tableTo": "categories",
           "columnsFrom": [
             "categoryId"
           ],
+          "tableTo": "categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "indents_indentNumber_unique": {
           "name": "indents_indentNumber_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "indentNumber"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "tableList": {
+    "public.tableList": {
       "name": "tableList",
       "schema": "",
       "columns": {
@@ -391,29 +389,29 @@
         "tableList_categoryId_categories_id_fk": {
           "name": "tableList_categoryId_categories_id_fk",
           "tableFrom": "tableList",
-          "tableTo": "categories",
           "columnsFrom": [
             "categoryId"
           ],
+          "tableTo": "categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "tableList_name_unique": {
           "name": "tableList_name_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -467,14 +465,14 @@
       "uniqueConstraints": {
         "users_email_unique": {
           "name": "users_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "vendors": {
+    "public.vendors": {
       "name": "vendors",
       "schema": "",
       "columns": {
@@ -560,58 +558,58 @@
         "vendors_categoryId_categories_id_fk": {
           "name": "vendors_categoryId_categories_id_fk",
           "tableFrom": "vendors",
-          "tableTo": "categories",
           "columnsFrom": [
             "categoryId"
           ],
+          "tableTo": "categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "vendors_addressId_addresses_id_fk": {
           "name": "vendors_addressId_addresses_id_fk",
           "tableFrom": "vendors",
-          "tableTo": "addresses",
           "columnsFrom": [
             "addressId"
           ],
+          "tableTo": "addresses",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "vendors_bankDetailsId_bankDetails_id_fk": {
           "name": "vendors_bankDetailsId_bankDetails_id_fk",
           "tableFrom": "vendors",
-          "tableTo": "bankDetails",
           "columnsFrom": [
             "bankDetailsId"
           ],
+          "tableTo": "bankDetails",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "vendors_emailId_unique": {
           "name": "vendors_emailId_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "emailId"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "vendors_gstNumber_unique": {
           "name": "vendors_gstNumber_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "gstNumber"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
@@ -619,8 +617,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "d20b19a4-9610-4880-aaaa-5cc63f59a2b2",
+  "prevId": "d0f94aae-330a-4923-b10d-d215c0c7be94"
 }

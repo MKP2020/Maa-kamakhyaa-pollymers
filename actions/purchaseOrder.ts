@@ -13,7 +13,7 @@ import {
   TPurchaseOrderItem,
 } from "@/lib/types";
 import { getYear } from "date-fns";
-import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
+import { and, count, eq, not, gte, ilike, lte } from "drizzle-orm";
 
 export const getPurchaseOrders = async (
   search?: string,
@@ -83,7 +83,7 @@ export const getPurchaseOrderById = (id: number) => {
   return db.query.purchaseOrders.findFirst({
     where: eq(purchaseOrders.id, id),
     with: {
-      items: true,
+      items: { with: { item: true } },
       indent: true,
       seller: true,
     },
@@ -111,7 +111,6 @@ export const createPurchaseOrder = async (
       poNumber += count.currentCount + 1;
     }
 
-    console.log("poNumber", poNumber);
     const res = await db
       .insert(purchaseOrders)
       .values({
@@ -137,11 +136,6 @@ export const createPurchaseOrder = async (
       for (let index = 0; index < items.length; index++) {
         const element = items[index];
 
-        console.log("adding", {
-          ...element,
-
-          poId: newPO.id,
-        });
         const nRes = await db
           .insert(purchaseOrderItems)
           .values({
@@ -173,4 +167,21 @@ export const updatePurchaseOrder = (
     .set(values)
     .where(eq(purchaseOrders.id, id))
     .returning();
+};
+
+export const getPendingPurchaseOrders = async () => {
+  return db.query.purchaseOrders.findMany({
+    where: eq(purchaseOrders.status, 0),
+  });
+};
+
+export const getPurchaseOrderItems = (poId: number) => {
+  return db.query.purchaseOrderItems.findMany({
+    where: eq(purchaseOrderItems.poId, poId),
+    with: {
+      item: {
+        with: { item: true },
+      },
+    },
+  });
 };

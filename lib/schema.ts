@@ -258,3 +258,55 @@ export const purchaseOrderNumbers = pgTable("purchaseOrderNumbers", {
   year: integer("year").notNull(),
   currentCount: integer("currentCount").notNull(),
 });
+
+export const grnItems = pgTable("grnItems", {
+  id: serial("id").primaryKey().notNull(),
+  grnId: integer("grnId")
+    .notNull()
+    .references(() => grns.id),
+  itemId: integer("itemId")
+    .notNull()
+    .references(() => purchaseOrderItems.id),
+  quantity: integer("price").notNull(),
+});
+
+export const grns = pgTable("grn", {
+  id: serial("id").primaryKey().notNull(),
+  grnNumber: varchar("grnNumber", { length: 30 }).unique().notNull(),
+  poId: integer("poId").notNull(),
+  receivedDate: timestamp("receivedDate").defaultNow().notNull(),
+  invoiceNumber: text("invoiceNumber").notNull(),
+  invoiceDate: timestamp("invoiceDate").defaultNow().notNull(),
+  transportMode: varchar("transportMode", { length: 15 }).notNull(),
+  transportName: text("transportName").notNull(),
+  cnNumber: varchar("cnNumber", { length: 30 }).notNull(),
+  vehicleNumber: varchar("vehicleNumber", { length: 30 }).notNull(),
+  freightAmount: integer("freightAmount").notNull(),
+  taxType: varchar("taxType", { length: 10 }).notNull(),
+  taxPercentage: integer("taxPercentage").notNull(),
+});
+
+export const grnNumbers = pgTable("grnNumbers", {
+  id: serial("id").primaryKey().notNull(),
+  year: integer("year").notNull(),
+  currentCount: integer("currentCount").notNull(),
+});
+
+export const grnItemsRelation = relations(grnItems, ({ one }) => ({
+  po: one(grns, {
+    fields: [grnItems.grnId],
+    references: [grns.id],
+  }),
+  item: one(purchaseOrderItems, {
+    fields: [grnItems.itemId],
+    references: [purchaseOrderItems.id],
+  }),
+}));
+
+export const grnRelations = relations(grns, ({ many, one }) => ({
+  items: many(grnItems),
+  po: one(purchaseOrders, {
+    fields: [grns.poId],
+    references: [purchaseOrders.id],
+  }),
+}));

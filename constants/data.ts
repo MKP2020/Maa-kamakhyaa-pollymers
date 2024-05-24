@@ -83,7 +83,13 @@ export const navItems: NavItem[] = [
     title: "Purchase Order",
     href: "/dashboard/purchase-order",
     icon: "newspaper",
-    label: "indent",
+    label: "purchase-order",
+  },
+  {
+    title: "GRN",
+    href: "/dashboard/grn",
+    icon: "newspaper",
+    label: "grn",
   },
   {
     title: "Profile",

@@ -15,6 +15,10 @@ export const getPONumber = (date: Date) => {
   const year = getYear(date);
   return `MKP${year}PO`;
 };
+export const getGRNNumber = (date: Date) => {
+  const year = getYear(date);
+  return `MKP${year}GRN`;
+};
 
 const ApprovalStatusText: Record<number, string> = {
   // 0: "Pending",

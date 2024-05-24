@@ -18,7 +18,7 @@ const getBreadcrumbItems = (id?: string) => [
   {
     title: !!id ? "Update" : "New",
     link: !!id
-      ? `/dashboard/purchase-order]/${id}`
+      ? `/dashboard/purchase-order/${id}`
       : "/dashboard/purchase-order/new",
   },
 ];

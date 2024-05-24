@@ -1,4 +1,6 @@
 {
+  "id": "bd7b1e6e-50b9-4f7d-adf5-a4f3039686cb",
+  "prevId": "45fb7cb5-89fe-4cca-9468-5bdc3302c35d",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -161,10 +163,10 @@
       "uniqueConstraints": {
         "departments_name_unique": {
           "name": "departments_name_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -198,10 +200,197 @@
       "uniqueConstraints": {
         "fabrics_grade_unique": {
           "name": "fabrics_grade_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "grade"
+          ]
+        }
+      }
+    },
+    "public.grnItems": {
+      "name": "grnItems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "grnId": {
+          "name": "grnId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "grnItems_grnId_grn_id_fk": {
+          "name": "grnItems_grnId_grn_id_fk",
+          "tableFrom": "grnItems",
+          "tableTo": "grn",
+          "columnsFrom": [
+            "grnId"
           ],
-          "nullsNotDistinct": false
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "grnItems_itemId_purchaseOrderItems_id_fk": {
+          "name": "grnItems_itemId_purchaseOrderItems_id_fk",
+          "tableFrom": "grnItems",
+          "tableTo": "purchaseOrderItems",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.grnNumbers": {
+      "name": "grnNumbers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currentCount": {
+          "name": "currentCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.grn": {
+      "name": "grn",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "grnNumber": {
+          "name": "grnNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "poId": {
+          "name": "poId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "receivedDate": {
+          "name": "receivedDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "invoiceNumber": {
+          "name": "invoiceNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoiceDate": {
+          "name": "invoiceDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "transportMode": {
+          "name": "transportMode",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transportName": {
+          "name": "transportName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cnNumber": {
+          "name": "cnNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vehicleNumber": {
+          "name": "vehicleNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "freightAmount": {
+          "name": "freightAmount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taxType": {
+          "name": "taxType",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taxPercentage": {
+          "name": "taxPercentage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "grn_grnNumber_unique": {
+          "name": "grn_grnNumber_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "grnNumber"
+          ]
         }
       }
     },
@@ -245,28 +434,28 @@
         "indentItems_indentId_indents_id_fk": {
           "name": "indentItems_indentId_indents_id_fk",
           "tableFrom": "indentItems",
+          "tableTo": "indents",
           "columnsFrom": [
             "indentId"
           ],
-          "tableTo": "indents",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "indentItems_itemId_tableList_id_fk": {
           "name": "indentItems_itemId_tableList_id_fk",
           "tableFrom": "indentItems",
+          "tableTo": "tableList",
           "columnsFrom": [
             "itemId"
           ],
-          "tableTo": "tableList",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -341,6 +530,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -348,38 +543,236 @@
         "indents_departmentId_departments_id_fk": {
           "name": "indents_departmentId_departments_id_fk",
           "tableFrom": "indents",
+          "tableTo": "departments",
           "columnsFrom": [
             "departmentId"
           ],
-          "tableTo": "departments",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "indents_categoryId_categories_id_fk": {
           "name": "indents_categoryId_categories_id_fk",
           "tableFrom": "indents",
+          "tableTo": "categories",
           "columnsFrom": [
             "categoryId"
           ],
-          "tableTo": "categories",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "indents_indentNumber_unique": {
           "name": "indents_indentNumber_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "indentNumber"
+          ]
+        }
+      }
+    },
+    "public.purchaseOrderItems": {
+      "name": "purchaseOrderItems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "poId": {
+          "name": "poId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "purchaseOrderItems_poId_purchaseOrders_id_fk": {
+          "name": "purchaseOrderItems_poId_purchaseOrders_id_fk",
+          "tableFrom": "purchaseOrderItems",
+          "tableTo": "purchaseOrders",
+          "columnsFrom": [
+            "poId"
           ],
-          "nullsNotDistinct": false
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "purchaseOrderItems_itemId_indentItems_id_fk": {
+          "name": "purchaseOrderItems_itemId_indentItems_id_fk",
+          "tableFrom": "purchaseOrderItems",
+          "tableTo": "indentItems",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.purchaseOrderNumbers": {
+      "name": "purchaseOrderNumbers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currentCount": {
+          "name": "currentCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.purchaseOrders": {
+      "name": "purchaseOrders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "poNumber": {
+          "name": "poNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sellerId": {
+          "name": "sellerId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "indentId": {
+          "name": "indentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "taxType": {
+          "name": "taxType",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taxPercentage": {
+          "name": "taxPercentage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approvalStatus": {
+          "name": "approvalStatus",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "status": {
+          "name": "status",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "purchaseOrders_sellerId_vendors_id_fk": {
+          "name": "purchaseOrders_sellerId_vendors_id_fk",
+          "tableFrom": "purchaseOrders",
+          "tableTo": "vendors",
+          "columnsFrom": [
+            "sellerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "purchaseOrders_indentId_indents_id_fk": {
+          "name": "purchaseOrders_indentId_indents_id_fk",
+          "tableFrom": "purchaseOrders",
+          "tableTo": "indents",
+          "columnsFrom": [
+            "indentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "purchaseOrders_poNumber_unique": {
+          "name": "purchaseOrders_poNumber_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "poNumber"
+          ]
         }
       }
     },
@@ -430,25 +823,25 @@
         "tableList_categoryId_categories_id_fk": {
           "name": "tableList_categoryId_categories_id_fk",
           "tableFrom": "tableList",
+          "tableTo": "categories",
           "columnsFrom": [
             "categoryId"
           ],
-          "tableTo": "categories",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "tableList_name_unique": {
           "name": "tableList_name_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -506,10 +899,10 @@
       "uniqueConstraints": {
         "users_email_unique": {
           "name": "users_email_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -599,58 +992,58 @@
         "vendors_categoryId_categories_id_fk": {
           "name": "vendors_categoryId_categories_id_fk",
           "tableFrom": "vendors",
+          "tableTo": "categories",
           "columnsFrom": [
             "categoryId"
           ],
-          "tableTo": "categories",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "vendors_addressId_addresses_id_fk": {
           "name": "vendors_addressId_addresses_id_fk",
           "tableFrom": "vendors",
+          "tableTo": "addresses",
           "columnsFrom": [
             "addressId"
           ],
-          "tableTo": "addresses",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "vendors_bankDetailsId_bankDetails_id_fk": {
           "name": "vendors_bankDetailsId_bankDetails_id_fk",
           "tableFrom": "vendors",
+          "tableTo": "bankDetails",
           "columnsFrom": [
             "bankDetailsId"
           ],
-          "tableTo": "bankDetails",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "vendors_emailId_unique": {
           "name": "vendors_emailId_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "emailId"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "vendors_gstNumber_unique": {
           "name": "vendors_gstNumber_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "gstNumber"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     }
@@ -658,10 +1051,8 @@
   "enums": {},
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "id": "87ddbcd3-0267-4b0c-a88f-a622fc787d44",
-  "prevId": "735e548f-2ecf-4471-892e-3366c0566690"
+    "tables": {}
+  }
 }

@@ -1,10 +1,8 @@
 {
-  "id": "8fb1bc69-acb3-46bd-ba1d-93dd957e6dae",
-  "prevId": "842d5509-3c83-4a33-8f24-d1cb79822845",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "addresses": {
+    "public.addresses": {
       "name": "addresses",
       "schema": "",
       "columns": {
@@ -75,14 +73,14 @@
       "uniqueConstraints": {
         "addresses_gstNumber_unique": {
           "name": "addresses_gstNumber_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "gstNumber"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "bankDetails": {
+    "public.bankDetails": {
       "name": "bankDetails",
       "schema": "",
       "columns": {
@@ -122,7 +120,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "categories": {
+    "public.categories": {
       "name": "categories",
       "schema": "",
       "columns": {
@@ -150,7 +148,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -166,7 +164,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "venders": {
+    "public.venders": {
       "name": "venders",
       "schema": "",
       "columns": {
@@ -218,51 +216,51 @@
         "venders_categoryId_categories_id_fk": {
           "name": "venders_categoryId_categories_id_fk",
           "tableFrom": "venders",
-          "tableTo": "categories",
           "columnsFrom": [
             "categoryId"
           ],
+          "tableTo": "categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "venders_addressId_addresses_id_fk": {
           "name": "venders_addressId_addresses_id_fk",
           "tableFrom": "venders",
-          "tableTo": "addresses",
           "columnsFrom": [
             "addressId"
           ],
+          "tableTo": "addresses",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "venders_bankDerailsId_bankDetails_id_fk": {
           "name": "venders_bankDerailsId_bankDetails_id_fk",
           "tableFrom": "venders",
-          "tableTo": "bankDetails",
           "columnsFrom": [
             "bankDerailsId"
           ],
+          "tableTo": "bankDetails",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "venders_emailId_unique": {
           "name": "venders_emailId_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "emailId"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
@@ -270,8 +268,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "8fb1bc69-acb3-46bd-ba1d-93dd957e6dae",
+  "prevId": "842d5509-3c83-4a33-8f24-d1cb79822845"
 }
