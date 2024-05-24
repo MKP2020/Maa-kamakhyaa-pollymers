@@ -180,7 +180,7 @@ export const getPurchaseOrderItems = (poId: number) => {
     where: eq(purchaseOrderItems.poId, poId),
     with: {
       item: {
-        with: { item: true },
+        with: { item: true, indent: true },
       },
     },
   });

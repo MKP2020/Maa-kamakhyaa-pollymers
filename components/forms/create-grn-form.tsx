@@ -77,6 +77,9 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [selectedPo, setSelectedPo] = useState<number | undefined>(
+    initialData?.poId
+  );
 
   const [poItems, setPoItems] = useState<TPurchaseOrderItemFull[]>([]);
 
@@ -95,8 +98,8 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
         taxPercentage: initialData.taxPercentage,
 
         items: initialData.items.map((item) => ({
-          itemId: Number(item.itemId),
-          quantity: Number(item.quantity),
+          itemId: item.itemId.toString(),
+          quantity: item.inStockQuantity.toString(),
         })),
       } as any)
     : {};
@@ -105,6 +108,8 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+
+  console.log("poItems", poItems);
 
   const isDisabled = !!initialData || loading;
   const onSubmit = useCallback(
@@ -129,9 +134,12 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
               receivedDate: data.receivedDate!,
               invoiceDate: data.invoiceDate!,
             },
-            data.items.map((item) => ({
+            data.items.map((item, index) => ({
+              categoryId: poItems[index].item.indent.categoryId,
               itemId: Number(item.itemId),
-              quantity: Number(item.quantity),
+              usedQuantity: 0,
+              inStockQuantity: Number(item.quantity),
+              departmentId: poItems[index].item.indent.departmentId,
             }))
           );
         } else {
@@ -156,7 +164,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
         setLoading(false);
       }
     },
-    [initialData]
+    [initialData, poItems]
   );
 
   const { fields } = useFieldArray({
@@ -174,10 +182,6 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
     return (total + 0).toString();
   }, [values]);
 
-  const [selectedPo, setSelectedPo] = useState<number | undefined>(
-    initialData?.poId
-  );
-
   useEffect(() => {
     if (!selectedPo) return;
 
@@ -185,7 +189,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
       setPoItems([]);
       form.setValue("items", []);
       const response = await getPurchaseOrderItems(selectedPo);
-      setPoItems(response);
+      setPoItems(response as any);
 
       form.setValue(
         "items",

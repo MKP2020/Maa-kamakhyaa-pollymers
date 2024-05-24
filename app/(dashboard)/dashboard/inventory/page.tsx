@@ -1,7 +1,7 @@
-import { getPurchaseOrders } from "@/actions/purchaseOrder";
+import { getInventory } from "@/actions/inventory";
 import BreadCrumb from "@/components/breadcrumb";
-import { columns } from "@/components/tables/purchase-order-tables/columns";
-import { PurchaseOrderTable } from "@/components/tables/purchase-order-tables/purchase-order-table";
+import { columns } from "@/components/tables/inventory-tables/columns";
+import { InventoryTable } from "@/components/tables/inventory-tables/inventory-table";
 
 type paramsProps = {
   searchParams: {
@@ -9,9 +9,7 @@ type paramsProps = {
   };
 };
 
-const breadcrumbItems = [
-  { title: "Purchase Order", link: "/dashboard/purchase-order" },
-];
+const breadcrumbItems = [{ title: "Inventory", link: "/dashboard/inventory" }];
 
 export default async function Page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
@@ -20,20 +18,22 @@ export default async function Page({ searchParams }: paramsProps) {
   const date = (searchParams.date as string) || undefined;
   const offset = (page - 1) * pageLimit;
 
-  const { data, total } = await getPurchaseOrders(
+  const { data, total } = await getInventory(
     search as any,
     date,
     offset,
     pageLimit
   );
 
+  console.log("data", JSON.stringify(data));
+
   const pageCount = Math.ceil(total / pageLimit);
 
   return (
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
       <BreadCrumb items={breadcrumbItems} />
-      <PurchaseOrderTable
-        columns={columns}
+      <InventoryTable
+        columns={columns as any}
         data={data as any}
         date={date}
         pageNo={page}

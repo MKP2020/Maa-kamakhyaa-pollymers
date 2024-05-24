@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  Boxes,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -70,6 +71,7 @@ export const Icons = {
   category: Network,
   network: Network,
   scroll: Scroll,
+  boxes: Boxes,
   newspaper: Newspaper,
   gitHub: ({ ...props }: LucideProps) => (
     <svg

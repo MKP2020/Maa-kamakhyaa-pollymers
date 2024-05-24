@@ -183,6 +183,90 @@
       "when": 1716123279888,
       "tag": "0025_high_thunderball",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "6",
+      "when": 1716568547480,
+      "tag": "0026_steep_korg",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "6",
+      "when": 1716568729131,
+      "tag": "0027_polite_scarlet_spider",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "6",
+      "when": 1716568737569,
+      "tag": "0028_mysterious_phantom_reporter",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "6",
+      "when": 1716568938798,
+      "tag": "0029_tiresome_cobalt_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "6",
+      "when": 1716568979406,
+      "tag": "0030_jittery_shinko_yamashiro",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "6",
+      "when": 1716569043507,
+      "tag": "0031_hard_chameleon",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "6",
+      "when": 1716569438598,
+      "tag": "0032_quiet_maelstrom",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "6",
+      "when": 1716572081573,
+      "tag": "0033_ambiguous_jack_murdock",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "6",
+      "when": 1716572716093,
+      "tag": "0034_wide_vengeance",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "6",
+      "when": 1716572769136,
+      "tag": "0035_dear_firebrand",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "6",
+      "when": 1716573805966,
+      "tag": "0036_smooth_puck",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "6",
+      "when": 1716573894202,
+      "tag": "0037_safe_firelord",
+      "breakpoints": true
     }
   ]
 }

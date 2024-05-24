@@ -39,12 +39,13 @@ export default async function Page({ params }: paramsProps) {
       ? undefined
       : await getIndentById(purchaseOrder.indentId)
     : undefined;
+
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
         <CreatePurchaseOrder
-          initialData={purchaseOrder as TPurchaseOrder}
+          initialData={purchaseOrder as any}
           indents={!!id ? (!pIndent ? [] : [pIndent]) : indents}
           vendors={vendors}
         />

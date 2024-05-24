@@ -8,6 +8,8 @@ import {
   varchar,
   index,
 } from "drizzle-orm/pg-core";
+import { departments, inventory } from "./schemas";
+export * from "./schemas";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -101,28 +103,30 @@ export type TVendorsFull = typeof vendors.$inferSelect & {
   address: TAddress;
 };
 
-export const departments = pgTable("departments", {
-  id: serial("id").primaryKey().notNull(),
-  name: varchar("name", { length: 256 }).notNull().unique(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
 export const fabrics = pgTable("fabrics", {
   id: serial("id").primaryKey().notNull(),
   grade: text("grade").notNull().unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const tableList = pgTable("tableList", {
-  id: serial("id").primaryKey().notNull(),
-  categoryId: integer("categoryId")
-    .notNull()
-    .references(() => categories.id),
-  name: text("name").notNull().unique(),
-  minQuantity: integer("minQuantity").notNull(),
-  unit: varchar("unit", { length: 256 }).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+export const tableList = pgTable(
+  "tableList",
+  {
+    id: serial("id").primaryKey().notNull(),
+    categoryId: integer("categoryId")
+      .notNull()
+      .references(() => categories.id),
+    name: text("name").notNull().unique(),
+    minQuantity: integer("minQuantity").notNull(),
+    unit: varchar("unit", { length: 256 }).notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (tableList) => {
+    return {
+      itemCategoryIdx: index("itemCategoryIdx").on(tableList.categoryId),
+    };
+  }
+);
 
 export type TTableList = typeof tableList.$inferSelect;
 
@@ -259,17 +263,6 @@ export const purchaseOrderNumbers = pgTable("purchaseOrderNumbers", {
   currentCount: integer("currentCount").notNull(),
 });
 
-export const grnItems = pgTable("grnItems", {
-  id: serial("id").primaryKey().notNull(),
-  grnId: integer("grnId")
-    .notNull()
-    .references(() => grns.id),
-  itemId: integer("itemId")
-    .notNull()
-    .references(() => purchaseOrderItems.id),
-  quantity: integer("price").notNull(),
-});
-
 export const grns = pgTable("grn", {
   id: serial("id").primaryKey().notNull(),
   grnNumber: varchar("grnNumber", { length: 30 }).unique().notNull(),
@@ -292,19 +285,8 @@ export const grnNumbers = pgTable("grnNumbers", {
   currentCount: integer("currentCount").notNull(),
 });
 
-export const grnItemsRelation = relations(grnItems, ({ one }) => ({
-  po: one(grns, {
-    fields: [grnItems.grnId],
-    references: [grns.id],
-  }),
-  item: one(purchaseOrderItems, {
-    fields: [grnItems.itemId],
-    references: [purchaseOrderItems.id],
-  }),
-}));
-
 export const grnRelations = relations(grns, ({ many, one }) => ({
-  items: many(grnItems),
+  items: many(inventory),
   po: one(purchaseOrders, {
     fields: [grns.poId],
     references: [purchaseOrders.id],

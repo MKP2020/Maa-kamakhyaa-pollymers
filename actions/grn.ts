@@ -1,7 +1,14 @@
 "use server";
 import { db } from "@/lib/db";
-import { grnItems, grnNumbers, grns, purchaseOrders } from "@/lib/schema";
-import { TGRNItem, TNewGRN, TNewGRNItem } from "@/lib/types";
+import {
+  TInventory,
+  TNewInventory,
+  grnNumbers,
+  grns,
+  inventory,
+  purchaseOrders,
+} from "@/lib/schema";
+import { TNewGRN } from "@/lib/types";
 import { getYear } from "date-fns";
 import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
 
@@ -67,7 +74,7 @@ export const getGrns = async (
 
 export const createGrn = async (
   grnData: TNewGRN,
-  items: Omit<TNewGRNItem, "grnId">[]
+  items: Omit<TNewInventory, "grnId">[]
 ) => {
   try {
     const year = getYear(grnData.receivedDate!);
@@ -108,13 +115,13 @@ export const createGrn = async (
     }
 
     if (newGRN) {
-      const itemList: TGRNItem[] = [];
+      const itemList: TInventory[] = [];
 
       for (let index = 0; index < items.length; index++) {
         const element = items[index];
 
         const nRes = await db
-          .insert(grnItems)
+          .insert(inventory)
           .values({
             ...element,
             grnId: newGRN.id,

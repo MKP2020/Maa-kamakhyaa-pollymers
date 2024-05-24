@@ -1,0 +1,1 @@
+ALTER TABLE "inventory" ALTER COLUMN "usedQuantity" SET DEFAULT 0;

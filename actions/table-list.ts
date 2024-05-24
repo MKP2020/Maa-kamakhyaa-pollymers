@@ -40,6 +40,7 @@ export const getTableListByCategory = async (id: number) => {
     where: eq(tableList.categoryId, id),
   });
 };
+
 export const createTableListItem = async (item: TNewTableList) => {
   const exists = await db
     .select()

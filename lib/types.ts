@@ -1,9 +1,9 @@
 import {
   TCategory,
+  TInventoryFull,
   TVendors,
   departments,
   fabrics,
-  grnItems,
   grns,
   indentItems,
   indents,
@@ -26,6 +26,7 @@ export type TIndentItem = typeof indentItems.$inferSelect;
 
 export type TIndentItemFull = TIndentItem & {
   item: TTableList;
+  indent: TIndent;
 };
 
 export type TNewIndentItem = typeof indentItems.$inferInsert;
@@ -51,7 +52,6 @@ export type TPurchaseOrderItemFull = TPurchaseOrderItem & {
 export type TNewPurchaseOrder = typeof purchaseOrders.$inferInsert;
 
 export type TPurchaseOrder = typeof purchaseOrders.$inferSelect & {
-  indent: TIndent;
   vendor: TVendors;
   items: TPurchaseOrderItem[];
   seller: TVendors;
@@ -61,10 +61,6 @@ export type TNewGRN = typeof grns.$inferInsert;
 
 export type TGRN = typeof grns.$inferSelect;
 
-export type TNewGRNItem = typeof grnItems.$inferInsert;
-
-export type TGRNItem = typeof grnItems.$inferSelect;
-
 export type TGRNFull = TGRN & {
-  items: TGRNItem[];
+  items: TInventoryFull[];
 };

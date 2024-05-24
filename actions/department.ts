@@ -6,9 +6,9 @@ import { count, desc, eq, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export const getDepartments = async (
-  offset: number,
-  limit: number,
-  search: string
+  offset?: number,
+  limit?: number,
+  search?: string
 ) => {
   try {
     const data = await db.query.departments.findMany({
