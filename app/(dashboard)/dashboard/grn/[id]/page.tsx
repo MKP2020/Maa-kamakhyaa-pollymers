@@ -2,7 +2,6 @@ import { getGrnById } from "@/actions/grn";
 import {
   getPendingPurchaseOrders,
   getPurchaseOrderById,
-  getPurchaseOrders,
 } from "@/actions/purchaseOrder";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreateGRN } from "@/components/forms/create-grn-form";
@@ -39,7 +38,7 @@ export default async function Page({ params }: paramsProps) {
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
         <CreateGRN
-          initialData={initialData}
+          initialData={initialData as any}
           purchaseOrders={purchaseOrders as any}
         />
       </div>
