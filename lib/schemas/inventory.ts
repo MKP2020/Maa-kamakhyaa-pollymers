@@ -3,6 +3,7 @@ import {
   index,
   integer,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
@@ -31,10 +32,14 @@ export const inventory = pgTable(
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
     grnId: integer("grnId").notNull(),
   },
-  (inventory) => {
+  (table) => {
     return {
-      itemIdx: index("inventoryItemIdx").on(inventory.itemId),
-      dateIdx: index("inventoryDate").on(inventory.createdAt).desc(),
+      itemIdx: index("inventoryItemIdx").on(table.itemId),
+      dateIdx: index("inventoryDate").on(table.createdAt).desc(),
+      categoryIdIdx: index("inventoryCategoryIdIdx").on(table.categoryId),
+      departmentIdIdIdx: index("inventoryDepartmentIdIdx").on(
+        table.departmentId
+      ),
     };
   }
 );

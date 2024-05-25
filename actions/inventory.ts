@@ -79,3 +79,19 @@ export const getInventoryById = (id: number) => {
 export const createInventory = (data: TNewInventory) => {
   return db.insert(inventory).values(data).returning();
 };
+
+export const getInventoryBy = (categoryId: number, departmentId: number) => {
+  return db.query.inventory.findMany({
+    where: and(
+      eq(inventory.categoryId, categoryId),
+      eq(inventory.departmentId, departmentId)
+    ),
+    with: {
+      item: {
+        with: {
+          item: { with: { item: true } },
+        },
+      },
+    },
+  });
+};

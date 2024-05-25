@@ -267,6 +267,41 @@
       "when": 1716573894202,
       "tag": "0037_safe_firelord",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "6",
+      "when": 1716618007397,
+      "tag": "0038_groovy_king_bedlam",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "6",
+      "when": 1716618087339,
+      "tag": "0039_chilly_iceman",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "6",
+      "when": 1716618137993,
+      "tag": "0040_glorious_secret_warriors",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "6",
+      "when": 1716618166070,
+      "tag": "0041_workable_shatterstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "6",
+      "when": 1716620258824,
+      "tag": "0042_next_hawkeye",
+      "breakpoints": true
     }
   ]
 }

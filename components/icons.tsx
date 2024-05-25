@@ -34,6 +34,7 @@ import {
   User,
   User2Icon,
   UserX2Icon,
+  WashingMachine,
   X,
 } from "lucide-react";
 
@@ -62,6 +63,7 @@ export const Icons = {
   add: Plus,
   warning: AlertTriangle,
   user: User,
+  washingMachine: WashingMachine,
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,

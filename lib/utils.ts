@@ -36,3 +36,9 @@ const POStatusText: Record<number, string> = {
   1: "Closed",
 };
 export const getPOStatusText = (index: number) => POStatusText[index];
+
+export const SHIFT = ["A", "B"];
+
+export const SHIFT_MAP = { A: "A", B: "B" };
+
+export const isValidShift = (shift: "A" | "B") => !!SHIFT_MAP[shift];

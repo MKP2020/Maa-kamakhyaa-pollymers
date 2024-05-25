@@ -95,6 +95,12 @@ export const navItems: NavItem[] = [
     title: "Inventory",
     href: "/dashboard/inventory",
     icon: "boxes",
-    label: "grn",
+    label: "inventory",
+  },
+  {
+    title: "Washing Unit",
+    href: "/dashboard/washing-unit",
+    icon: "washingMachine",
+    label: "washing-unit",
   },
 ];

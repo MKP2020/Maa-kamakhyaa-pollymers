@@ -1,0 +1,2 @@
+CREATE INDEX IF NOT EXISTS "washingUnitItemsUnitIdx" ON "washingUnitItems" ("unitId");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "washingUnitItemsCategoryIdIdx" ON "washingUnitItems" ("categoryId");
