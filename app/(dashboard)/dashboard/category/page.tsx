@@ -2,7 +2,6 @@ import { getCategories } from "@/actions/category";
 import BreadCrumb from "@/components/breadcrumb";
 import { CategoryTable } from "@/components/tables/category-tables/category-table";
 import { columns } from "@/components/tables/category-tables/columns";
-import { UserClient } from "@/components/tables/user-tables/client";
 
 const breadcrumbItems = [{ title: "Category", link: "/dashboard/category" }];
 

@@ -50,7 +50,7 @@ interface DataTableProps<TData, TValue> {
   loading?: boolean;
 }
 
-export function WashingUnitTable<TData, TValue>({
+export function CategoryTable<TData, TValue>({
   columns,
   data,
   pageNo,

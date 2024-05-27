@@ -156,6 +156,7 @@ export const createWashingUnit = async (
     if (!newData) {
       throw new Error("Not able to save washing unit");
     }
+
     const newItems: TWashingUnitItem[] = [];
     for (let index = 0; index < items.length; index++) {
       const element = items[index];
