@@ -17,7 +17,6 @@ export default async function Page({}: paramsProps) {
       <GRNTable
         columns={columns as any}
         data={[]}
-        date={new Date().toISOString()}
         pageNo={0}
         searchKey="poNumber"
         total={0}
