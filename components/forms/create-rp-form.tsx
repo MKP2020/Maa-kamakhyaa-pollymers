@@ -32,6 +32,7 @@ import {
   TDepartment,
   TQuantity,
   TRpFull,
+  TRpItemFull,
   TWashingUnitItemFull,
 } from "@/lib/schemas";
 import { TCategory } from "@/lib/schema";
@@ -78,7 +79,7 @@ type TUnitFormItemProps = {
   index: number;
   disabled: boolean;
   onPressRemove: () => void;
-  initial?: TWashingUnitItemFull;
+  initial?: TRpItemFull;
 };
 
 const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
@@ -355,7 +356,7 @@ export const CreateRP: FC<
     ? {
         consumedQty: initialData.consumedQty.toString(),
         producedQty: initialData.producedQty.toString(),
-        rpLumps: initialData.rpLumps?.toString(),
+        rpLumps: initialData.rpLumps?.toString() || "",
         shift: initialData.shift,
         type: initialData.type.toString(),
         date: initialData.date,

@@ -20,7 +20,6 @@ export default async function Page({ searchParams }: paramsProps) {
       <PurchaseOrderTable
         columns={columns as any}
         data={[]}
-        date={new Date().toISOString()}
         pageNo={0}
         searchKey="poNumber"
         total={0}
