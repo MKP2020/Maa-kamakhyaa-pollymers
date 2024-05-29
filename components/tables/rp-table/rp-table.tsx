@@ -177,18 +177,6 @@ export function RpTable({
               ))}
             </SelectContent>
           </Select>
-          <Select value={type} onValueChange={(e) => setType(e)}>
-            <SelectTrigger className="h-[40px]">
-              <SelectValue placeholder="Select RP Type" />
-            </SelectTrigger>
-            <SelectContent defaultValue={type}>
-              {RP_TYPE.map((item, index) => (
-                <SelectItem key={index.toString()} value={index.toString()}>
-                  {item}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Select value={shift} onValueChange={(e) => setShift(e)}>
             <SelectTrigger className="h-[40px]">
               <SelectValue placeholder="Select Shift" />
