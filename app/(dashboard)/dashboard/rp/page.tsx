@@ -17,7 +17,7 @@ export default async function Page(props: TParamsProps) {
   const from = (searchParams.from as string) || undefined;
   const offset = (page - 1) * pageLimit;
 
-  console.log("type", type);
+  console.log("type", !!type ? Number(type) : 0);
   const { data, total } = await getRpList(
     !!type ? Number(type) : 0,
     shift,

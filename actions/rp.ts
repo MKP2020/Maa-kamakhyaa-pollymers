@@ -73,7 +73,7 @@ export const getRpList = async (
   limit?: number
 ) => {
   const where = and(
-    !!type ? eq(rp.type, type) : undefined,
+    type !== undefined ? eq(rp.type, type) : undefined,
     !!shift ? eq(rp.shift, shift) : undefined,
     !!from
       ? gte(rp.date, new Date(new Date(from).setHours(0, 0, 0, 0)))
