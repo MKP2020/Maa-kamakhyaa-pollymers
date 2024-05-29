@@ -15,12 +15,14 @@ export default async function Page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search || undefined;
-  const date = (searchParams.date as string) || undefined;
   const offset = (page - 1) * pageLimit;
+  const to = (searchParams.to as string) || undefined;
+  const from = (searchParams.from as string) || undefined;
 
   const { data, total } = await getInventory(
     search as any,
-    date,
+    from,
+    to,
     offset,
     pageLimit
   );
@@ -35,7 +37,8 @@ export default async function Page({ searchParams }: paramsProps) {
       <InventoryTable
         columns={columns as any}
         data={data as any}
-        date={date}
+        from={from}
+        to={to}
         pageNo={page}
         searchKey="poNumber"
         total={total}

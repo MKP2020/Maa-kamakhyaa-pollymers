@@ -17,32 +17,54 @@ import { and, count, eq, not, gte, ilike, lte } from "drizzle-orm";
 
 export const getPurchaseOrders = async (
   search?: string,
-  date?: string,
+  from?: string,
+  to?: string,
   offset?: number,
   limit?: number
 ) => {
   let where: any = undefined;
 
   if ((search || "").length === 0) {
-    if (!!date) {
-      console.log("Adding date", date, new Date(date));
-      const end = new Date(date).getMilliseconds() + 86400000;
+    if (!!from && !!to) {
       where = and(
-        gte(purchaseOrders.date, new Date(date)),
+        gte(purchaseOrders.date, new Date(new Date(from).setHours(0, 0, 0, 0))),
         lte(
           purchaseOrders.date,
-          new Date(new Date(date).setUTCHours(23, 59, 59, 999))
+          new Date(new Date(to).setHours(23, 59, 59, 999))
         )
+      );
+    } else if (!!from && !to) {
+      where = gte(
+        purchaseOrders.date,
+        new Date(new Date(from).setHours(0, 0, 0, 0))
+      );
+    } else if (!from && !!to) {
+      where = gte(
+        purchaseOrders.date,
+        new Date(new Date(to).setHours(23, 59, 59, 999))
       );
     }
   } else {
-    if (!!date) {
+    if (!!from && !!to) {
       where = and(
         ilike(purchaseOrders.poNumber, search + "%"),
-        gte(purchaseOrders.date, new Date(date)),
+        gte(purchaseOrders.date, new Date(new Date(from).setHours(0, 0, 0, 0))),
         lte(
           purchaseOrders.date,
-          new Date(new Date(date).setUTCHours(23, 59, 59, 999))
+          new Date(new Date(to).setHours(23, 59, 59, 999))
+        )
+      );
+    } else if (!!from && !to) {
+      where = and(
+        ilike(purchaseOrders.poNumber, search + "%"),
+        gte(purchaseOrders.date, new Date(new Date(from).setHours(0, 0, 0, 0)))
+      );
+    } else if (!from && !!to) {
+      where = and(
+        ilike(purchaseOrders.poNumber, search + "%"),
+        gte(
+          purchaseOrders.date,
+          new Date(new Date(to).setHours(23, 59, 59, 999))
         )
       );
     } else {

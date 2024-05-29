@@ -45,16 +45,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { RP_TYPE, SHIFT, cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { TIndent, TPurchaseOrder } from "@/lib/types";
-import { TInventory, TInventoryFull } from "@/lib/schemas";
+import { TGRNFull } from "@/lib/types";
 import { DateRange } from "react-day-picker";
+import { TRpFull } from "@/lib/schemas";
 
 interface DataTableProps {
-  columns: ColumnDef<TPurchaseOrder, any>[];
-  data: TInventoryFull[];
+  columns: (type: string) => ColumnDef<TRpFull, any>[];
+  data: TRpFull[];
   searchKey: string;
   pageNo: number;
   total: number;
@@ -63,9 +63,10 @@ interface DataTableProps {
   loading?: boolean;
   from?: string | null;
   to?: string | null;
+  type?: string | null;
 }
 
-export function InventoryTable({
+export function RpTable({
   columns,
   data,
   pageNo,
@@ -74,8 +75,9 @@ export function InventoryTable({
   loading,
   pageCount,
   pageSizeOptions = [10, 20, 30, 40, 50],
-  from,
-  to,
+  from: pFrom,
+  to: pTo,
+  type: pType,
 }: DataTableProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -90,9 +92,14 @@ export function InventoryTable({
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: from ? new Date(from) : undefined,
-    to: to ? new Date(to) : undefined,
+    from: pFrom ? new Date(pFrom) : undefined,
+    to: pTo ? new Date(pTo) : undefined,
   });
+  const [type, setType] = useState<string>(
+    (searchParams.get("type") as any) || "0"
+  );
+  const [shift, setShift] = useState((searchParams.get("shift") as any) || "");
+
   /* this can be used to get the selectedrows 
   console.log("value", table.getFilteredSelectedRowModel()); */
 
@@ -137,7 +144,7 @@ export function InventoryTable({
 
   const table = useReactTable({
     data: loading ? ([1, 2, 3, 4, 5] as any) : data,
-    columns,
+    columns: columns((searchParams.get("type") as any) || "0"),
     pageCount: pageCount ?? -1,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -158,14 +165,42 @@ export function InventoryTable({
     <>
       <div id="table-indent" className="flex items-start justify-between">
         <div className="flex gap-4">
-          <Input
-            defaultValue={(searchParams.get("search") as any) || ""}
-            disabled={loading}
-            placeholder={`Search by item name...`}
-            // value={searchValue ?? ""}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:max-w-sm"
-          />
+          <Select value={type} onValueChange={(e) => setType(e)}>
+            <SelectTrigger className="h-[40px]">
+              <SelectValue placeholder="Select Shift" />
+            </SelectTrigger>
+            <SelectContent defaultValue={type}>
+              {RP_TYPE.map((item, index) => (
+                <SelectItem key={index.toString()} value={index.toString()}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={type} onValueChange={(e) => setType(e)}>
+            <SelectTrigger className="h-[40px]">
+              <SelectValue placeholder="Select RP Type" />
+            </SelectTrigger>
+            <SelectContent defaultValue={type}>
+              {RP_TYPE.map((item, index) => (
+                <SelectItem key={index.toString()} value={index.toString()}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={shift} onValueChange={(e) => setShift(e)}>
+            <SelectTrigger className="h-[40px]">
+              <SelectValue placeholder="Select Shift" />
+            </SelectTrigger>
+            <SelectContent defaultValue={shift}>
+              {SHIFT.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -204,9 +239,11 @@ export function InventoryTable({
           </Popover>
           <Button
             onClick={() => {
+              console.log("searchValue", search);
               router.push(
                 `${pathname}?${createQueryString({
-                  search: search || null,
+                  type: type || null,
+                  shift: shift || null,
                   from: date?.from ? format(date?.from, "yyyy-MM-dd") : null,
                   to: date?.to ? format(date?.to, "yyyy-MM-dd") : null,
                   page: 0,
@@ -221,12 +258,12 @@ export function InventoryTable({
           </Button>
         </div>
         <div className="flex items-center gap-4">
-          {/* <Button
+          <Button
             className="text-xs md:text-sm"
-            onClick={() => router.push(`/dashboard/inventory/new`)}
+            onClick={() => router.push(`/dashboard/rp/new`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
-          </Button> */}
+          </Button>
         </div>
       </div>
 

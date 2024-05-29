@@ -3,7 +3,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { CellAction } from "./cell-action";
-import { getApprovalStatusText, getPOStatusText } from "@/lib/utils";
 import { TInventoryFull } from "@/lib/schemas";
 
 export const columns: ColumnDef<TInventoryFull>[] = [
@@ -27,12 +26,8 @@ export const columns: ColumnDef<TInventoryFull>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: "ID",
-  },
-  {
     accessorFn: (data) => {
-      return data.item.item.item.name;
+      return data.item.name;
     },
     // accessorKey: "data.item.item.item.name",
     header: "Item Name",

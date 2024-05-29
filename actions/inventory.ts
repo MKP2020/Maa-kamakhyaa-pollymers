@@ -1,60 +1,75 @@
 "use server";
 import { db } from "@/lib/db";
-import { TNewInventory, inventory } from "@/lib/schemas";
+import { categories, purchaseOrderItems, tableList } from "@/lib/schema";
+import { TNewInventory, departments, inventory } from "@/lib/schemas";
 import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
 
 export const getInventory = async (
   search?: string,
-  date?: string,
+  from?: string,
+  to?: string,
   offset?: number,
   limit?: number
 ) => {
   let where: any = undefined;
 
-  if ((search || "").length === 0) {
-    if (!!date) {
-      where = and(
-        gte(inventory.createdAt, new Date(date)),
-        lte(
-          inventory.createdAt,
-          new Date(new Date(date).setUTCHours(23, 59, 59, 999))
-        )
-      );
-    }
-  } else {
-    if (!!date) {
-      where = and(
-        ilike(inventory.itemId, "%" + search + "%"),
-        gte(inventory.createdAt, new Date(date)),
-        lte(
-          inventory.createdAt,
-          new Date(new Date(date).setUTCHours(23, 59, 59, 999))
-        )
-      );
-    } else {
-      where = ilike(inventory.itemId, "%" + search + "%");
-    }
-  }
-
   try {
-    const data = await db.query.inventory.findMany({
-      where,
-      limit,
-      offset,
+    const res = await db.query.inventory.findMany({
+      where: and(
+        !from
+          ? undefined
+          : gte(
+              inventory.createdAt,
+              new Date(new Date(from).setHours(0, 0, 0, 0))
+            ),
+        !to
+          ? undefined
+          : lte(
+              inventory.createdAt,
+              new Date(new Date(to).setHours(23, 59, 59, 999))
+            )
+      ),
       with: {
-        item: { with: { item: { with: { item: true } } } },
-        department: true,
         category: true,
+        department: true,
+        poItem: true,
+        item: {
+          where:
+            (search || "").length === 0
+              ? undefined
+              : ilike(tableList.name, search + "%"),
+        },
       },
+      offset,
+      limit,
     });
 
     const totalC = await db
       .select({ count: count() })
       .from(inventory)
-      .where(where);
+      .innerJoin(tableList, eq(tableList.id, inventory.itemId))
+      .where(
+        and(
+          (search || "").length === 0
+            ? undefined
+            : ilike(tableList.name, search + "%"),
+          !from
+            ? undefined
+            : gte(
+                inventory.createdAt,
+                new Date(new Date(from).setHours(0, 0, 0, 0))
+              ),
+          !to
+            ? undefined
+            : lte(
+                inventory.createdAt,
+                new Date(new Date(to).setHours(23, 59, 59, 999))
+              )
+        )
+      );
 
     return {
-      data,
+      data: res.filter((d) => !!d.item),
       total: totalC[0].count,
     };
   } catch (error) {
@@ -70,7 +85,8 @@ export const getInventoryById = (id: number) => {
     where: eq(inventory.id, id),
     with: {
       category: true,
-      item: { with: { item: { with: { item: true } } } },
+      item: true,
+      poItem: { with: { item: true } },
       department: true,
     },
   });
@@ -87,11 +103,8 @@ export const getInventoryBy = (categoryId: number, departmentId: number) => {
       eq(inventory.departmentId, departmentId)
     ),
     with: {
-      item: {
-        with: {
-          item: { with: { item: true } },
-        },
-      },
+      item: true,
+      poItem: { with: { item: true } },
     },
   });
 };

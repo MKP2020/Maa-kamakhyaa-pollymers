@@ -6,9 +6,12 @@ import {
   TNewWashingUnitItem,
   TWashingUnitItem,
   inventory,
+  quantity,
   washingUnit,
   washingUnitItems,
 } from "@/lib/schemas";
+import { getIdForType } from "@/lib/utils";
+import { sql } from "@vercel/postgres";
 import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
 import { WashingMachine } from "lucide-react";
 
@@ -177,6 +180,20 @@ export const createWashingUnit = async (
       newItems.push(itemRes[0]);
     }
 
+    if (newData.bhusaQuantity !== null) {
+      console.log("sd", getIdForType("Bhusha"));
+      const bhusaQuantity = await db.query.quantity.findFirst({
+        where: eq(quantity.id, getIdForType("Bhusha")),
+      });
+
+      await db
+        .update(quantity)
+        .set({
+          producedQty:
+            (bhusaQuantity?.producedQty || 0) + newData.bhusaQuantity,
+        })
+        .where(eq(quantity.id, getIdForType("Bhusha")));
+    }
     return {
       ...newData,
       items: newItems,

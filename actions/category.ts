@@ -28,3 +28,7 @@ export const getCategories = async (
 
   return { data: res, total: categoriesCount[0].count };
 };
+
+export const createCategory = (name: string) => {
+  return db.insert(categories).values({ name }).returning();
+};

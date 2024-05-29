@@ -230,7 +230,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                 onValueChange={(e) => {
                   form.setValue(
                     `items.${index}.itemId`,
-                    (items || [])[index].item.item.itemId.toString()
+                    (items || [])[index].itemId.toString()
                   );
                   field.onChange(e);
                 }}
@@ -265,7 +265,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                         key={item.id.toString()}
                         value={item.id.toString()}
                       >
-                        {item.item.item.item.name}
+                        {item.item.name}
                       </SelectItem>
                     ))
                   )}
@@ -285,7 +285,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                   placeholder="Enter quantity"
                   {...field}
                   disabled={disabled}
-                  inputMode="numeric"
+                  type="number"
                 />
               </FormControl>
               <FormMessage />
@@ -302,7 +302,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                   placeholder="Enter quantity"
                   {...field}
                   disabled={disabled}
-                  inputMode="numeric"
+                  type="number"
                 />
               </FormControl>
               <FormMessage />

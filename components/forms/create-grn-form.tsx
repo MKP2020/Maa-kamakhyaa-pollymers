@@ -136,7 +136,8 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
             },
             data.items.map((item, index) => ({
               categoryId: poItems[index].item.indent.categoryId,
-              itemId: Number(item.itemId),
+              itemId: Number(poItems[index].item.itemId),
+              poItemId: Number(poItems[index].item.itemId),
               usedQuantity: 0,
               inStockQuantity: Number(item.quantity),
               departmentId: poItems[index].item.indent.departmentId,

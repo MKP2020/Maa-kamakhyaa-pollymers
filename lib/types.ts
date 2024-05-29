@@ -12,6 +12,15 @@ import {
   tableList,
 } from "./schema";
 
+export type TParamsProps = {
+  searchParams: {
+    [key: string]: string | undefined;
+  };
+  params: {
+    [key: string]: string | undefined;
+  };
+};
+
 export type TTableList = typeof tableList.$inferSelect;
 
 export type TDepartment = typeof departments.$inferSelect;

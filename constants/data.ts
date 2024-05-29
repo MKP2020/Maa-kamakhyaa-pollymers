@@ -103,4 +103,10 @@ export const navItems: NavItem[] = [
     icon: "washingMachine",
     label: "washing-unit",
   },
+  {
+    title: "RP",
+    href: "/dashboard/rp",
+    icon: "washingMachine",
+    label: "rp",
+  },
 ];

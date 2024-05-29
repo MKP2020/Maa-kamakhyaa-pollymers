@@ -91,7 +91,7 @@ export const CreateInventoryForm: React.FC<TCreateInventoryFormProps> = ({
 
   const [isGettingItems, setIsGettingItems] = useState(false);
   const [items, setItems] = useState<TTableList[]>(
-    !!initialData ? [initialData.item.item.item] : []
+    !!initialData ? [initialData.item] : []
   );
 
   const title = initialData ? "Edit Inventory" : "Create Inventory";
@@ -105,7 +105,7 @@ export const CreateInventoryForm: React.FC<TCreateInventoryFormProps> = ({
 
   const defaultValues: TCreateInventoryFormValues = initialData
     ? {
-        itemId: initialData.item.item.itemId.toString(),
+        itemId: initialData.item.id.toString(),
         departmentId: initialData.departmentId.toString(),
         categoryId: initialData.categoryId.toString(),
         inStockQuantity: initialData.inStockQuantity.toString(),

@@ -49,6 +49,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { TGRNFull } from "@/lib/types";
+import { DateRange } from "react-day-picker";
 
 interface DataTableProps {
   columns: ColumnDef<TGRNFull, any>[];
@@ -59,7 +60,8 @@ interface DataTableProps {
   pageSizeOptions?: number[];
   pageCount: number;
   loading?: boolean;
-  date?: string | null;
+  from?: string | null;
+  to?: string | null;
 }
 
 export function GRNTable({
@@ -71,7 +73,8 @@ export function GRNTable({
   loading,
   pageCount,
   pageSizeOptions = [10, 20, 30, 40, 50],
-  date: pDate,
+  from: pFrom,
+  to: pTo,
 }: DataTableProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -85,9 +88,10 @@ export function GRNTable({
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
-  const [date, setDate] = React.useState<Date | undefined>(
-    pDate ? new Date(pDate) : undefined
-  );
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: pFrom ? new Date(pFrom) : undefined,
+    to: pTo ? new Date(pTo) : undefined,
+  });
 
   /* this can be used to get the selectedrows 
   console.log("value", table.getFilteredSelectedRowModel()); */
@@ -173,14 +177,25 @@ export function GRNTable({
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "LLL dd, y") : <span>Pick a date</span>}
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, "LLL dd, y")} -{" "}
+                      {format(date.to, "LLL dd, y")}
+                    </>
+                  ) : (
+                    format(date.from, "LLL dd, y")
+                  )
+                ) : (
+                  <span>Pick a date</span>
+                )}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 initialFocus
-                mode="single"
-                defaultMonth={date}
+                mode="range"
+                defaultMonth={date?.from}
                 selected={date}
                 onSelect={setDate}
                 numberOfMonths={2}
@@ -193,7 +208,8 @@ export function GRNTable({
               router.push(
                 `${pathname}?${createQueryString({
                   search: search || null,
-                  date: date ? format(date, "yyyy-MM-dd") : null,
+                  from: date?.from ? format(date?.from, "yyyy-MM-dd") : null,
+                  to: date?.to ? format(date?.to, "yyyy-MM-dd") : null,
                   page: 0,
                 })}`,
                 {

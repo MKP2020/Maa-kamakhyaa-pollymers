@@ -160,14 +160,14 @@ export function WashingUnitTable({
       <div id="table-indent" className="flex items-start justify-between">
         <div className="flex gap-4">
           <div className="flex w-full gap-4">
-            <Input
+            {/* <Input
               defaultValue={(searchParams.get("search") as any) || ""}
               disabled={loading}
               placeholder={`Search by id...`}
               // value={searchValue ?? ""}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full md:max-w-sm"
-            />
+            /> */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button

@@ -14,33 +14,46 @@ import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
 
 export const getGrns = async (
   search?: string,
-  date?: string,
+  from?: string,
+  to?: string,
   offset?: number,
   limit?: number
 ) => {
   let where: any = undefined;
 
   if ((search || "").length === 0) {
-    if (!!date) {
-      console.log("Adding date", date, new Date(date));
-      const end = new Date(date).getMilliseconds() + 86400000;
+    if (!!from && !!to) {
       where = and(
-        gte(grns.receivedDate, new Date(date)),
-        lte(
-          grns.receivedDate,
-          new Date(new Date(date).setUTCHours(23, 59, 59, 999))
-        )
+        gte(grns.receivedDate, new Date(new Date(from).setHours(0, 0, 0, 0))),
+        lte(grns.receivedDate, new Date(new Date(to).setHours(23, 59, 59, 999)))
+      );
+    } else if (!!from && !to) {
+      where = gte(
+        grns.receivedDate,
+        new Date(new Date(from).setHours(0, 0, 0, 0))
+      );
+    } else if (!from && !!to) {
+      where = gte(
+        grns.receivedDate,
+        new Date(new Date(to).setHours(23, 59, 59, 999))
       );
     }
   } else {
-    if (!!date) {
+    if (!!from && !!to) {
       where = and(
         ilike(grns.grnNumber, search + "%"),
-        gte(grns.receivedDate, new Date(date)),
-        lte(
-          grns.receivedDate,
-          new Date(new Date(date).setUTCHours(23, 59, 59, 999))
-        )
+        gte(grns.receivedDate, new Date(new Date(from).setHours(0, 0, 0, 0))),
+        lte(grns.receivedDate, new Date(new Date(to).setHours(23, 59, 59, 999)))
+      );
+    } else if (!!from && !to) {
+      where = and(
+        ilike(grns.grnNumber, search + "%"),
+        gte(grns.receivedDate, new Date(new Date(from).setHours(0, 0, 0, 0)))
+      );
+    } else if (!from && !!to) {
+      where = and(
+        ilike(grns.grnNumber, search + "%"),
+        gte(grns.receivedDate, new Date(new Date(to).setHours(23, 59, 59, 999)))
       );
     } else {
       where = ilike(grns.grnNumber, search + "%");
@@ -124,6 +137,7 @@ export const createGrn = async (
           .insert(inventory)
           .values({
             ...element,
+
             grnId: newGRN.id,
           })
           .returning();

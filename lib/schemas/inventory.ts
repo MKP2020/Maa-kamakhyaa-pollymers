@@ -24,6 +24,7 @@ export const inventory = pgTable(
   {
     id: serial("id").primaryKey().notNull(),
     itemId: integer("itemId").notNull(),
+    poItemId: integer("poItemId").notNull(),
     categoryId: integer("categoryId").notNull(),
     inStockQuantity: integer("inStockQuantity").notNull(),
     usedQuantity: integer("usedQuantity").default(0).notNull(),
@@ -35,6 +36,7 @@ export const inventory = pgTable(
   (table) => {
     return {
       itemIdx: index("inventoryItemIdx").on(table.itemId),
+      poItemIdx: index("poItemIdx").on(table.poItemId),
       dateIdx: index("inventoryDate").on(table.createdAt).desc(),
       categoryIdIdx: index("inventoryCategoryIdIdx").on(table.categoryId),
       departmentIdIdIdx: index("inventoryDepartmentIdIdx").on(
@@ -49,9 +51,13 @@ export const inventoryRelations = relations(inventory, ({ one }) => ({
     fields: [inventory.departmentId],
     references: [departments.id],
   }),
-  item: one(purchaseOrderItems, {
-    fields: [inventory.itemId],
+  poItem: one(purchaseOrderItems, {
+    fields: [inventory.poItemId],
     references: [purchaseOrderItems.id],
+  }),
+  item: one(tableList, {
+    fields: [inventory.itemId],
+    references: [tableList.id],
   }),
   category: one(categories, {
     fields: [inventory.categoryId],
@@ -67,8 +73,17 @@ export type TInventory = typeof inventory.$inferSelect;
 
 export type TInventoryFull = TInventory & {
   department: TDepartment;
-  item: TPurchaseOrderItemFull;
+  item: TTableList;
+  poItem: TPurchaseOrderItemFull;
   category: TCategory;
+};
+
+export type TInventoryOtherFull = {
+  inventory: TInventory;
+  purchaseOrderItems: TPurchaseOrderItemFull;
+  tableList: TTableList;
+  departments: TDepartment;
+  categories: TCategory;
 };
 
 export type TNewInventory = typeof inventory.$inferInsert;

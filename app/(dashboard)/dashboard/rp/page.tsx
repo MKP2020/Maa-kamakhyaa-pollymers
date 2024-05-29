@@ -1,26 +1,26 @@
+import { getRpList } from "@/actions/rp";
 import BreadCrumb from "@/components/breadcrumb";
-import { GRNTable } from "@/components/tables/grn-table/grn-table";
-import { columns } from "@/components/tables/grn-table/columns";
-import { getGrns } from "@/actions/grn";
+import { columns } from "@/components/tables/rp-table/columns";
+import { RpTable } from "@/components/tables/rp-table/rp-table";
+import { type TParamsProps } from "@/lib/types";
 
-type paramsProps = {
-  searchParams: {
-    [key: string]: string | string[] | undefined;
-  };
-};
+const breadcrumbItems = [{ title: "RP", link: "/dashboard/rp" }];
 
-const breadcrumbItems = [{ title: "GRN", link: "/dashboard/grn" }];
+export default async function Page(props: TParamsProps) {
+  const searchParams = props.searchParams;
 
-export default async function Page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
-  const search = searchParams.search || undefined;
+  const type = searchParams.type || undefined;
+  const shift = searchParams.shift || undefined;
   const to = (searchParams.to as string) || undefined;
   const from = (searchParams.from as string) || undefined;
   const offset = (page - 1) * pageLimit;
 
-  const { data, total } = await getGrns(
-    search as any,
+  console.log("type", type);
+  const { data, total } = await getRpList(
+    !!type ? Number(type) : 0,
+    shift,
     from,
     to,
     offset,
@@ -28,14 +28,13 @@ export default async function Page({ searchParams }: paramsProps) {
   );
 
   const pageCount = Math.ceil(total / pageLimit);
-
   return (
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
       <BreadCrumb items={breadcrumbItems} />
-      <GRNTable
-        columns={columns}
+      <RpTable
         data={data as any}
         from={from}
+        columns={columns}
         to={to}
         pageNo={page}
         searchKey="poNumber"

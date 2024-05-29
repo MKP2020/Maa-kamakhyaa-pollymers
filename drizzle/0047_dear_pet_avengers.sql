@@ -1,0 +1,1 @@
+ALTER TABLE "rp" ADD COLUMN "producedQty" integer NOT NULL;

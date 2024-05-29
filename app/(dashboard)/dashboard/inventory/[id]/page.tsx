@@ -27,7 +27,6 @@ export default async function Page({ params }: paramsProps) {
 
   const initialData = !!id ? await getInventoryById(Number(id)) : undefined;
 
-  console.log("initialData", initialData?.item.item.item);
   const { data: categories } = !!initialData
     ? { data: [initialData.category] }
     : await getCategories();
