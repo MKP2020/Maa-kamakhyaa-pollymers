@@ -38,7 +38,7 @@ export const getInventory = async (
             (search || "").length === 0
               ? undefined
               : ilike(tableList.name, search + "%"),
-        },
+        } as any,
       },
       offset,
       limit,
