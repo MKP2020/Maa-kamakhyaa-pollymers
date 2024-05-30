@@ -344,6 +344,13 @@
       "when": 1717001018265,
       "tag": "0048_steep_leader",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "6",
+      "when": 1717056923911,
+      "tag": "0049_spicy_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

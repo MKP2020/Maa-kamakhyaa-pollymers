@@ -35,15 +35,35 @@ export const columns: (type: string) => ColumnDef<TRpFull>[] = (type) => {
       accessorKey: "shift",
       header: "Shift",
     },
-    {
+  ];
+  if (type === "4") {
+    data.push({
+      accessorKey: "loomQty",
+      header: "Loom Waste",
+    });
+    data.push({
+      accessorKey: "lamQty",
+      header: "Lam Waste",
+    });
+    data.push({
+      accessorKey: "tapeQty",
+      header: "Tape Waste",
+    });
+    data.push({
+      accessorKey: "tarpQty",
+      header: "Tarp Waste",
+    });
+  } else {
+    data.push({
       accessorKey: "consumedQty",
       header: RP_CONSUMED_Table_TITLE[type],
-    },
-    {
-      accessorKey: "producedQty",
-      header: RP_PRODUCED_Table_TITLE[type],
-    },
-  ];
+    });
+  }
+
+  data.push({
+    accessorKey: "producedQty",
+    header: RP_PRODUCED_Table_TITLE[type],
+  });
   if (type !== "0") {
     data.push({
       accessorKey: "rpLumps",

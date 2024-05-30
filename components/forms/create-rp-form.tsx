@@ -41,34 +41,109 @@ import { getQuantityDetails } from "@/actions/quantity";
 import { createRp } from "@/actions/rp";
 import { useRouter } from "next/navigation";
 
-const formSchema = z.object({
-  date: z.date(),
+const formSchema = z
+  .object({
+    date: z.date(),
 
-  shift: z.string(),
-  type: z.string().regex(/^\d+\.?\d*$/, "Please select a type"),
-  consumedQty: z.string().regex(/^\d+\.?\d*$/),
-  producedQty: z.string().regex(/^\d+\.?\d*$/),
-  rpLumps: z
-    .string()
-    .regex(/^\d+\.?\d*$/)
-    .nullable(),
+    shift: z.string(),
+    type: z.string().regex(/^\d+\.?\d*$/, "Please select a type"),
+    consumedQty: z
+      .string()
+      .regex(/^\d+\.?\d*$/)
+      .nullish(),
+    producedQty: z.string().regex(/^\d+\.?\d*$/),
 
-  items: z.array(
-    z.object({
-      itemId: z.string().regex(/^\d+\.?\d*$/),
-      quantity: z
-        .string()
-        .min(1, "Please enter some quantity")
-        .regex(/^\d+\.?\d*$/),
+    loomQty: z
+      .string()
+      .regex(/^\d+\.?\d*$/)
+      .nullish(),
+    lamQty: z
+      .string()
+      .regex(/^\d+\.?\d*$/)
+      .nullish(),
+    tapeQty: z
+      .string()
+      .regex(/^\d+\.?\d*$/)
+      .nullish(),
+    tarpQty: z
+      .string()
+      .regex(/^\d+\.?\d*$/)
+      .nullish(),
 
-      categoryId: z.string().regex(/^\d+\.?\d*$/, "Please select a category"),
-      departmentId: z
-        .string()
-        .regex(/^\d+\.?\d*$/, "Please select a department"),
-      inventoryId: z.string().regex(/^\d+\.?\d*$/, "Please select a inventory"),
-    })
-  ),
-});
+    rpLumps: z
+      .string()
+      .regex(/^\d+\.?\d*$/)
+      .nullable(),
+
+    items: z.array(
+      z.object({
+        itemId: z.string().regex(/^\d+\.?\d*$/),
+        quantity: z
+          .string()
+          .min(1, "Please enter some quantity")
+          .regex(/^\d+\.?\d*$/),
+
+        categoryId: z.string().regex(/^\d+\.?\d*$/, "Please select a category"),
+        departmentId: z
+          .string()
+          .regex(/^\d+\.?\d*$/, "Please select a department"),
+        inventoryId: z
+          .string()
+          .regex(/^\d+\.?\d*$/, "Please select a inventory"),
+      })
+    ),
+  })
+  .refine(
+    ({ type, consumedQty }) => {
+      const num = Number(consumedQty);
+      return type === "4" ? true : isNaN(num) ? false : num >= 0;
+    },
+    {
+      message: "Please enter used used quantity",
+      path: ["consumedQty"],
+    }
+  )
+  .refine(
+    ({ type, loomQty }) => {
+      const num = Number(loomQty);
+      return type !== "4" ? true : isNaN(num) ? false : num >= 0;
+    },
+    {
+      message: "Please enter used Loom waste quantity",
+      path: ["loomQty"],
+    }
+  )
+  .refine(
+    ({ type, lamQty }) => {
+      const num = Number(lamQty);
+      return type !== "4" ? true : isNaN(num) ? false : num >= 0;
+    },
+    {
+      message: "Please enter used Lam waste quantity",
+      path: ["lamQty"],
+    }
+  )
+  .refine(
+    ({ type, tapeQty }) => {
+      const num = Number(tapeQty);
+      return type !== "4" ? true : isNaN(num) ? false : num >= 0;
+    },
+    {
+      message: "Please enter used Tape waste quantity",
+      path: ["tapeQty"],
+    }
+  )
+  .refine(
+    ({ type, tarpQty }) => {
+      console.log("type", type);
+      const num = Number(tarpQty);
+      return type !== "4" ? true : isNaN(num) ? false : num >= 0;
+    },
+    {
+      message: "Please enter used Tarp waste quantity",
+      path: ["tarpQty"],
+    }
+  );
 
 type TCreateInventoryFormValues = z.infer<typeof formSchema>;
 
@@ -130,6 +205,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
     ? items.find((item) => item.id === Number(inventoryId))
     : undefined;
 
+  console.log(form.formState.errors);
   return (
     <div>
       <div className="md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 space-y-8 lg:space-y-0 ">
@@ -354,8 +430,14 @@ export const CreateRP: FC<
 
   const defaultValues: TCreateInventoryFormValues = !!initialData
     ? {
-        consumedQty: initialData.consumedQty.toString(),
+        consumedQty: initialData.consumedQty?.toString() || null,
         producedQty: initialData.producedQty.toString(),
+
+        loomQty: initialData.loomQty?.toString() || null,
+        lamQty: initialData.lamQty?.toString() || null,
+        tapeQty: initialData.tapeQty?.toString() || null,
+        tarpQty: initialData.tarpQty?.toString() || null,
+
         rpLumps: initialData.rpLumps?.toString() || "",
         shift: initialData.shift,
         type: initialData.type.toString(),
@@ -369,8 +451,12 @@ export const CreateRP: FC<
         })),
       }
     : {
-        consumedQty: "",
+        consumedQty: null,
         producedQty: "",
+        loomQty: null,
+        lamQty: null,
+        tapeQty: null,
+        tarpQty: null,
         rpLumps: null,
         shift: "",
         type: "",
@@ -400,7 +486,17 @@ export const CreateRP: FC<
           {
             shift: data.shift,
             type: Number(data.type),
-            consumedQty: Number(data.consumedQty),
+            consumedQty:
+              (data.consumedQty?.length || 0) > 0
+                ? Number(data.consumedQty)
+                : null,
+            loomQty:
+              (data.loomQty?.length || 0) > 0 ? Number(data.loomQty) : null,
+            lamQty: (data.lamQty?.length || 0) > 0 ? Number(data.lamQty) : null,
+            tapeQty:
+              (data.tapeQty?.length || 0) > 0 ? Number(data.tapeQty) : null,
+            tarpQty:
+              (data.tarpQty?.length || 0) > 0 ? Number(data.tarpQty) : null,
             producedQty: Number(data.producedQty),
             date: data.date,
             rpLumps: Number(data.rpLumps),
@@ -534,6 +630,7 @@ export const CreateRP: FC<
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="shift"
@@ -645,32 +742,148 @@ export const CreateRP: FC<
           <Separator className="my-2" />
           {type === "" ? null : (
             <div className="md:grid grid-cols-1 items-center md:grid-cols-2 gap-8 space-y-8 lg:space-y-0 items-center">
-              <FormField
-                control={form.control}
-                name="consumedQty"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>
-                      {consumedUnits[form.getValues("type")]}
-                      {loading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : null}
-                      {isDisabled
-                        ? ""
-                        : `(Available ${quantityData?.producedQty || 0})`}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter used quantity"
-                        {...(field as any)}
-                        type="number"
-                        disabled={isDisabled}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {type === "4" ? null : (
+                <FormField
+                  control={form.control}
+                  name="consumedQty"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>
+                        {consumedUnits[form.getValues("type")]}
+
+                        {isDisabled
+                          ? ""
+                          : `(Available ${
+                              (quantityData?.producedQty || 0) -
+                              (quantityData?.usedQty || 0)
+                            })`}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter used quantity"
+                          {...(field as any)}
+                          type="number"
+                          disabled={isDisabled}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {type === "4" ? (
+                <FormField
+                  control={form.control}
+                  name="loomQty"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>
+                        Loom Waste Used
+                        {/* {isDisabled
+                          ? ""
+                          : `(Available ${
+                              (quantityData?.producedQty || 0) -
+                              (quantityData?.usedQty || 0)
+                            })`} */}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter used quantity"
+                          {...(field as any)}
+                          type="number"
+                          disabled={isDisabled}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
+              {type === "4" ? (
+                <FormField
+                  control={form.control}
+                  name="lamQty"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>
+                        Lam Waste Used
+                        {/* {isDisabled
+                          ? ""
+                          : `(Available ${
+                              (quantityData?.producedQty || 0) -
+                              (quantityData?.usedQty || 0)
+                            })`} */}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter used quantity"
+                          {...(field as any)}
+                          type="number"
+                          disabled={isDisabled}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
+              {type === "4" ? (
+                <FormField
+                  control={form.control}
+                  name="tapeQty"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>
+                        Tape Waste Used
+                        {/* {isDisabled
+                          ? ""
+                          : `(Available ${
+                              (quantityData?.producedQty || 0) -
+                              (quantityData?.usedQty || 0)
+                            })`} */}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter used quantity"
+                          {...(field as any)}
+                          type="number"
+                          disabled={isDisabled}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
+              {type === "4" ? (
+                <FormField
+                  control={form.control}
+                  name="tarpQty"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>
+                        Tarp Waste Used
+                        {/* {isDisabled
+                          ? ""
+                          : `(Available ${
+                              (quantityData?.producedQty || 0) -
+                              (quantityData?.usedQty || 0)
+                            })`} */}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter used quantity"
+                          {...(field as any)}
+                          type="number"
+                          disabled={isDisabled}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
+
               <FormField
                 disabled={isDisabled}
                 control={form.control}

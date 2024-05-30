@@ -26,8 +26,13 @@ export const rp = pgTable(
     shift: varchar("shift", { length: 1 }).notNull(),
     type: integer("type").notNull(),
 
-    consumedQty: integer("consumedQty").notNull(),
+    consumedQty: integer("consumedQty"),
     producedQty: integer("producedQty").notNull(),
+
+    loomQty: integer("loomQty"),
+    lamQty: integer("lamQty"),
+    tapeQty: integer("tapeQty"),
+    tarpQty: integer("tarpQty"),
 
     plantWasteConsumed: integer("plantWasteConsumed"),
     rpLumps: integer("rpLumps"),

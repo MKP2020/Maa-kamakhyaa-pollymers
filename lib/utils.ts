@@ -60,13 +60,13 @@ export const RP_TYPE_OBJ: Record<string, number> = {
 };
 
 export const RP_CONSUMED_TYPE_OBJ: Record<string, number> = {
-  "0": 10,
-  "1": 11,
-  "2": 12,
-  "3": 23,
-  "4": 24,
-  "5": 25,
-  "6": 26,
+  "0": 33,
+  "1": 34,
+  "2": 35,
+  "3": 36,
+  "4": 37,
+  "5": 38,
+  "6": 39,
 };
 
 export const RP_CONSUMED_Table_TITLE: Record<string, string> = {
@@ -90,13 +90,13 @@ export const RP_PRODUCED_Table_TITLE: Record<string, string> = {
 };
 
 export const RP_PRODUCED_TYPE_OBJ: Record<string, number> = {
-  "0": 11,
-  "1": 12,
-  "2": 23,
-  "3": 24,
-  "4": 25,
-  "5": 26,
-  "6": 27,
+  "0": 34,
+  "1": 35,
+  "2": 36,
+  "3": 37,
+  "4": 38,
+  "5": 39,
+  "6": 40,
 };
 
 export type TGlobalQuantityType =
@@ -107,17 +107,33 @@ export type TGlobalQuantityType =
   | "RP_Black(Tape)_1st"
   | "RP_Black(Lam)_1st"
   | "RP_Black(Tape)_2nd"
-  | "RP_Black(Lam)_2nd";
+  | "RP_Black(Lam)_2nd"
+  | "Loom_Waste"
+  | "Lam_Waste"
+  | "Tape_Waste"
+  | "Tarp_Waste"
+  | "Loom"
+  | "Lam"
+  | "Tape"
+  | "Tarp";
 
 export const GlobalQuantityObj: Record<TGlobalQuantityType, number> = {
-  Bhusha: 10,
-  Algo: 11,
-  RP_Mix_1st: 12,
-  RP_Mix_2nd: 23,
-  "RP_Black(Tape)_1st": 24,
-  "RP_Black(Lam)_1st": 25,
-  "RP_Black(Tape)_2nd": 26,
-  "RP_Black(Lam)_2nd": 27,
+  Bhusha: 33,
+  Algo: 34,
+  RP_Mix_1st: 35,
+  RP_Mix_2nd: 36,
+  "RP_Black(Tape)_1st": 37,
+  "RP_Black(Lam)_1st": 38,
+  "RP_Black(Tape)_2nd": 39,
+  "RP_Black(Lam)_2nd": 40,
+  Loom_Waste: 41,
+  Lam_Waste: 42,
+  Tape_Waste: 43,
+  Tarp_Waste: 44,
+  Loom: 45,
+  Lam: 46,
+  Tape: 47,
+  Tarp: 48,
 };
 
 export const getIndexByRPType = (type: string) => RP_TYPE_OBJ[type];

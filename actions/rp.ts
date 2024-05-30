@@ -10,8 +10,31 @@ import {
   rp,
   rpItems,
 } from "@/lib/schemas";
-import { getRpProducedId } from "@/lib/utils";
+import {
+  GlobalQuantityObj,
+  TGlobalQuantityType,
+  getRpProducedId,
+} from "@/lib/utils";
 import { and, count, eq, gte, lte } from "drizzle-orm";
+
+const updatedUsedQty = async (
+  type: TGlobalQuantityType,
+  qty?: number | null
+) => {
+  if (qty && (qty || 0) > 0) {
+    const where = eq(quantity.id, GlobalQuantityObj[type]);
+    const res = await db.query.quantity.findFirst({
+      where,
+    });
+
+    if (res) {
+      await db
+        .update(quantity)
+        .set({ usedQty: res.usedQty + qty })
+        .where(where);
+    }
+  }
+};
 
 export const createRp = async (
   data: TNewRp,
@@ -46,15 +69,21 @@ export const createRp = async (
         items.push(resp[0]);
       }
 
-      const qData = await db.query.quantity.findFirst({
-        where: eq(quantity.id, getRpProducedId(data.type.toString())),
-      });
+      if (data.type === 4) {
+        await updatedUsedQty("Lam_Waste", data.lamQty);
+        await updatedUsedQty("Loom_Waste", data.loomQty);
+        await updatedUsedQty("Tape_Waste", data.tapeQty);
+        await updatedUsedQty("Tarp_Waste", data.tarpQty);
+      } else {
+        const qData = await db.query.quantity.findFirst({
+          where: eq(quantity.id, getRpProducedId(data.type.toString())),
+        });
 
-      await db
-        .update(quantity)
-        .set({ producedQty: (qData?.producedQty || 0) + rpData.producedQty })
-        .where(eq(quantity.id, getRpProducedId(data.type.toString())));
-
+        await db
+          .update(quantity)
+          .set({ producedQty: (qData?.producedQty || 0) + rpData.producedQty })
+          .where(eq(quantity.id, getRpProducedId(data.type.toString())));
+      }
       return { ...rpData, items: items };
     }
     return false;
