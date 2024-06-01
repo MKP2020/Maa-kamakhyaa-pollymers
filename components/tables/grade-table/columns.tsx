@@ -3,9 +3,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { CellAction } from "./cell-action";
-import { type TFabric } from "@/lib/types";
+import { type TGrade } from "@/lib/types";
+import { GRADE_TYPES } from "@/lib/utils";
 
-export const columns: ColumnDef<TFabric>[] = [
+export const columns: ColumnDef<TGrade>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -28,6 +29,10 @@ export const columns: ColumnDef<TFabric>[] = [
   {
     accessorKey: "id",
     header: "ID",
+  },
+  {
+    accessorFn: (data) => GRADE_TYPES[data.type],
+    header: "Type",
   },
   {
     accessorKey: "grade",

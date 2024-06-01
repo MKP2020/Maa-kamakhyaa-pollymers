@@ -1,5 +1,5 @@
 "use client";
-import { deleteFabric } from "@/actions/fabric";
+import { deleteGrade } from "@/actions/grade";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,13 +18,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TFabric } from "@/lib/types";
+import { TGrade } from "@/lib/types";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface CellActionProps {
-  data: TFabric;
+  data: TGrade;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -35,7 +35,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await deleteFabric(data.id, true);
+      await deleteGrade(data.id, true);
     } catch (error) {
     } finally {
       setLoading(false);
@@ -70,7 +70,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/fabric/${data.id}`)}
+            onClick={() => router.push(`/dashboard/grade/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

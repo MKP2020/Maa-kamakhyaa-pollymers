@@ -10,7 +10,7 @@ export default async function Page() {
             { title: "Washing Unit", link: "/dashboard/washing-unit" },
             {
               title: "View/Update",
-              link: "/washing-unit/grn/new",
+              link: "/dashboard/washing-unit/new",
             },
           ]}
         />

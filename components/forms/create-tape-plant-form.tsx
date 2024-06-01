@@ -18,7 +18,7 @@ import { Button } from "../ui/button";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2, Trash } from "lucide-react";
 import { Calendar } from "../ui/calendar";
-import { RP_TYPE, SHIFT, cn, getRpPreviousConsumedId } from "@/lib/utils";
+import { SHIFT, cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -26,124 +26,59 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { TInventoryFull } from "@/lib/schemas/inventory";
+import type { TInventoryFull } from "@/lib/schemas/inventory";
 import { getInventoryBy } from "@/actions/inventory";
-import {
+import type {
   TDepartment,
-  TQuantity,
-  TRpFull,
-  TRpItemFull,
-  TWashingUnitItemFull,
+  TTTapeItemFull,
+  TTapeConsumedItem,
+  TTapeFull,
 } from "@/lib/schemas";
 import { TCategory } from "@/lib/schema";
 import { Input } from "../ui/input";
-import { getQuantityDetails } from "@/actions/quantity";
-import { createRp } from "@/actions/rp";
 import { useRouter } from "next/navigation";
+import { TGrade } from "@/lib/types";
+import { createTapePlant } from "@/actions/tapePlant";
 
-const formSchema = z
-  .object({
-    date: z.date(),
+const formSchema = z.object({
+  date: z.date(),
 
-    shift: z.string(),
-    type: z.string().regex(/^\d+\.?\d*$/, "Please select a type"),
-    consumedQty: z
-      .string()
-      .regex(/^\d+\.?\d*$/)
-      .nullish(),
-    producedQty: z.string().regex(/^\d+\.?\d*$/),
+  shift: z.string(),
 
-    loomQty: z
-      .string()
-      .regex(/^\d+\.?\d*$/)
-      .nullish(),
-    lamQty: z
-      .string()
-      .regex(/^\d+\.?\d*$/)
-      .nullish(),
-    tapeQty: z
-      .string()
-      .regex(/^\d+\.?\d*$/)
-      .nullish(),
-    tarpQty: z
-      .string()
-      .regex(/^\d+\.?\d*$/)
-      .nullish(),
+  tapeGrade: z.string().regex(/^\d+\.?\d*$/, "Please select a grade"),
+  tapeQty: z.string().regex(/^\d+\.?\d*$/),
+  tapeWaste: z
+    .string()
+    .regex(/^\d+\.?\d*$/)
+    .nullish(),
+  tapeLumps: z
+    .string()
+    .regex(/^\d+\.?\d*$/)
+    .nullish(),
 
-    rpLumps: z
-      .string()
-      .regex(/^\d+\.?\d*$/)
-      .nullable(),
+  consumedItems: z.array(
+    z.object({
+      rpType: z.string().regex(/^\d+\.?\d*$/, "Please select a type"),
+      qty: z.string().regex(/^\d+\.?\d*$/),
+    })
+  ),
 
-    items: z.array(
-      z.object({
-        itemId: z.string().regex(/^\d+\.?\d*$/),
-        quantity: z
-          .string()
-          .min(1, "Please enter some quantity")
-          .regex(/^\d+\.?\d*$/),
+  items: z.array(
+    z.object({
+      itemId: z.string().regex(/^\d+\.?\d*$/),
+      quantity: z
+        .string()
+        .min(1, "Please enter some quantity")
+        .regex(/^\d+\.?\d*$/),
 
-        categoryId: z.string().regex(/^\d+\.?\d*$/, "Please select a category"),
-        departmentId: z
-          .string()
-          .regex(/^\d+\.?\d*$/, "Please select a department"),
-        inventoryId: z
-          .string()
-          .regex(/^\d+\.?\d*$/, "Please select a inventory"),
-      })
-    ),
-  })
-  .refine(
-    ({ type, consumedQty }) => {
-      const num = Number(consumedQty);
-      return type === "4" ? true : isNaN(num) ? false : num >= 0;
-    },
-    {
-      message: "Please enter used used quantity",
-      path: ["consumedQty"],
-    }
-  )
-  .refine(
-    ({ type, loomQty }) => {
-      const num = Number(loomQty);
-      return type !== "4" ? true : isNaN(num) ? false : num >= 0;
-    },
-    {
-      message: "Please enter used Loom waste quantity",
-      path: ["loomQty"],
-    }
-  )
-  .refine(
-    ({ type, lamQty }) => {
-      const num = Number(lamQty);
-      return type !== "4" ? true : isNaN(num) ? false : num >= 0;
-    },
-    {
-      message: "Please enter used Lam waste quantity",
-      path: ["lamQty"],
-    }
-  )
-  .refine(
-    ({ type, tapeQty }) => {
-      const num = Number(tapeQty);
-      return type !== "4" ? true : isNaN(num) ? false : num >= 0;
-    },
-    {
-      message: "Please enter used Tape waste quantity",
-      path: ["tapeQty"],
-    }
-  )
-  .refine(
-    ({ type, tarpQty }) => {
-      console.log("type", type);
-      const num = Number(tarpQty);
-      return type !== "4" ? true : isNaN(num) ? false : num >= 0;
-    },
-    {
-      message: "Please enter used Tarp waste quantity",
-      path: ["tarpQty"],
-    }
-  );
+      categoryId: z.string().regex(/^\d+\.?\d*$/, "Please select a category"),
+      departmentId: z
+        .string()
+        .regex(/^\d+\.?\d*$/, "Please select a department"),
+      inventoryId: z.string().regex(/^\d+\.?\d*$/, "Please select a inventory"),
+    })
+  ),
+});
 
 type TCreateInventoryFormValues = z.infer<typeof formSchema>;
 
@@ -154,7 +89,8 @@ type TUnitFormItemProps = {
   index: number;
   disabled: boolean;
   onPressRemove: () => void;
-  initial?: TRpItemFull;
+  initial?: TTTapeItemFull;
+  isLast: boolean;
 };
 
 const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
@@ -165,6 +101,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
     onPressRemove,
     departments,
     index,
+    isLast,
     categories,
   } = props;
 
@@ -360,6 +297,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                 <Input
                   placeholder="Enter quantity"
                   {...field}
+                  min={1}
                   max={
                     !!inventory
                       ? inventory.inStockQuantity - inventory.usedQuantity
@@ -374,7 +312,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
           )}
         />
 
-        {index !== 0 ? (
+        {!disabled ? (
           <div className="flex flex-col h-full items-start justify-end">
             <Button
               disabled={disabled}
@@ -387,64 +325,170 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
           </div>
         ) : null}
       </div>
-      <Separator className="mt-8" />
+      {!isLast ? <Separator className="mt-8" /> : null}
     </div>
   );
 };
 
-const consumedUnits: Record<string, string> = {
-  "0": "Bhusa Consumed (Num)",
-  "1": "Agglo Consumed (Num)",
-  "2": "Mix 1st Consumed (Num)",
-  "3": "Tape Waste Consumed",
-  "4": "Plant Waste Consumed",
-  "5": "Black(Tape) 1st Consumed",
-  "6": "Black(Lam) 1st Consumed",
+type TConsumedFormItemProps = {
+  form: UseFormReturn<TCreateInventoryFormValues>;
+  index: number;
+  disabled: boolean;
+  onPressRemove: () => void;
+  initial?: TTapeConsumedItem;
+  rpQuantities: Record<number, number>;
+  selectedRpTypes: string[];
+  isLast: boolean;
 };
 
-const producedUnits: Record<string, string> = {
-  "0": "Agglo Produced Qty (Num)",
-  "1": "RP Mix 1st Produced (Num - Kg)",
-  "2": "Mix 2nd Produced (Num - Kg)",
-  "3": "RP Black(Tape) 1st Produced (Num - Kg)",
-  "4": "RP Black(Lam) 1st Produced (Num - Kg)",
-  "5": "Black(Tape) 2nd Produced (Num - Kg)",
-  "6": "Black(Lam) 2nd Produced (Num - Kg)",
+const revUnits: Record<number, string> = {
+  35: "RP_Mix_1st",
+  36: "RP_Mix_2nd",
+  37: "RP_Black(Tape)_1st",
+  38: "RP_Black(Lam)_1st",
+  39: "RP_Black(Tape)_2nd",
+  40: "RP_Black(Lam)_2nd",
 };
 
-export const CreateRP: FC<
+const TYPES = ["35", "36", "37", "38", "39", "40"];
+
+const units: Record<string, number> = {
+  RP_Mix_1st: 35,
+  RP_Mix_2nd: 36,
+  "RP_Black(Tape)_1st": 37,
+  "RP_Black(Lam)_1st": 38,
+  "RP_Black(Tape)_2nd": 39,
+  "RP_Black(Lam)_2nd": 40,
+};
+
+const ConsumedFormItem: FC<TConsumedFormItemProps> = (props) => {
+  const {
+    form,
+    disabled,
+    initial,
+    selectedRpTypes,
+    rpQuantities,
+    onPressRemove,
+    index,
+    isLast,
+  } = props;
+
+  const type = form.watch(`consumedItems.${index}.rpType`);
+
+  console.log("type", type);
+  return (
+    <div>
+      <div className="md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 space-y-8 lg:space-y-0 ">
+        <FormField
+          {...form.register(`consumedItems.${index}.rpType` as any)}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>RP Type</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+                defaultValue={field.value}
+                disabled={disabled}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue
+                      defaultValue={field.value}
+                      placeholder="Select a type"
+                    />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {TYPES.map((item) => (
+                    <SelectItem
+                      disabled={selectedRpTypes.includes(item)}
+                      key={item}
+                      value={item}
+                    >
+                      {revUnits[Number(item)]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          {...form.register(`consumedItems.${index}.qty` as any)}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Used Quantity
+                {disabled
+                  ? ""
+                  : type?.length > 0
+                  ? `(Available ${rpQuantities[Number(type)]})`
+                  : ""}
+              </FormLabel>
+              <FormControl inputMode="numeric">
+                <Input
+                  placeholder="Enter quantity"
+                  {...field}
+                  max={
+                    type?.length > 0
+                      ? rpQuantities[Number(type)] || 0
+                      : undefined
+                  }
+                  disabled={disabled}
+                  type="number"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {!disabled ? (
+          <div className="flex flex-col h-full items-start justify-end">
+            <Button
+              disabled={disabled}
+              variant="destructive"
+              onClick={onPressRemove}
+              type="button"
+            >
+              <Trash className="mr-2 h-4 w-4" /> Remove
+            </Button>
+          </div>
+        ) : null}
+      </div>
+      {!isLast ? <Separator className="mt-8" /> : null}
+    </div>
+  );
+};
+
+export const CreateTapePlantForm: FC<
   Pick<TUnitFormItemProps, "categories" | "departments"> & {
-    initialData?: TRpFull;
+    initialData?: TTapeFull;
+    rpQuantities: Record<number, number>;
+    grades: TGrade[];
   }
 > = (props) => {
-  const { categories, departments, initialData } = props;
-  const title = "Create RP";
-  const description = "Create a new RP";
+  const { categories, departments, grades, initialData, rpQuantities } = props;
+  const title = !!initialData ? "View Tape Plant" : "Create Tape Plant";
+  const description = !!initialData
+    ? "view tape plant"
+    : "Create a new tape plant";
 
   const [loading, setLoading] = useState(false);
-  const [isGettingQuantity, setIsGettingQuantity] = useState(false);
-  const [quantityData, setQuantityData] = useState<
-    TQuantity | null | undefined
-  >();
-
-  const [waste, setWaste] = useState();
 
   const action = initialData ? "Update" : "Add";
 
   const defaultValues: TCreateInventoryFormValues = !!initialData
     ? {
-        consumedQty: initialData.consumedQty?.toString() || null,
-        producedQty: initialData.producedQty.toString(),
-
-        loomQty: initialData.loomQty?.toString() || null,
-        lamQty: initialData.lamQty?.toString() || null,
-        tapeQty: initialData.tapeQty?.toString() || null,
-        tarpQty: initialData.tarpQty?.toString() || null,
-
-        rpLumps: initialData.rpLumps?.toString() || "",
         shift: initialData.shift,
-        type: initialData.type.toString(),
+        tapeGrade: initialData.tapeGradeId.toString(),
+        tapeQty: initialData.tapeQty.toString(),
+        tapeWaste: initialData.tapeWaste.toString(),
+        tapeLumps: initialData.tapeLumps.toString(),
         date: initialData.date,
+
         items: initialData.items.map((item) => ({
           categoryId: item.categoryId.toString(),
           departmentId: item.departmentId.toString(),
@@ -452,20 +496,23 @@ export const CreateRP: FC<
           inventoryId: item.inventoryId.toString(),
           quantity: item.quantity.toString(),
         })),
+        consumedItems: initialData.consumedItems.map((item) => ({
+          rpType: item.rpType.toString(),
+          qty: item.qty.toString(),
+        })),
       }
     : {
-        consumedQty: null,
-        producedQty: "",
-        loomQty: null,
-        lamQty: null,
-        tapeQty: null,
-        tarpQty: null,
-        rpLumps: null,
         shift: "",
-        type: "",
+
+        tapeGrade: "",
+        tapeQty: "",
+        tapeWaste: "",
+        tapeLumps: "",
         date: new Date(),
+        consumedItems: [],
         items: [],
       };
+
   const router = useRouter();
   const form = useForm<TCreateInventoryFormValues>({
     resolver: zodResolver(formSchema),
@@ -477,75 +524,83 @@ export const CreateRP: FC<
     name: "items",
   });
 
-  const type = form.watch("type");
+  const {
+    fields: consumedFields,
+    append: consumedAppend,
+    remove: consumedRemove,
+  } = useFieldArray({
+    control: form.control,
+    name: "consumedItems",
+  });
 
-  const onSubmit = useCallback(
-    async (data: TCreateInventoryFormValues) => {
-      console.log("data", data);
-
-      try {
-        setLoading(true);
-        await createRp(
-          {
-            shift: data.shift,
-            type: Number(data.type),
-            consumedQty:
-              (data.consumedQty?.length || 0) > 0
-                ? Number(data.consumedQty)
-                : null,
-            loomQty:
-              (data.loomQty?.length || 0) > 0 ? Number(data.loomQty) : null,
-            lamQty: (data.lamQty?.length || 0) > 0 ? Number(data.lamQty) : null,
-            tapeQty:
-              (data.tapeQty?.length || 0) > 0 ? Number(data.tapeQty) : null,
-            tarpQty:
-              (data.tarpQty?.length || 0) > 0 ? Number(data.tarpQty) : null,
-            producedQty: Number(data.producedQty),
-            date: data.date,
-            rpLumps: Number(data.rpLumps),
-          },
-          data.items.map((item) => ({
-            categoryId: Number(item.categoryId),
-            departmentId: Number(item.departmentId),
-            inventoryId: Number(item.inventoryId),
-            itemId: Number(item.itemId),
-            quantity: Number(item.quantity),
-          }))
-        );
-        router.push(`/dashboard/rp?type=${type}`);
-        router.refresh();
-      } catch (error) {
-        console.log("error", error);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [type]
-  );
+  const onSubmit = useCallback(async (data: TCreateInventoryFormValues) => {
+    const {
+      shift,
+      tapeGrade,
+      tapeQty,
+      tapeWaste,
+      tapeLumps,
+      date,
+      items,
+      consumedItems,
+    } = data;
+    try {
+      setLoading(true);
+      // TODO: create
+      await createTapePlant(
+        {
+          shift,
+          tapeGradeId: Number(tapeGrade),
+          tapeQty: Number(tapeQty),
+          tapeWaste: tapeWaste?.length === 0 ? 0 : Number(tapeWaste),
+          tapeLumps: tapeLumps?.length === 0 ? 0 : Number(tapeLumps),
+          date,
+        },
+        items.map(
+          ({ itemId, quantity, categoryId, departmentId, inventoryId }) => ({
+            itemId: Number(itemId),
+            quantity: Number(quantity),
+            categoryId: Number(categoryId),
+            departmentId: Number(departmentId),
+            inventoryId: Number(inventoryId),
+          })
+        ),
+        consumedItems.map((item) => ({
+          rpType: Number(item.rpType),
+          qty: Number(item.qty),
+        }))
+      );
+      router.push(`/dashboard/tape-plant`);
+      router.refresh();
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const isDisabled = !!initialData;
 
-  console.log("initialData", initialData);
-
-  const canUpdate = !initialData;
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setQuantityData(undefined);
-        setIsGettingQuantity(true);
-        // if (type === "3") {
-        //   const data = await
-        // } else {
-        const data = await getQuantityDetails(getRpPreviousConsumedId(type));
-        setQuantityData(data);
-        // }
-      } catch (error) {
-      } finally {
-        setIsGettingQuantity(false);
-      }
-    })();
-  }, [type]);
+  const selectedRpTypes = form
+    .watch("consumedItems")
+    .map((item) => item.rpType);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       setQuantityData(undefined);
+  //       setIsGettingQuantity(true);
+  //       // if (type === "3") {
+  //       //   const data = await
+  //       // } else {
+  //       const data = await getQuantityDetails(getRpPreviousConsumedId(type));
+  //       setQuantityData(data);
+  //       // }
+  //     } catch (error) {
+  //     } finally {
+  //       setIsGettingQuantity(false);
+  //     }
+  //   })();
+  // }, [type]);
 
   return (
     <>
@@ -670,48 +725,6 @@ export const CreateRP: FC<
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>RP Type</FormLabel>
-                  <Select
-                    disabled={isDisabled}
-                    onValueChange={(e) => {
-                      if (e === "0") {
-                        form.setValue("rpLumps", "10");
-                      } else {
-                        form.setValue("rpLumps", "0");
-                      }
-                      field.onChange(e);
-                    }}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a shift"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {RP_TYPE.map((item, index) => (
-                        <SelectItem
-                          key={index.toString()}
-                          value={index.toString()}
-                        >
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
           <Separator className="my-2" />
           <h3>Items</h3>
@@ -719,6 +732,7 @@ export const CreateRP: FC<
           {fields.map((field, iIndex) => {
             return (
               <UnitFormItem
+                isLast={fields.length === iIndex + 1}
                 disabled={isDisabled}
                 initial={initialData?.items[iIndex]}
                 onPressRemove={() => {
@@ -747,192 +761,145 @@ export const CreateRP: FC<
             </Button>
           ) : null}
           <Separator className="my-2" />
-          {type === "" ? null : (
-            <div className="md:grid grid-cols-1 items-center md:grid-cols-2 gap-8 space-y-8 lg:space-y-0 items-center">
-              {type === "4" ? null : (
-                <FormField
-                  control={form.control}
-                  name="consumedQty"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>
-                        {consumedUnits[form.getValues("type")]}
+          <h3>Consumed RP Items</h3>
 
-                        {isDisabled
-                          ? ""
-                          : `(Available ${
-                              (quantityData?.producedQty || 0) -
-                              (quantityData?.usedQty || 0)
-                            })`}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter used quantity"
-                          {...(field as any)}
-                          type="number"
-                          disabled={isDisabled}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-              {type === "4" ? (
-                <FormField
-                  control={form.control}
-                  name="loomQty"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>
-                        Loom Waste Used
-                        {/* {isDisabled
-                          ? ""
-                          : `(Available ${
-                              (quantityData?.producedQty || 0) -
-                              (quantityData?.usedQty || 0)
-                            })`} */}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter used quantity"
-                          {...(field as any)}
-                          type="number"
-                          disabled={isDisabled}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
-              {type === "4" ? (
-                <FormField
-                  control={form.control}
-                  name="lamQty"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>
-                        Lam Waste Used
-                        {/* {isDisabled
-                          ? ""
-                          : `(Available ${
-                              (quantityData?.producedQty || 0) -
-                              (quantityData?.usedQty || 0)
-                            })`} */}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter used quantity"
-                          {...(field as any)}
-                          type="number"
-                          disabled={isDisabled}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
-              {type === "4" ? (
-                <FormField
-                  control={form.control}
-                  name="tapeQty"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>
-                        Tape Waste Used
-                        {/* {isDisabled
-                          ? ""
-                          : `(Available ${
-                              (quantityData?.producedQty || 0) -
-                              (quantityData?.usedQty || 0)
-                            })`} */}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter used quantity"
-                          {...(field as any)}
-                          type="number"
-                          disabled={isDisabled}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
-              {type === "4" ? (
-                <FormField
-                  control={form.control}
-                  name="tarpQty"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>
-                        Tarp Waste Used
-                        {/* {isDisabled
-                          ? ""
-                          : `(Available ${
-                              (quantityData?.producedQty || 0) -
-                              (quantityData?.usedQty || 0)
-                            })`} */}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter used quantity"
-                          {...(field as any)}
-                          type="number"
-                          disabled={isDisabled}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
-
-              <FormField
+          {consumedFields.map((field, iIndex) => {
+            return (
+              <ConsumedFormItem
+                isLast={consumedFields.length === iIndex + 1}
+                selectedRpTypes={selectedRpTypes}
                 disabled={isDisabled}
-                control={form.control}
-                name="producedQty"
-                render={({ field }) => (
-                  <FormItem inputMode="numeric">
-                    <FormLabel>
-                      {producedUnits[form.getValues("type")]}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter used quantity"
-                        {...(field as any)}
-                        type="number"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                initial={initialData?.consumedItems[iIndex]}
+                onPressRemove={() => {
+                  consumedRemove(iIndex);
+                }}
+                key={field.id}
+                index={iIndex}
+                form={form}
+                rpQuantities={rpQuantities}
               />
-              {form.getValues("type") === "0" ? null : (
-                <FormField
-                  disabled={!canUpdate}
-                  control={form.control}
-                  name="rpLumps"
-                  render={({ field }) => (
-                    <FormItem inputMode="numeric">
-                      <FormLabel>RP Lumps</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Enter lumps"
-                          {...(field as any)}
+            );
+          })}
+          {!initialData ? (
+            <Button
+              disabled={isDisabled}
+              onClick={() => {
+                consumedAppend({
+                  quantity: "",
+                } as any);
+              }}
+              type="button"
+              className="ml-auto"
+            >
+              Add Item
+            </Button>
+          ) : null}
+          <Separator className="my-2" />
+          <h3>Tape Produced</h3>
+
+          <div className="md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 space-y-8 lg:space-y-0 items-center">
+            <FormField
+              control={form.control}
+              name="tapeGrade"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Tape Grade</FormLabel>
+                  <Select
+                    disabled={isDisabled}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a grade"
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {grades.map((item) => (
+                        <SelectItem
+                          key={item.id.toString()}
+                          value={item.id.toString()}
+                        >
+                          {item.grade}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
-          )}
+            />
+            <FormField
+              control={form.control}
+              name="tapeQty"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Produced Quantity (Num - Kg)</FormLabel>
+                  <FormControl inputMode="numeric">
+                    <Input
+                      disabled={isDisabled}
+                      placeholder="Enter quantity"
+                      {...field}
+                      min={0}
+                      // disabled={disabled}
+                      type="number"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="tapeWaste"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tape Waste (Num - Kg)</FormLabel>
+                  <FormControl inputMode="numeric">
+                    <Input
+                      min={0}
+                      disabled={isDisabled}
+                      placeholder="Enter quantity"
+                      {...field}
+                      value={field.value || ""}
+                      // disabled={disabled}
+                      type="number"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tapeLumps"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tape Lumps</FormLabel>
+                  <FormControl inputMode="numeric">
+                    <Input
+                      min={0}
+                      disabled={isDisabled}
+                      placeholder="Enter quantity"
+                      {...field}
+                      value={field.value || ""}
+                      // disabled={disabled}
+                      type="number"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Separator className="my-2" />
+
           {!isDisabled ? (
             <Button
               disabled={loading || fields.length === 0}

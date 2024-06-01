@@ -20,6 +20,13 @@ export const getGRNNumber = (date: Date) => {
   return `MKP${year}GRN`;
 };
 
+export enum GRADES_TYPES {
+  Fabric,
+  Tape,
+  LAminatedFabric,
+  Tarpaulin,
+}
+
 const ApprovalStatusText: Record<number, string> = {
   // 0: "Pending",
   0: "Approved",
@@ -115,7 +122,8 @@ export type TGlobalQuantityType =
   | "Loom"
   | "Lam"
   | "Tape"
-  | "Tarp";
+  | "Tarp"
+  | "TapeLumps";
 
 export const GlobalQuantityObj: Record<TGlobalQuantityType, number> = {
   Bhusha: 33,
@@ -134,6 +142,7 @@ export const GlobalQuantityObj: Record<TGlobalQuantityType, number> = {
   Lam: 46,
   Tape: 47,
   Tarp: 48,
+  TapeLumps: 50,
 };
 
 export const getIndexByRPType = (type: string) => RP_TYPE_OBJ[type];
@@ -149,3 +158,12 @@ export const getRpPreviousConsumedId = (type: string) =>
   RP_CONSUMED_TYPE_OBJ[type];
 
 export const getRpProducedId = (type: string) => RP_PRODUCED_TYPE_OBJ[type];
+
+export const GRADES = [0, 1, 2, 3];
+
+export const GRADE_TYPES: Record<number, string> = {
+  0: "Fabric",
+  1: "Tape",
+  2: "LAminated Fabric",
+  3: "Tarpaulin",
+};

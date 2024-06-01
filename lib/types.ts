@@ -3,7 +3,6 @@ import {
   TInventoryFull,
   TVendors,
   departments,
-  fabrics,
   grns,
   indentItems,
   indents,
@@ -11,6 +10,7 @@ import {
   purchaseOrders,
   tableList,
 } from "./schema";
+import { grades } from "./schemas/grades";
 
 export type TParamsProps = {
   searchParams: {
@@ -27,9 +27,9 @@ export type TDepartment = typeof departments.$inferSelect;
 
 export type TNewDepartment = typeof departments.$inferInsert;
 
-export type TFabric = typeof fabrics.$inferSelect;
+export type TGrade = typeof grades.$inferSelect;
 
-export type TNewFabric = typeof fabrics.$inferInsert;
+export type TNewGrade = typeof grades.$inferInsert;
 
 export type TIndentItem = typeof indentItems.$inferSelect;
 

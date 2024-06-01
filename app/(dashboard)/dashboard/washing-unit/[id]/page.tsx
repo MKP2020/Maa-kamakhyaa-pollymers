@@ -22,7 +22,9 @@ const getBreadcrumbItems = (id?: string) => [
 
   {
     title: !!id ? "View/Update" : "New",
-    link: !!id ? `/dashboard/washing-unit/${id}` : "/washing-unit/grn/new",
+    link: !!id
+      ? `/dashboard/washing-unit/${id}`
+      : "/dashboard/washing-unit/new",
   },
 ];
 

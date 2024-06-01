@@ -1,8 +1,8 @@
 import BreadCrumb from "@/components/breadcrumb";
 
 const breadcrumbItems = [
-  { title: "Fabric", link: "/dashboard/fabric" },
-  { title: "New Fabric", link: "/dashboard/fabric/new" },
+  { title: "Fabric", link: "/dashboard/grade" },
+  { title: "New Fabric", link: "/dashboard/grade/new" },
 ];
 
 export default function Loading() {

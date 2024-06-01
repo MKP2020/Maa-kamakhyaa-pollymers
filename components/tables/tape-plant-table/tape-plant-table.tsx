@@ -8,7 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,26 +31,41 @@ import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
-import { ChevronLeftIcon, ChevronRightIcon, Plus } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Plus,
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { RP_TYPE, SHIFT, cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { DateRange } from "react-day-picker";
+import { TTapeFull } from "@/lib/schemas";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  columns: ColumnDef<TTapeFull, any>[];
+  data: TTapeFull[];
   searchKey: string;
   pageNo: number;
   total: number;
   pageSizeOptions?: number[];
   pageCount: number;
-  searchParams?: {
-    [key: string]: string | string[] | undefined;
-  };
   loading?: boolean;
+  from?: string | null;
+  to?: string | null;
+  type?: string | null;
 }
 
-export function FabricTable<TData, TValue>({
+export function TapePlantTable({
   columns,
   data,
   pageNo,
@@ -58,9 +73,11 @@ export function FabricTable<TData, TValue>({
   total,
   loading,
   pageCount,
-
   pageSizeOptions = [10, 20, 30, 40, 50],
-}: DataTableProps<TData, TValue>) {
+  from: pFrom,
+  to: pTo,
+  type: pType,
+}: DataTableProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -72,6 +89,13 @@ export function FabricTable<TData, TValue>({
   const per_page = searchParams?.get("limit") ?? "10";
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
+
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: pFrom ? new Date(pFrom) : undefined,
+    to: pTo ? new Date(pTo) : undefined,
+  });
+
+  const [shift, setShift] = useState((searchParams.get("shift") as any) || "");
 
   /* this can be used to get the selectedrows 
   console.log("value", table.getFilteredSelectedRowModel()); */
@@ -124,39 +148,77 @@ export function FabricTable<TData, TValue>({
     state: {
       pagination: { pageIndex, pageSize },
     },
-
     onPaginationChange: setPagination,
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     manualFiltering: true,
   });
 
-  const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
+  const [search, setSearch] = useState(
+    (searchParams.get("search") as any) || ""
+  );
 
   return (
     <>
-      {" "}
-      <div className="flex items-start justify-between">
-        <div className="flex gap-10">
-          <Input
-            defaultValue={searchParams.get("search") ?? ""}
-            disabled={loading}
-            placeholder={`Search ${searchKey}...`}
-            // value={
-            //   (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
-            // }
-            onChange={(event) =>
-              table.getColumn(searchKey)?.setFilterValue(event.target.value)
-            }
-            className="w-full md:max-w-sm"
-          />
+      <div id="table-indent" className="flex items-start justify-between">
+        <div className="flex gap-4">
+          <Select value={shift} onValueChange={(e) => setShift(e)}>
+            <SelectTrigger className="h-[40px]">
+              <SelectValue placeholder="Select Shift" />
+            </SelectTrigger>
+            <SelectContent defaultValue={shift}>
+              {SHIFT.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="date"
+                variant={"outline"}
+                className={cn(
+                  "w-[300px] justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, "LLL dd, y")} -{" "}
+                      {format(date.to, "LLL dd, y")}
+                    </>
+                  ) : (
+                    format(date.from, "LLL dd, y")
+                  )
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={date?.from}
+                selected={date}
+                onSelect={setDate}
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
           <Button
             onClick={() => {
+              console.log("searchValue", search);
               router.push(
                 `${pathname}?${createQueryString({
-                  page: null,
-                  limit: null,
-                  search: searchValue || null,
+                  shift: shift || null,
+                  from: date?.from ? format(date?.from, "yyyy-MM-dd") : null,
+                  to: date?.to ? format(date?.to, "yyyy-MM-dd") : null,
+                  page: 0,
                 })}`,
                 {
                   scroll: false,
@@ -167,16 +229,16 @@ export function FabricTable<TData, TValue>({
             Search
           </Button>
         </div>
-
         <div className="flex items-center gap-4">
           <Button
             className="text-xs md:text-sm"
-            onClick={() => router.push(`/dashboard/fabric/new`)}
+            onClick={() => router.push(`/dashboard/tape-plant/new`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
         </div>
       </div>
+
       <ScrollArea className="rounded-md border h-[calc(80vh-220px)]">
         <Table className="relative">
           <TableHeader>
@@ -232,6 +294,7 @@ export function FabricTable<TData, TValue>({
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
+
       <div className="flex flex-col gap-2 sm:flex-row items-center justify-end space-x-2 py-4">
         <div className="flex items-center justify-between w-full">
           <div className="flex-1 text-sm text-muted-foreground">

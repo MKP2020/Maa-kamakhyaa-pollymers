@@ -18,7 +18,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { useToast } from "../ui/use-toast";
-import { TFabric } from "@/lib/types";
+import { TGrade } from "@/lib/types";
 
 import {
   AlertDialog,
@@ -30,30 +30,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
-import { createFabric, deleteFabric, updateFabric } from "@/actions/fabric";
+import { createGrade, deleteGrade, updateGrade } from "@/actions/grade";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { GRADES, GRADE_TYPES } from "@/lib/utils";
 
 export const IMG_MAX_LIMIT = 3;
 
 const formSchema = z.object({
-  grade: z.string().min(1, { message: "Please enter a valid fabric grade" }),
+  type: z.string().regex(/^\d+\.?\d*$/, "Please select a type of grade"),
+  grade: z.string().min(1, { message: "Please enter a valid grade" }),
 });
 
 type UserFormValues = z.infer<typeof formSchema>;
 
 interface UserFormProps {
-  initialData: TFabric | null;
+  initialData: TGrade | null;
 }
 
-export const CreateFabricForm: React.FC<UserFormProps> = ({ initialData }) => {
+export const CreateGradeForm: React.FC<UserFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit Fabric" : "Create Fabric";
-  const description = initialData ? "Edit fabric details." : "Add a new fabric";
-  const toastMessage = initialData ? "Fabric updated." : "Fabric created.";
+  const title = initialData ? "Edit Grade" : "Create a new Grade";
+  const description = initialData ? "Edit grade details." : "Add a new grade";
+  const toastMessage = initialData ? "Grade updated." : "Grade created.";
   const action = initialData ? "Save changes" : "Create";
 
   const defaultValues = initialData
@@ -73,12 +82,12 @@ export const CreateFabricForm: React.FC<UserFormProps> = ({ initialData }) => {
     try {
       setLoading(true);
       if (!!initialData) {
-        await updateFabric(initialData.id, data.grade);
+        await updateGrade(initialData.id, data.grade);
       } else {
-        await createFabric(data.grade);
+        await createGrade(data.grade);
       }
 
-      router.push(`/dashboard/fabric`);
+      router.push(`/dashboard/grade`);
       router.refresh();
       toast({
         title: "Success!",
@@ -101,7 +110,7 @@ export const CreateFabricForm: React.FC<UserFormProps> = ({ initialData }) => {
       setLoading(true);
       //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
       router.refresh();
-      router.push(`/${params.storeId}/fabric`);
+      router.push(`/${params.storeId}/grade`);
     } catch (error: any) {
     } finally {
       setLoading(false);
@@ -117,7 +126,7 @@ export const CreateFabricForm: React.FC<UserFormProps> = ({ initialData }) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete this
-              fabric.
+              grade.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -131,8 +140,8 @@ export const CreateFabricForm: React.FC<UserFormProps> = ({ initialData }) => {
             <AlertDialogAction
               onClick={async () => {
                 setOpen(false);
-                await deleteFabric(initialData!.id);
-                router.push("/dashboard/fabric");
+                await deleteGrade(initialData!.id);
+                router.push("/dashboard/grade");
                 router.refresh();
               }}
             >
@@ -163,6 +172,41 @@ export const CreateFabricForm: React.FC<UserFormProps> = ({ initialData }) => {
           <div className="md:grid md:grid-cols-3 gap-8">
             <FormField
               control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                    disabled={!!initialData}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a shift"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {GRADES.map((item) => (
+                        <SelectItem
+                          key={item.toString()}
+                          value={item.toString()}
+                        >
+                          {GRADE_TYPES[item]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="grade"
               render={({ field }) => (
                 <FormItem>
@@ -170,7 +214,7 @@ export const CreateFabricForm: React.FC<UserFormProps> = ({ initialData }) => {
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Enter fabric grade"
+                      placeholder="Enter grade"
                       {...field}
                     />
                   </FormControl>

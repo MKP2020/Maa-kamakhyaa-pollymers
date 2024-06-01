@@ -103,12 +103,6 @@ export type TVendorsFull = typeof vendors.$inferSelect & {
   address: TAddress;
 };
 
-export const fabrics = pgTable("fabrics", {
-  id: serial("id").primaryKey().notNull(),
-  grade: text("grade").notNull().unique(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
 export const tableList = pgTable(
   "tableList",
   {

@@ -68,10 +68,10 @@ export const navItems: NavItem[] = [
     label: "vendor",
   },
   {
-    title: "Fabric",
-    href: "/dashboard/fabric",
+    title: "Grade",
+    href: "/dashboard/grade",
     icon: "scroll",
-    label: "fabric",
+    label: "grade",
   },
   {
     title: "Indent",
@@ -108,5 +108,11 @@ export const navItems: NavItem[] = [
     href: "/dashboard/rp",
     icon: "washingMachine",
     label: "rp",
+  },
+  {
+    title: "Tape Plant",
+    href: "/dashboard/tape-plant",
+    icon: "washingMachine",
+    label: "tape-plant",
   },
 ];

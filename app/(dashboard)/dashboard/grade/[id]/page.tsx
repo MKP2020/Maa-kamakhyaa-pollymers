@@ -1,11 +1,11 @@
-import { getFabricById } from "@/actions/fabric";
+import { getGradeById } from "@/actions/grade";
 import BreadCrumb from "@/components/breadcrumb";
-import { CreateFabricForm } from "@/components/forms/create-fabric-form";
+import { CreateGradeForm } from "@/components/forms/create-grade-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const breadcrumbItems = [
-  { title: "Fabric", link: "/dashboard/fabric" },
-  { title: "New Fabric", link: "/dashboard/fabric/new" },
+  { title: "Fabric", link: "/dashboard/grade" },
+  { title: "New Fabric", link: "/dashboard/grade/new" },
 ];
 
 type paramsProps = {
@@ -20,14 +20,14 @@ export default async function Page(props: paramsProps) {
   const departmentId = params?.id !== "new" ? params?.id : undefined;
 
   const { data } = !!departmentId
-    ? await getFabricById(Number(departmentId as any))
+    ? await getGradeById(Number(departmentId as any))
     : { data: null };
 
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
-        <CreateFabricForm initialData={data} />
+        <CreateGradeForm initialData={data} />
       </div>
     </ScrollArea>
   );

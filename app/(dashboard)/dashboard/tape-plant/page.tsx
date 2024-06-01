@@ -1,23 +1,28 @@
-import { getFabrics } from "@/actions/fabric";
 import BreadCrumb from "@/components/breadcrumb";
-import { columns } from "@/components/tables/fabric-table/columns";
-import { FabricTable } from "@/components/tables/fabric-table/fabric-table";
+import { TapePlantTable } from "@/components/tables/tape-plant-table/tape-plant-table";
+import { columns } from "@/components/tables/tape-plant-table/columns";
+import { getTapePlantList } from "@/actions/tapePlant";
 
-const breadcrumbItems = [{ title: "Fabric", link: "/dashboard/fabric" }];
+const breadcrumbItems = [
+  { title: "Tape Plant", link: "/dashboard/tape-plant" },
+];
 
 type paramsProps = {
   searchParams: {
-    [key: string]: string | string[] | undefined;
+    [key: string]: string | undefined;
   };
 };
 
 export default async function Page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
-  const search = searchParams.search || null;
-  const offset = (page - 1) * pageLimit;
 
-  const { data, total } = await getFabrics(offset, pageLimit, search as string);
+  const shift = searchParams.shift;
+  const offset = (page - 1) * pageLimit;
+  const from = searchParams.from || undefined;
+  const to = searchParams.to || undefined;
+
+  const { data, total } = await getTapePlantList(shift, from, to, offset);
 
   const pageCount = Math.ceil(total / pageLimit);
 
@@ -25,11 +30,13 @@ export default async function Page({ searchParams }: paramsProps) {
     <>
       <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
         <BreadCrumb items={breadcrumbItems} />
-        <FabricTable
+        <TapePlantTable
+          from={from}
+          to={to}
           pageCount={pageCount}
           total={total}
           pageNo={page}
-          searchKey="grade"
+          searchKey="name"
           columns={columns}
           data={data}
         />
