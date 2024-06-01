@@ -145,6 +145,26 @@ export const GlobalQuantityObj: Record<TGlobalQuantityType, number> = {
   TapeLumps: 50,
 };
 
+export const GlobalQuantityStringObj: Record<number, string> = {
+  33: "Bhusha",
+  34: "Algo",
+  35: "RP Mix 1st",
+  36: "RP Mix 2nd",
+  37: "RP Black(Tape) 1st",
+  38: "RP Black(Lam) 1st",
+  39: "RP Black(Tape) 2nd",
+  40: "RP Black(Lam) 2nd",
+  41: "Loom Waste",
+  42: "Lam Waste",
+  43: "Tape Waste",
+  44: "Tarp Waste",
+  45: "Loom",
+  46: "Lam",
+  47: "Tape",
+  48: "Tarp",
+  50: "Tape Lumps",
+};
+
 export const getIndexByRPType = (type: string) => RP_TYPE_OBJ[type];
 
 export const SHIFT_MAP = { A: "A", B: "B" };

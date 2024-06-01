@@ -26,3 +26,7 @@ export const addProducedQty = async (qty: number, id: number) => {
     .where(eq(quantity.id, id))
     .returning();
 };
+
+export const getAllQuantities = () => {
+  return db.query.quantity.findMany();
+};
