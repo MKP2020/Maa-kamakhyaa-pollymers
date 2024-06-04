@@ -1,0 +1,1 @@
+ALTER TABLE "tarpaulin" ALTER COLUMN "tarpaulinSize" SET DATA TYPE text;

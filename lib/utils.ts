@@ -23,7 +23,7 @@ export const getGRNNumber = (date: Date) => {
 export enum GRADES_TYPES {
   Fabric,
   Tape,
-  LAminatedFabric,
+  LaminatedFabric,
   Tarpaulin,
 }
 
@@ -184,6 +184,6 @@ export const GRADES = [0, 1, 2, 3];
 export const GRADE_TYPES: Record<number, string> = {
   0: "Fabric",
   1: "Tape",
-  2: "LAminated Fabric",
+  2: "Laminated Fabric",
   3: "Tarpaulin",
 };

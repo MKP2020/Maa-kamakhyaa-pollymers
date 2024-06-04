@@ -23,27 +23,10 @@ const quantityData = [
   "Lam 2nd",
 ];
 const createDefaultTables = async () => {
-  //   console.log("==================");
-  //   console.log("Creating Categories");
-  //   console.log("==================");
-  //   for (let index = 0; index < categoriesData.length; index++) {
-  //     const element = categoriesData[index];
-  //     await createCategory(element);
-  //   }
-  //   console.log("==================");
-  //   console.log("Categories Created");
-  //   console.log("==================");
-  console.log("==================");
-  console.log("Creating Globals");
-  console.log("==================");
-
   for (let index = 0; index < quantityData.length; index++) {
     const element = quantityData[index];
     await createQuantity(index);
   }
-  console.log("==================");
-  console.log("Globals Created");
-  console.log("==================");
 };
 
 createDefaultTables();

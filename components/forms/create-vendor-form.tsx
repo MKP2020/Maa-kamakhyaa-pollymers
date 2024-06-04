@@ -122,8 +122,6 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
     defaultValues,
   });
 
-  console.log("selectedState", selectedState);
-
   const states = useMemo(() => State.getStatesOfCountry("IN"), []);
 
   const cities = useMemo(
@@ -155,7 +153,6 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
           : "Vendor successfully updated",
       });
     } catch (error: any) {
-      console.log(error);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",

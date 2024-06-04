@@ -5,8 +5,8 @@ import { quantity } from "@/lib/schemas/quantity";
 import { GlobalQuantityObj } from "@/lib/utils";
 import { and, eq, or, sql } from "drizzle-orm";
 
-export const createQuantity = async (id: number) => {
-  return db.insert(quantity).values({});
+export const createQuantity = async (gradeId?: number) => {
+  return db.insert(quantity).values({ gradeId });
 };
 
 export const getQuantityDetails = async (id: number) => {

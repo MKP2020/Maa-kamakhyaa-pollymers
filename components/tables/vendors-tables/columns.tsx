@@ -53,7 +53,6 @@ export const columns: ColumnDef<TVendorsFull>[] = [
     // accessorFn: (data) =>
     //   `${data.bankDerails.accountNumber}\n${data.bankDerails.ifsc}\n${data.bankDerails.ifsc}`,
     cell: ({ row }) => {
-      console.log("row", row);
       return (
         <>
           <p className="text-sm font-medium leading-none">Account Number</p>

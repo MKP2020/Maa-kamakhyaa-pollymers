@@ -93,7 +93,6 @@ export const CreateDepartmentForm: React.FC<UserFormProps> = ({
         description: toastMessage,
       });
     } catch (error: any) {
-      console.log(error);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",

@@ -19,7 +19,6 @@ type paramsProps = {
 };
 
 export default function Page({ params }: paramsProps) {
-  console.log("params", params);
   const id = params?.id === "new" ? undefined : (params?.id as string);
 
   const breadcrumbItems = getBreadcrumbItems(id);

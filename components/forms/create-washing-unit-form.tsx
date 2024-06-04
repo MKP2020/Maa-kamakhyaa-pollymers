@@ -131,7 +131,6 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
           selectedDepartment
         );
 
-        console.log("items", items);
         setItems(items as any);
       } catch (error) {
       } finally {

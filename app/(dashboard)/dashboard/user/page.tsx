@@ -8,10 +8,7 @@ export default async function page() {
   // const userResponse = await fetch("http://localhost:3000/api/users", {
   //   next: { revalidate: 10 },
   // });
-  // console.log("userResponse", userResponse);
   const data = await getAllUsers();
-
-  console.log("data", data);
 
   return (
     <>

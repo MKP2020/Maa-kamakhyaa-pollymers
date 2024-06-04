@@ -109,8 +109,6 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
     defaultValues,
   });
 
-  console.log("poItems", poItems);
-
   const isDisabled = !!initialData || loading;
   const onSubmit = useCallback(
     async (data: NewGRNFormValues) => {

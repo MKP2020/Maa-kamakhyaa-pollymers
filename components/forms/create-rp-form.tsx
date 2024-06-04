@@ -135,7 +135,6 @@ const formSchema = z
   )
   .refine(
     ({ type, tarpQty }) => {
-      console.log("type", type);
       const num = Number(tarpQty);
       return type !== "4" ? true : isNaN(num) ? false : num >= 0;
     },
@@ -205,7 +204,6 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
     ? items.find((item) => item.id === Number(inventoryId))
     : undefined;
 
-  console.log(form.formState.errors);
   return (
     <div>
       <div className="md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 space-y-8 lg:space-y-0 ">
@@ -481,8 +479,6 @@ export const CreateRP: FC<
 
   const onSubmit = useCallback(
     async (data: TCreateInventoryFormValues) => {
-      console.log("data", data);
-
       try {
         setLoading(true);
         await createRp(
@@ -515,7 +511,6 @@ export const CreateRP: FC<
         router.push(`/dashboard/rp?type=${type}`);
         router.refresh();
       } catch (error) {
-        console.log("error", error);
       } finally {
         setLoading(false);
       }
@@ -524,8 +519,6 @@ export const CreateRP: FC<
   );
 
   const isDisabled = !!initialData;
-
-  console.log("initialData", initialData);
 
   const canUpdate = !initialData;
 

@@ -88,7 +88,6 @@ export const createRp = async (
     }
     return false;
   } catch (error) {
-    console.log("error", error);
     return false;
   }
 };

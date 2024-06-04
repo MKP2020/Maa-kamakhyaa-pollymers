@@ -5,6 +5,7 @@ import { grades } from "@/lib/schema";
 import { GRADES_TYPES } from "@/lib/utils";
 import { count, desc, eq, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { createQuantity } from "./quantity";
 
 export const getGrades = async (
   offset?: number,
@@ -50,15 +51,18 @@ export const getGradesByType = async (type: GRADES_TYPES) => {
   }
 };
 
-export const createGrade = async (grade: string) => {
+export const createGrade = async (type: number, grade: string) => {
   const exists = await db
     .select()
     .from(grades)
     .where(ilike(grades.grade, grade));
+
   if (exists.length > 0) {
     throw new Error("grade already exists");
   }
-  return db.insert(grades).values({ grade }).returning();
+  const res = await db.insert(grades).values({ type, grade }).returning();
+  await createQuantity(res[0].id);
+  return res[0];
 };
 
 export const updateGrade = (id: number, grade: string) => {
@@ -83,5 +87,21 @@ export const getGradeById = async (id: number) => {
     return { data: data[0] };
   } catch (error) {
     return { data: null };
+  }
+};
+
+export const getGradesByTypeWithQuantity = async (type: GRADES_TYPES) => {
+  try {
+    const data = await db.query.grades.findMany({
+      where: eq(grades.type, type),
+      orderBy: desc(grades.createdAt),
+      with: {
+        quantity: true,
+      },
+    });
+
+    return { data };
+  } catch (error) {
+    return { data: [] };
   }
 };

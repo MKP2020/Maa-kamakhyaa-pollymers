@@ -27,8 +27,6 @@ export default async function Page({ searchParams }: paramsProps) {
     pageLimit
   );
 
-  console.log("data", JSON.stringify(data));
-
   const pageCount = Math.ceil(total / pageLimit);
 
   return (

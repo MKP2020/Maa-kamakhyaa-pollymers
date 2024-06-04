@@ -83,7 +83,6 @@ export const getWashingUnits = async (
     }
   }
 
-  console.log("shift", shift);
   try {
     const data = await db.query.washingUnit.findMany({
       where,
@@ -181,7 +180,6 @@ export const createWashingUnit = async (
     }
 
     if (newData.bhusaQuantity !== null) {
-      console.log("sd", getIdForType("Bhusha"));
       const bhusaQuantity = await db.query.quantity.findFirst({
         where: eq(quantity.id, getIdForType("Bhusha")),
       });

@@ -142,7 +142,6 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
     ? items.find((item) => item.id === Number(inventoryId))
     : undefined;
 
-  console.log(form.formState.errors);
   return (
     <div>
       <div className="md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 space-y-8 lg:space-y-0 ">
@@ -375,7 +374,6 @@ const ConsumedFormItem: FC<TConsumedFormItemProps> = (props) => {
 
   const type = form.watch(`consumedItems.${index}.rpType`);
 
-  console.log("type", type);
   return (
     <div>
       <div className="md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 space-y-8 lg:space-y-0 ">
@@ -573,7 +571,6 @@ export const CreateTapePlantForm: FC<
       router.push(`/dashboard/tape-plant`);
       router.refresh();
     } catch (error) {
-      console.log("error", error);
     } finally {
       setLoading(false);
     }

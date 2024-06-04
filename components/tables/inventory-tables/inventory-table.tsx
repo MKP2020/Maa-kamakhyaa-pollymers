@@ -93,8 +93,8 @@ export function InventoryTable({
     from: from ? new Date(from) : undefined,
     to: to ? new Date(to) : undefined,
   });
-  /* this can be used to get the selectedrows 
-  console.log("value", table.getFilteredSelectedRowModel()); */
+
+  // this can be used to get the selectedrows
 
   // Create query string
   const createQueryString = React.useCallback(

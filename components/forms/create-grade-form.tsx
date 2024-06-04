@@ -84,7 +84,7 @@ export const CreateGradeForm: React.FC<UserFormProps> = ({ initialData }) => {
       if (!!initialData) {
         await updateGrade(initialData.id, data.grade);
       } else {
-        await createGrade(data.grade);
+        await createGrade(Number(data.type), data.grade);
       }
 
       router.push(`/dashboard/grade`);
@@ -94,7 +94,6 @@ export const CreateGradeForm: React.FC<UserFormProps> = ({ initialData }) => {
         description: toastMessage,
       });
     } catch (error: any) {
-      console.log(error);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -186,7 +185,7 @@ export const CreateGradeForm: React.FC<UserFormProps> = ({ initialData }) => {
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select a shift"
+                          placeholder="Select a grade type"
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -210,7 +209,7 @@ export const CreateGradeForm: React.FC<UserFormProps> = ({ initialData }) => {
               name="grade"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Fabric drage</FormLabel>
+                  <FormLabel>Fabric grade</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}

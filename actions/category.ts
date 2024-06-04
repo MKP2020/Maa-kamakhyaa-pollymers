@@ -10,7 +10,6 @@ export const getCategories = async (
 ): Promise<{ data: TCategory[]; total: number }> => {
   const query = db.select().from(categories);
 
-  console.log("search", search);
   if (!!search) {
     query.where(ilike(categories.name, search + "%"));
   }

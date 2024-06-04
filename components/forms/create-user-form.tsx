@@ -107,7 +107,6 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
         description: "User successfully created",
       });
     } catch (error: any) {
-      console.log(error);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",

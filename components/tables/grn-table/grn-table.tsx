@@ -93,8 +93,7 @@ export function GRNTable({
     to: pTo ? new Date(pTo) : undefined,
   });
 
-  /* this can be used to get the selectedrows 
-  console.log("value", table.getFilteredSelectedRowModel()); */
+  // this can be used to get the selectedrows
 
   // Create query string
   const createQueryString = React.useCallback(
@@ -204,7 +203,6 @@ export function GRNTable({
           </Popover>
           <Button
             onClick={() => {
-              console.log("searchValue", search);
               router.push(
                 `${pathname}?${createQueryString({
                   search: search || null,

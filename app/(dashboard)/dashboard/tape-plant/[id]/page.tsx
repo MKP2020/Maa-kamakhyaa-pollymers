@@ -30,7 +30,6 @@ export default async function Page(props: TParamsProps) {
   const isId = !!id ? !isNaN(Number(id)) : false;
   const initialData = isId ? await getTapePlantById(Number(id)) : undefined;
 
-  console.log(initialData);
   const response = isId
     ? []
     : await getQuantitiesByIds([

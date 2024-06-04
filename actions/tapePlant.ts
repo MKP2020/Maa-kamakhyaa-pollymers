@@ -73,8 +73,14 @@ export const createTapePlant = async (
     shouldDelete = true;
     const tape = response[0];
 
-    console.log("tape produced");
+    await db
+      .update(quantity)
+      .set({ producedQty: sql`${quantity.producedQty} + ${tape.tapeQty}` })
+      .where(eq(quantity.gradeId, tape.tapeGradeId))
+      .returning();
+
     itemId = tape.id;
+
     const items: TTapeItem[] = [];
 
     for (let index = 0; index < dataItems.length; index++) {
@@ -88,7 +94,6 @@ export const createTapePlant = async (
         })
         .returning();
 
-      console.log("tape produced item", resp);
       const inventoryData = await db.query.inventory.findFirst({
         where: eq(inventory.id, resp[0].inventoryId),
       });
@@ -123,7 +128,6 @@ export const createTapePlant = async (
       //   .where(eq(quantity.id, item.rpType));
       await addProducedQty(item.qty, item.rpType);
       consumedItems.push(resp[0]);
-      console.log("tape produced item", resp);
     }
 
     if (data.tapeWaste > 0) {

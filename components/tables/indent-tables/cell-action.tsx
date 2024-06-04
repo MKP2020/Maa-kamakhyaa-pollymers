@@ -46,7 +46,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     doc.text(`Si.No: ${data.indentNumber}`, 4, 20);
     doc.text(`date: ${format(data.date, "dd/MM/yyyy")}`, 4, 30);
     doc.text(`note: ${data.note || ""}`, 4, 40);
-    console.log("pdfData", pdfData);
     autoTable(doc, pdfData);
 
     doc.save("indent-" + data.indentNumber + ".pdf");

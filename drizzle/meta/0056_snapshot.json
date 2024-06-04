@@ -1,0 +1,2376 @@
+{
+  "id": "48ed4a42-230b-43ee-a8d5-150d26ce1449",
+  "prevId": "4a089de6-aa31-4d6c-8213-5da8259f2edb",
+  "version": "6",
+  "dialect": "postgresql",
+  "tables": {
+    "public.addresses": {
+      "name": "addresses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "addressLine1": {
+          "name": "addressLine1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "addressLine2": {
+          "name": "addressLine2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "district": {
+          "name": "district",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state": {
+          "name": "state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pinCode": {
+          "name": "pinCode",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.bankDetails": {
+      "name": "bankDetails",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "accountNumber": {
+          "name": "accountNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ifsc": {
+          "name": "ifsc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "branch": {
+          "name": "branch",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.grnNumbers": {
+      "name": "grnNumbers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currentCount": {
+          "name": "currentCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.grn": {
+      "name": "grn",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "grnNumber": {
+          "name": "grnNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "poId": {
+          "name": "poId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "receivedDate": {
+          "name": "receivedDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "invoiceNumber": {
+          "name": "invoiceNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoiceDate": {
+          "name": "invoiceDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "transportMode": {
+          "name": "transportMode",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transportName": {
+          "name": "transportName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cnNumber": {
+          "name": "cnNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vehicleNumber": {
+          "name": "vehicleNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "freightAmount": {
+          "name": "freightAmount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taxType": {
+          "name": "taxType",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taxPercentage": {
+          "name": "taxPercentage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "grn_grnNumber_unique": {
+          "name": "grn_grnNumber_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "grnNumber"
+          ]
+        }
+      }
+    },
+    "public.indentItems": {
+      "name": "indentItems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "indentId": {
+          "name": "indentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "indentedQty": {
+          "name": "indentedQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approvedQty": {
+          "name": "approvedQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "indentItems_indentId_indents_id_fk": {
+          "name": "indentItems_indentId_indents_id_fk",
+          "tableFrom": "indentItems",
+          "tableTo": "indents",
+          "columnsFrom": [
+            "indentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "indentItems_itemId_tableList_id_fk": {
+          "name": "indentItems_itemId_tableList_id_fk",
+          "tableFrom": "indentItems",
+          "tableTo": "tableList",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.indentNumber": {
+      "name": "indentNumber",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currentCount": {
+          "name": "currentCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.indents": {
+      "name": "indents",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "indentNumber": {
+          "name": "indentNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "indents_departmentId_departments_id_fk": {
+          "name": "indents_departmentId_departments_id_fk",
+          "tableFrom": "indents",
+          "tableTo": "departments",
+          "columnsFrom": [
+            "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "indents_categoryId_categories_id_fk": {
+          "name": "indents_categoryId_categories_id_fk",
+          "tableFrom": "indents",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "indents_indentNumber_unique": {
+          "name": "indents_indentNumber_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "indentNumber"
+          ]
+        }
+      }
+    },
+    "public.purchaseOrderItems": {
+      "name": "purchaseOrderItems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "poId": {
+          "name": "poId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "purchaseOrderItems_poId_purchaseOrders_id_fk": {
+          "name": "purchaseOrderItems_poId_purchaseOrders_id_fk",
+          "tableFrom": "purchaseOrderItems",
+          "tableTo": "purchaseOrders",
+          "columnsFrom": [
+            "poId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "purchaseOrderItems_itemId_indentItems_id_fk": {
+          "name": "purchaseOrderItems_itemId_indentItems_id_fk",
+          "tableFrom": "purchaseOrderItems",
+          "tableTo": "indentItems",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.purchaseOrderNumbers": {
+      "name": "purchaseOrderNumbers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currentCount": {
+          "name": "currentCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.purchaseOrders": {
+      "name": "purchaseOrders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "poNumber": {
+          "name": "poNumber",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sellerId": {
+          "name": "sellerId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "indentId": {
+          "name": "indentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "taxType": {
+          "name": "taxType",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taxPercentage": {
+          "name": "taxPercentage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approvalStatus": {
+          "name": "approvalStatus",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "status": {
+          "name": "status",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "purchaseOrders_sellerId_vendors_id_fk": {
+          "name": "purchaseOrders_sellerId_vendors_id_fk",
+          "tableFrom": "purchaseOrders",
+          "tableTo": "vendors",
+          "columnsFrom": [
+            "sellerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "purchaseOrders_indentId_indents_id_fk": {
+          "name": "purchaseOrders_indentId_indents_id_fk",
+          "tableFrom": "purchaseOrders",
+          "tableTo": "indents",
+          "columnsFrom": [
+            "indentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "purchaseOrders_poNumber_unique": {
+          "name": "purchaseOrders_poNumber_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "poNumber"
+          ]
+        }
+      }
+    },
+    "public.tableList": {
+      "name": "tableList",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "minQuantity": {
+          "name": "minQuantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "unit": {
+          "name": "unit",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "itemCategoryIdx": {
+          "name": "itemCategoryIdx",
+          "columns": [
+            "categoryId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "tableList_categoryId_categories_id_fk": {
+          "name": "tableList_categoryId_categories_id_fk",
+          "tableFrom": "tableList",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "tableList_name_unique": {
+          "name": "tableList_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "firstName": {
+          "name": "firstName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastName": {
+          "name": "lastName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "clerkId": {
+          "name": "clerkId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    },
+    "public.vendors": {
+      "name": "vendors",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contactNumber": {
+          "name": "contactNumber",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emailId": {
+          "name": "emailId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "addressId": {
+          "name": "addressId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bankDetailsId": {
+          "name": "bankDetailsId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "gstNumber": {
+          "name": "gstNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pan": {
+          "name": "pan",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "name": {
+          "name": "name",
+          "columns": [
+            "name"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "vendors_categoryId_categories_id_fk": {
+          "name": "vendors_categoryId_categories_id_fk",
+          "tableFrom": "vendors",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "vendors_addressId_addresses_id_fk": {
+          "name": "vendors_addressId_addresses_id_fk",
+          "tableFrom": "vendors",
+          "tableTo": "addresses",
+          "columnsFrom": [
+            "addressId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "vendors_bankDetailsId_bankDetails_id_fk": {
+          "name": "vendors_bankDetailsId_bankDetails_id_fk",
+          "tableFrom": "vendors",
+          "tableTo": "bankDetails",
+          "columnsFrom": [
+            "bankDetailsId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "vendors_emailId_unique": {
+          "name": "vendors_emailId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "emailId"
+          ]
+        },
+        "vendors_gstNumber_unique": {
+          "name": "vendors_gstNumber_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "gstNumber"
+          ]
+        }
+      }
+    },
+    "public.inventory": {
+      "name": "inventory",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "poItemId": {
+          "name": "poItemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inStockQuantity": {
+          "name": "inStockQuantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usedQuantity": {
+          "name": "usedQuantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "grnId": {
+          "name": "grnId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "inventoryItemIdx": {
+          "name": "inventoryItemIdx",
+          "columns": [
+            "itemId"
+          ],
+          "isUnique": false
+        },
+        "poItemIdx": {
+          "name": "poItemIdx",
+          "columns": [
+            "poItemId"
+          ],
+          "isUnique": false
+        },
+        "inventoryDate": {
+          "name": "inventoryDate",
+          "columns": [
+            "createdAt"
+          ],
+          "isUnique": false
+        },
+        "inventoryCategoryIdIdx": {
+          "name": "inventoryCategoryIdIdx",
+          "columns": [
+            "categoryId"
+          ],
+          "isUnique": false
+        },
+        "inventoryDepartmentIdIdx": {
+          "name": "inventoryDepartmentIdIdx",
+          "columns": [
+            "departmentId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.departments": {
+      "name": "departments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "departments_name_unique": {
+          "name": "departments_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.washingUnit": {
+      "name": "washingUnit",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "shift": {
+          "name": "shift",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bhusaQuantity": {
+          "name": "bhusaQuantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "consumptionShiftIdx": {
+          "name": "consumptionShiftIdx",
+          "columns": [
+            "shift"
+          ],
+          "isUnique": false
+        },
+        "consumptionDateIdx": {
+          "name": "consumptionDateIdx",
+          "columns": [
+            "date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.washingUnitItems": {
+      "name": "washingUnitItems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "unitId": {
+          "name": "unitId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inventoryId": {
+          "name": "inventoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reqQty": {
+          "name": "reqQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "issueQuantity": {
+          "name": "issueQuantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "washingUnitItemsUnitIdx": {
+          "name": "washingUnitItemsUnitIdx",
+          "columns": [
+            "unitId"
+          ],
+          "isUnique": false
+        },
+        "washingUnitItemsCategoryIdIdx": {
+          "name": "washingUnitItemsCategoryIdIdx",
+          "columns": [
+            "categoryId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "washingUnitItems_unitId_washingUnit_id_fk": {
+          "name": "washingUnitItems_unitId_washingUnit_id_fk",
+          "tableFrom": "washingUnitItems",
+          "tableTo": "washingUnit",
+          "columnsFrom": [
+            "unitId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "washingUnitItems_categoryId_categories_id_fk": {
+          "name": "washingUnitItems_categoryId_categories_id_fk",
+          "tableFrom": "washingUnitItems",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "washingUnitItems_departmentId_departments_id_fk": {
+          "name": "washingUnitItems_departmentId_departments_id_fk",
+          "tableFrom": "washingUnitItems",
+          "tableTo": "departments",
+          "columnsFrom": [
+            "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "washingUnitItems_inventoryId_inventory_id_fk": {
+          "name": "washingUnitItems_inventoryId_inventory_id_fk",
+          "tableFrom": "washingUnitItems",
+          "tableTo": "inventory",
+          "columnsFrom": [
+            "inventoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "washingUnitItems_itemId_tableList_id_fk": {
+          "name": "washingUnitItems_itemId_tableList_id_fk",
+          "tableFrom": "washingUnitItems",
+          "tableTo": "tableList",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.rp": {
+      "name": "rp",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "shift": {
+          "name": "shift",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "consumedQty": {
+          "name": "consumedQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "producedQty": {
+          "name": "producedQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "loomQty": {
+          "name": "loomQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lamQty": {
+          "name": "lamQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tapeQty": {
+          "name": "tapeQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tarpQty": {
+          "name": "tarpQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plantWasteConsumed": {
+          "name": "plantWasteConsumed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rpLumps": {
+          "name": "rpLumps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "rpDateIdx": {
+          "name": "rpDateIdx",
+          "columns": [
+            "date"
+          ],
+          "isUnique": false
+        },
+        "rpTypeIdx": {
+          "name": "rpTypeIdx",
+          "columns": [
+            "type"
+          ],
+          "isUnique": false
+        },
+        "rpShiftIdx": {
+          "name": "rpShiftIdx",
+          "columns": [
+            "shift"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.rpItems": {
+      "name": "rpItems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "rpId": {
+          "name": "rpId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inventoryId": {
+          "name": "inventoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "rpItemsIdIdx": {
+          "name": "rpItemsIdIdx",
+          "columns": [
+            "rpId"
+          ],
+          "isUnique": false
+        },
+        "rpItemsCategoryIdx": {
+          "name": "rpItemsCategoryIdx",
+          "columns": [
+            "categoryId"
+          ],
+          "isUnique": false
+        },
+        "rpItemsDepartmentIdx": {
+          "name": "rpItemsDepartmentIdx",
+          "columns": [
+            "departmentId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "rpItems_rpId_rp_id_fk": {
+          "name": "rpItems_rpId_rp_id_fk",
+          "tableFrom": "rpItems",
+          "tableTo": "rp",
+          "columnsFrom": [
+            "rpId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "rpItems_categoryId_categories_id_fk": {
+          "name": "rpItems_categoryId_categories_id_fk",
+          "tableFrom": "rpItems",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "rpItems_departmentId_departments_id_fk": {
+          "name": "rpItems_departmentId_departments_id_fk",
+          "tableFrom": "rpItems",
+          "tableTo": "departments",
+          "columnsFrom": [
+            "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "rpItems_inventoryId_inventory_id_fk": {
+          "name": "rpItems_inventoryId_inventory_id_fk",
+          "tableFrom": "rpItems",
+          "tableTo": "inventory",
+          "columnsFrom": [
+            "inventoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "rpItems_itemId_tableList_id_fk": {
+          "name": "rpItems_itemId_tableList_id_fk",
+          "tableFrom": "rpItems",
+          "tableTo": "tableList",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.quantity": {
+      "name": "quantity",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "producedQty": {
+          "name": "producedQty",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "usedQty": {
+          "name": "usedQty",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "gradeId": {
+          "name": "gradeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "quantity_gradeId_grades_id_fk": {
+          "name": "quantity_gradeId_grades_id_fk",
+          "tableFrom": "quantity",
+          "tableTo": "grades",
+          "columnsFrom": [
+            "gradeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.grades": {
+      "name": "grades",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "grade": {
+          "name": "grade",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "grades_grade_unique": {
+          "name": "grades_grade_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "grade"
+          ]
+        }
+      }
+    },
+    "public.tapeItem": {
+      "name": "tapeItem",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tapeId": {
+          "name": "tapeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inventoryId": {
+          "name": "inventoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "tapeItemsIdIdx": {
+          "name": "tapeItemsIdIdx",
+          "columns": [
+            "tapeId"
+          ],
+          "isUnique": false
+        },
+        "tapeItemsCategoryIdx": {
+          "name": "tapeItemsCategoryIdx",
+          "columns": [
+            "categoryId"
+          ],
+          "isUnique": false
+        },
+        "tapeItemsDepartmentIdx": {
+          "name": "tapeItemsDepartmentIdx",
+          "columns": [
+            "departmentId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "tapeItem_tapeId_tapePlant_id_fk": {
+          "name": "tapeItem_tapeId_tapePlant_id_fk",
+          "tableFrom": "tapeItem",
+          "tableTo": "tapePlant",
+          "columnsFrom": [
+            "tapeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tapeItem_categoryId_categories_id_fk": {
+          "name": "tapeItem_categoryId_categories_id_fk",
+          "tableFrom": "tapeItem",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tapeItem_departmentId_departments_id_fk": {
+          "name": "tapeItem_departmentId_departments_id_fk",
+          "tableFrom": "tapeItem",
+          "tableTo": "departments",
+          "columnsFrom": [
+            "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tapeItem_inventoryId_inventory_id_fk": {
+          "name": "tapeItem_inventoryId_inventory_id_fk",
+          "tableFrom": "tapeItem",
+          "tableTo": "inventory",
+          "columnsFrom": [
+            "inventoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tapeItem_itemId_tableList_id_fk": {
+          "name": "tapeItem_itemId_tableList_id_fk",
+          "tableFrom": "tapeItem",
+          "tableTo": "tableList",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.tapePlant": {
+      "name": "tapePlant",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "shift": {
+          "name": "shift",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tapeGradeId": {
+          "name": "tapeGradeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tapeQty": {
+          "name": "tapeQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tapeWaste": {
+          "name": "tapeWaste",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tapeLumps": {
+          "name": "tapeLumps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "tapePlantDateIdx": {
+          "name": "tapePlantDateIdx",
+          "columns": [
+            "date"
+          ],
+          "isUnique": false
+        },
+        "tapePlantShiftIdx": {
+          "name": "tapePlantShiftIdx",
+          "columns": [
+            "shift"
+          ],
+          "isUnique": false
+        },
+        "tapePlantGradeIdx": {
+          "name": "tapePlantGradeIdx",
+          "columns": [
+            "tapeGradeId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "tapePlant_tapeGradeId_grades_id_fk": {
+          "name": "tapePlant_tapeGradeId_grades_id_fk",
+          "tableFrom": "tapePlant",
+          "tableTo": "grades",
+          "columnsFrom": [
+            "tapeGradeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.tapePlantConsumedItem": {
+      "name": "tapePlantConsumedItem",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tapeId": {
+          "name": "tapeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rpType": {
+          "name": "rpType",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "qty": {
+          "name": "qty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tapePlantConsumedItem_tapeId_tapePlant_id_fk": {
+          "name": "tapePlantConsumedItem_tapeId_tapePlant_id_fk",
+          "tableFrom": "tapePlantConsumedItem",
+          "tableTo": "tapePlant",
+          "columnsFrom": [
+            "tapeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.loom": {
+      "name": "loom",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "shift": {
+          "name": "shift",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tapeGradeId": {
+          "name": "tapeGradeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tapeQty": {
+          "name": "tapeQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fabricGradeId": {
+          "name": "fabricGradeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fabricQty": {
+          "name": "fabricQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "loomWaste": {
+          "name": "loomWaste",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "loom_tapeGradeId_grades_id_fk": {
+          "name": "loom_tapeGradeId_grades_id_fk",
+          "tableFrom": "loom",
+          "tableTo": "grades",
+          "columnsFrom": [
+            "tapeGradeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "loom_fabricGradeId_grades_id_fk": {
+          "name": "loom_fabricGradeId_grades_id_fk",
+          "tableFrom": "loom",
+          "tableTo": "grades",
+          "columnsFrom": [
+            "fabricGradeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.loomItem": {
+      "name": "loomItem",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "loomId": {
+          "name": "loomId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inventoryId": {
+          "name": "inventoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "loomItemsIdIdx": {
+          "name": "loomItemsIdIdx",
+          "columns": [
+            "loomId"
+          ],
+          "isUnique": false
+        },
+        "loomItemsCategoryIdx": {
+          "name": "loomItemsCategoryIdx",
+          "columns": [
+            "categoryId"
+          ],
+          "isUnique": false
+        },
+        "loomItemsDepartmentIdx": {
+          "name": "loomItemsDepartmentIdx",
+          "columns": [
+            "departmentId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "loomItem_loomId_loom_id_fk": {
+          "name": "loomItem_loomId_loom_id_fk",
+          "tableFrom": "loomItem",
+          "tableTo": "loom",
+          "columnsFrom": [
+            "loomId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "loomItem_categoryId_categories_id_fk": {
+          "name": "loomItem_categoryId_categories_id_fk",
+          "tableFrom": "loomItem",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "loomItem_departmentId_departments_id_fk": {
+          "name": "loomItem_departmentId_departments_id_fk",
+          "tableFrom": "loomItem",
+          "tableTo": "departments",
+          "columnsFrom": [
+            "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "loomItem_inventoryId_inventory_id_fk": {
+          "name": "loomItem_inventoryId_inventory_id_fk",
+          "tableFrom": "loomItem",
+          "tableTo": "inventory",
+          "columnsFrom": [
+            "inventoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "loomItem_itemId_tableList_id_fk": {
+          "name": "loomItem_itemId_tableList_id_fk",
+          "tableFrom": "loomItem",
+          "tableTo": "tableList",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.lamItem": {
+      "name": "lamItem",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "lamId": {
+          "name": "lamId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inventoryId": {
+          "name": "inventoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemId": {
+          "name": "itemId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "lamItemsIdIdx": {
+          "name": "lamItemsIdIdx",
+          "columns": [
+            "lamId"
+          ],
+          "isUnique": false
+        },
+        "lamItemsCategoryIdx": {
+          "name": "lamItemsCategoryIdx",
+          "columns": [
+            "categoryId"
+          ],
+          "isUnique": false
+        },
+        "lamItemsDepartmentIdx": {
+          "name": "lamItemsDepartmentIdx",
+          "columns": [
+            "departmentId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "lamItem_lamId_lamination_id_fk": {
+          "name": "lamItem_lamId_lamination_id_fk",
+          "tableFrom": "lamItem",
+          "tableTo": "lamination",
+          "columnsFrom": [
+            "lamId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lamItem_categoryId_categories_id_fk": {
+          "name": "lamItem_categoryId_categories_id_fk",
+          "tableFrom": "lamItem",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lamItem_departmentId_departments_id_fk": {
+          "name": "lamItem_departmentId_departments_id_fk",
+          "tableFrom": "lamItem",
+          "tableTo": "departments",
+          "columnsFrom": [
+            "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lamItem_inventoryId_inventory_id_fk": {
+          "name": "lamItem_inventoryId_inventory_id_fk",
+          "tableFrom": "lamItem",
+          "tableTo": "inventory",
+          "columnsFrom": [
+            "inventoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lamItem_itemId_tableList_id_fk": {
+          "name": "lamItem_itemId_tableList_id_fk",
+          "tableFrom": "lamItem",
+          "tableTo": "tableList",
+          "columnsFrom": [
+            "itemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.lamination": {
+      "name": "lamination",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "shift": {
+          "name": "shift",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fabricGradeId": {
+          "name": "fabricGradeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fabricQty": {
+          "name": "fabricQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lamFabricGradeId": {
+          "name": "lamFabricGradeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lamFabricQty": {
+          "name": "lamFabricQty",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lamWaste": {
+          "name": "lamWaste",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "lamination_fabricGradeId_grades_id_fk": {
+          "name": "lamination_fabricGradeId_grades_id_fk",
+          "tableFrom": "lamination",
+          "tableTo": "grades",
+          "columnsFrom": [
+            "fabricGradeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lamination_lamFabricGradeId_grades_id_fk": {
+          "name": "lamination_lamFabricGradeId_grades_id_fk",
+          "tableFrom": "lamination",
+          "tableTo": "grades",
+          "columnsFrom": [
+            "lamFabricGradeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

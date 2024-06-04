@@ -5,3 +5,6 @@ export * from "./rp";
 export * from "./quantity";
 export * from "./grades";
 export * from "./tapePlant";
+export * from "./loom";
+export * from "./lamination";
+export * from "./tarpaulin";

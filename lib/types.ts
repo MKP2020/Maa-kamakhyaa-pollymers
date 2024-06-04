@@ -1,6 +1,7 @@
 import {
   TCategory,
   TInventoryFull,
+  TQuantity,
   TVendors,
   departments,
   grns,
@@ -28,6 +29,10 @@ export type TDepartment = typeof departments.$inferSelect;
 export type TNewDepartment = typeof departments.$inferInsert;
 
 export type TGrade = typeof grades.$inferSelect;
+
+export type TGradeWithQuantity = TGrade & {
+  quantity: TQuantity | null;
+};
 
 export type TNewGrade = typeof grades.$inferInsert;
 

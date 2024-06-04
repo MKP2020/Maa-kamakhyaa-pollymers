@@ -97,8 +97,7 @@ export function TapePlantTable({
 
   const [shift, setShift] = useState((searchParams.get("shift") as any) || "");
 
-  /* this can be used to get the selectedrows 
-  console.log("value", table.getFilteredSelectedRowModel()); */
+  /* this can be used to get the selectedrows ; */
 
   // Create query string
   const createQueryString = React.useCallback(
@@ -212,7 +211,6 @@ export function TapePlantTable({
           </Popover>
           <Button
             onClick={() => {
-              console.log("searchValue", search);
               router.push(
                 `${pathname}?${createQueryString({
                   shift: shift || null,

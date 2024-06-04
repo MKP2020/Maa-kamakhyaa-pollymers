@@ -99,7 +99,6 @@ export const CreateTableListForm: React.FC<UserFormProps> = ({
           : "Item successfully updated",
       });
     } catch (error: any) {
-      console.log(error);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",

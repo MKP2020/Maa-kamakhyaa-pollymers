@@ -115,4 +115,22 @@ export const navItems: NavItem[] = [
     icon: "washingMachine",
     label: "tape-plant",
   },
+  {
+    title: "Loom",
+    href: "/dashboard/loom",
+    icon: "washingMachine",
+    label: "loom",
+  },
+  {
+    title: "Lamination",
+    href: "/dashboard/lamination",
+    icon: "washingMachine",
+    label: "lamination",
+  },
+  {
+    title: "Tarpaulin",
+    href: "/dashboard/tarpaulin",
+    icon: "washingMachine",
+    label: "tarpaulin",
+  },
 ];

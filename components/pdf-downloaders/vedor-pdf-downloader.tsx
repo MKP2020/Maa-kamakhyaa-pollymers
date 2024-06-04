@@ -25,7 +25,6 @@ const VEndorPDFDownloader: FC<{
       "Address",
     ];
     const body = data.map((item) => {
-      console.log("item", item);
       const dItem: (number | string)[] = [];
 
       dItem.push(item.id);

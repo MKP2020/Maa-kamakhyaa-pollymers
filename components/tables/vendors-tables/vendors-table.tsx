@@ -96,8 +96,7 @@ export function VendorTable<TData, TValue>({
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
-  /* this can be used to get the selectedrows 
-  console.log("value", table.getFilteredSelectedRowModel()); */
+  /* this can be used to get the selectedrows  */
 
   // Create query string
   const createQueryString = React.useCallback(
