@@ -19,7 +19,17 @@ export const users = pgTable("users", {
   email: text("email").unique().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   clerkId: text("clerkId").notNull(),
+  departmentId: integer("departmentId")
+    .default(7)
+    .references(() => departments.id),
 });
+
+export const userRelations = relations(users, ({ one }) => ({
+  department: one(departments, {
+    fields: [users.departmentId],
+    references: [departments.id],
+  }),
+}));
 
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),

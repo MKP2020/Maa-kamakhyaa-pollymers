@@ -29,6 +29,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "../ui/use-toast";
 import { getUserRole } from "@/lib/users";
 import { createUser, updateUser } from "@/actions/users";
+import { TDepartment } from "@/lib/types";
+import { departments } from "@/lib/schemas";
 
 export const IMG_MAX_LIMIT = 3;
 
@@ -36,6 +38,7 @@ const formSchema = z.object({
   firstName: z.string().min(1, { message: "Please enter a valid first name" }),
   lastName: z.string().min(1, { message: "Please enter a valid last name" }),
   email: z.string().email({ message: "Please enter a valid email" }),
+  department: z.string().regex(/^\d+\.?\d*$/, "Please select a department"),
   password: z.string().min(4).max(10),
   role: z.string(),
 });
@@ -44,9 +47,13 @@ type UserFormValues = z.infer<typeof formSchema>;
 
 interface UserFormProps {
   initialData: any | null;
+  departments: TDepartment[];
 }
 
-export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
+export const CreateUserForm: React.FC<UserFormProps> = ({
+  initialData,
+  departments,
+}) => {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
@@ -62,6 +69,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
     ? {
         ...initialData,
         password: "",
+
         role: initialData.role.toString(),
       }
     : {
@@ -96,6 +104,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
+
           password: data.password,
           role: parseInt(data.role),
         });
@@ -226,6 +235,42 @@ export const CreateUserForm: React.FC<UserFormProps> = ({ initialData }) => {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="department"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Select Department</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a department"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {/* @ts-ignore  */}
+                      {departments.map((department) => (
+                        <SelectItem
+                          key={department.id.toString()}
+                          value={department.id.toString()}
+                        >
+                          {department.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

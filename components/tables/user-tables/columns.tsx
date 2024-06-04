@@ -3,9 +3,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
-import { getUserRole, type NewUser } from "@/lib/users";
+import { type TUser, getUserRole } from "@/lib/users";
 
-export const columns: ColumnDef<NewUser>[] = [
+export const columns: ColumnDef<TUser>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -36,6 +36,10 @@ export const columns: ColumnDef<NewUser>[] = [
   {
     accessorKey: "email",
     header: "ROLE",
+  },
+  {
+    accessorFn: (data) => data.department?.name,
+    header: "DEPARTMENT",
   },
   {
     accessorFn: (data) => getUserRole(data.role),

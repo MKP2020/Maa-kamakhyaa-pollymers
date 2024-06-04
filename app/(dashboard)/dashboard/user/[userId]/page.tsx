@@ -1,3 +1,4 @@
+import { getDepartments } from "@/actions/department";
 import { getUserById } from "@/actions/users";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreateUserForm } from "@/components/forms/create-user-form";
@@ -15,11 +16,12 @@ export default async function Page({ params }: any) {
 
   const user = !!userId ? await getUserById(userId) : undefined;
 
+  const { data: departments } = await getDepartments();
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
-        <CreateUserForm initialData={user} />
+        <CreateUserForm departments={departments} initialData={user} />
         {/* <ProductForm
           categories={[
             { _id: "shirts", name: "shirts" },

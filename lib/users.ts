@@ -1,9 +1,12 @@
 import { db } from "./db";
 import { users } from "./schema";
+import { TDepartment } from "./types";
 
 export type NewUser = typeof users.$inferInsert;
 
-export type TUser = typeof users.$inferSelect;
+export type TUser = typeof users.$inferSelect & {
+  department: TDepartment | null;
+};
 
 export const getUserRole = (role: number) => {
   if (role === 0) return "admin";
