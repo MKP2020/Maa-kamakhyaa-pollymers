@@ -12,6 +12,8 @@ import {
 import { and, eq, sql, gte, lte, count } from "drizzle-orm";
 import { addProducedQty } from "./quantity";
 import { GlobalQuantityObj } from "@/lib/utils";
+import autoTable from "jspdf-autotable";
+import jsPDF from "jspdf";
 
 export const getTarpaulinList = async (
   shift?: string,

@@ -44,7 +44,18 @@ export const columns: ColumnDef<TInventoryFull>[] = [
     accessorKey: "department.name",
     header: "Department",
   },
-
+  {
+    accessorFn: (data) => {
+      return data.inStockQuantity;
+    },
+    header: "In Stock",
+  },
+  {
+    accessorFn: (data) => {
+      return data.usedQuantity;
+    },
+    header: "Used Qty",
+  },
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,

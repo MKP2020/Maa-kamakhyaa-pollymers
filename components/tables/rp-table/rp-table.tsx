@@ -35,6 +35,8 @@ import {
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Download,
+  Loader2,
   Plus,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -51,6 +53,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { TGRNFull } from "@/lib/types";
 import { DateRange } from "react-day-picker";
 import { TRpFull } from "@/lib/schemas";
+import { getRpList } from "@/actions/rp";
+import { generatePdf } from "@/lib/generate-pdf/rp";
 
 interface DataTableProps {
   columns: (type: string) => ColumnDef<TRpFull, any>[];
@@ -91,6 +95,7 @@ export function RpTable({
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
+  const [downloading, setDownloading] = useState(false);
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: pFrom ? new Date(pFrom) : undefined,
     to: pTo ? new Date(pTo) : undefined,
@@ -244,6 +249,28 @@ export function RpTable({
           </Button>
         </div>
         <div className="flex items-center gap-4">
+          <Button
+            className="text-xs md:text-sm"
+            onClick={async () => {
+              setDownloading(true);
+              const { data } = await getRpList(
+                Number(type || "0"),
+                shift,
+                pFrom || undefined,
+                pTo || undefined
+              );
+
+              await generatePdf(Number(type), data as any);
+              setDownloading(false);
+            }}
+          >
+            {downloading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}{" "}
+            Download
+          </Button>
           <Button
             className="text-xs md:text-sm"
             onClick={() => router.push(`/dashboard/rp/new`)}

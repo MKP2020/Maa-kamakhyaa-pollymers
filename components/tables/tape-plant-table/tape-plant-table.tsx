@@ -35,6 +35,8 @@ import {
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Download,
+  Loader2,
   Plus,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -50,6 +52,8 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
 import { TTapeFull } from "@/lib/schemas";
+import { getTapePlantList } from "@/actions/tapePlant";
+import { generatePdf } from "@/lib/generate-pdf/tape-plant";
 
 interface DataTableProps {
   columns: ColumnDef<TTapeFull, any>[];
@@ -90,6 +94,7 @@ export function TapePlantTable({
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
+  const [downloading, setDownloading] = useState(false);
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: pFrom ? new Date(pFrom) : undefined,
     to: pTo ? new Date(pTo) : undefined,
@@ -228,6 +233,27 @@ export function TapePlantTable({
           </Button>
         </div>
         <div className="flex items-center gap-4">
+          <Button
+            className="text-xs md:text-sm"
+            onClick={async () => {
+              setDownloading(true);
+              const { data } = await getTapePlantList(
+                shift,
+                pFrom || undefined,
+                pTo || undefined
+              );
+
+              await generatePdf(data);
+              setDownloading(false);
+            }}
+          >
+            {downloading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}{" "}
+            Download
+          </Button>
           <Button
             className="text-xs md:text-sm"
             onClick={() => router.push(`/dashboard/tape-plant/new`)}

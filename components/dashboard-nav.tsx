@@ -7,6 +7,7 @@ import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { NavItem } from "@/types";
 import { Dispatch, SetStateAction } from "react";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 interface DashboardNavProps {
   items: NavItem[];

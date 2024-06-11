@@ -35,6 +35,8 @@ import {
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Download,
+  Loader2,
   Plus,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -51,6 +53,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { TIndent, TPurchaseOrder } from "@/lib/types";
 import { TInventory, TInventoryFull } from "@/lib/schemas";
 import { DateRange } from "react-day-picker";
+import { generatePdf } from "@/lib/generate-pdf/inventory";
+import { getInventory } from "@/actions/inventory";
 
 interface DataTableProps {
   columns: ColumnDef<TPurchaseOrder, any>[];
@@ -89,6 +93,7 @@ export function InventoryTable({
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
+  const [downloading, setDownloading] = useState(false);
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: from ? new Date(from) : undefined,
     to: to ? new Date(to) : undefined,
@@ -221,6 +226,27 @@ export function InventoryTable({
           </Button>
         </div>
         <div className="flex items-center gap-4">
+          <Button
+            className="text-xs md:text-sm"
+            onClick={async () => {
+              setDownloading(true);
+              const { data } = await getInventory(
+                search,
+                date?.from ? format(date?.from, "yyyy-MM-dd") : undefined,
+                date?.to ? format(date?.to, "yyyy-MM-dd") : undefined
+              );
+
+              await generatePdf(data as any);
+              setDownloading(false);
+            }}
+          >
+            {downloading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}{" "}
+            Download
+          </Button>
           {/* <Button
             className="text-xs md:text-sm"
             onClick={() => router.push(`/dashboard/inventory/new`)}

@@ -37,6 +37,8 @@ import {
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Download,
+  Loader2,
   Plus,
   View,
 } from "lucide-react";
@@ -52,6 +54,8 @@ import { SHIFT, cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { TWashingUnitFull } from "@/lib/schemas";
+import { getWashingUnits } from "@/actions/washingUnit";
+import { generatePdf } from "@/lib/generate-pdf/washing-unit";
 
 interface DataTableProps {
   columns: ColumnDef<TWashingUnitFull, any>[];
@@ -88,6 +92,7 @@ export function WashingUnitTable({
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
+  const [downloading, setDownloading] = useState(false);
   const [date, setDate] = React.useState<Date | undefined>(
     pDate ? new Date(pDate) : undefined
   );
@@ -243,6 +248,26 @@ export function WashingUnitTable({
           </Button>
         </div>
         <div className="flex items-center gap-4">
+          <Button
+            className="text-xs md:text-sm"
+            onClick={async () => {
+              setDownloading(true);
+              const { data } = await getWashingUnits(
+                shift,
+                date ? format(date, "yyyy-MM-dd") : undefined
+              );
+
+              await generatePdf(data as any);
+              setDownloading(false);
+            }}
+          >
+            {downloading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}{" "}
+            Download
+          </Button>
           <Button
             className="text-xs md:text-sm"
             onClick={() => router.push(`/dashboard/washing-unit/new`)}
