@@ -34,6 +34,7 @@ import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
 import { createIndent, updateIndentApprovedQuantities } from "@/actions/indent";
 import { getTableListByCategory } from "@/actions/table-list";
+import { generateIndentPdf } from "@/lib/generate-pdf/indent";
 
 export const IMG_MAX_LIMIT = 3;
 
@@ -512,7 +513,19 @@ export const CreateIndentForm: React.FC<IndentFormProps> = ({
                 {action}
               </Button>
             </div>
-          ) : null}
+          ) : (
+            <Button
+              className="ml-auto"
+              type="button"
+              onClick={() => {
+                if (!!initialData) {
+                  generateIndentPdf(initialData);
+                }
+              }}
+            >
+              Download PDF
+            </Button>
+          )}
         </form>
       </Form>
     </>

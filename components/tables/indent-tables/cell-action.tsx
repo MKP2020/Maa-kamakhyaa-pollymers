@@ -8,6 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { generateIndentPdf } from "@/lib/generate-pdf/indent";
 import { TIndent } from "@/lib/types";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
@@ -29,26 +30,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const savePdf = () => {
-    const doc = new jsPDF();
-
-    const pdfData: UserOptions = {
-      head: [["Si.No", "Item", "Indented Quantity", "Approved Quantity"]],
-      body: data.items.map((item, index) => [
-        `${index + 1}`,
-        item.item.name,
-        item.indentedQty.toString(),
-        item.approvedQty?.toString() || "",
-      ]),
-      margin: { top: 60, left: 4, right: 4 },
-    };
-
-    doc.text(`Department: ${data.department.name}`, 4, 10, {});
-    doc.text(`Si.No: ${data.indentNumber}`, 4, 20);
-    doc.text(`date: ${format(data.date, "dd/MM/yyyy")}`, 4, 30);
-    doc.text(`note: ${data.note || ""}`, 4, 40);
-    autoTable(doc, pdfData);
-
-    doc.save("indent-" + data.indentNumber + ".pdf");
+    generateIndentPdf(data);
   };
   return (
     <>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Material Receipt Note</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .header {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .sub-header {
+        text-align: right;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .details,
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      .details th,
+      .details td,
+      .table th,
+      .table td {
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: left;
+      }
+      .details th {
+        width: 20%;
+      }
+      .details td {
+        width: 30%;
+      }
+      .table th {
+        background-color: #f2f2f2;
+      }
+      .footer,
+      .bottom {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .bottom div {
+        flex: 1;
+        text-align: center;
+      }
+
+      .top-container {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        gap: 10px;
+        padding-bottom: 30px;
+        border-width: 1px;
+        border-style: solid;
+        /* padding: 10px; */
+      }
+
+      .menu {
+        padding: 10px;
+        flex: 1;
+      }
+      .item {
+        border-width: 0px;
+        border-left-width: 1px;
+        border-style: solid;
+        padding: 10px;
+        flex: 2.5;
+      }
+      .footer {
+        grid-area: footer;
+      }
+
+      .title {
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        MAA KAMAKHYAA POLLYMERS<br />
+        <span>MATERIAL RECEIPT NOTE</span>
+      </div>
+      <div class="sub-header">No: 896</div>
+      <div class="top-container">
+        <div class="menu">
+          <span>Supplier's Name and Address (Code)</span>
+        </div>
+        <div aria-colspan="4" class="item">
+          <div style="display: flex; flex: 1; flex-direction: row">
+            <div style="flex: 1; display: flex">
+              <span style="flex: 1" class="title">MRN No. <span></span> </span>
+              <span style="flex: 1" class="title">Dt <span></span> </span>
+            </div>
+            <div style="display: flex; flex: 1">
+              <span class="title">Mlt. Entry Slip No. <span></span></span>
+            </div>
+          </div>
+          <div style="display: flex; flex: 1; flex-direction: row">
+            <div style="flex: 1">
+              <span class="title">Indent No. <span></span> </span>
+              <span class="title">Dt <span></span> </span>
+            </div>
+            <div style="display: flex; flex: 1">
+              <span class="title">Indenting Dept <span></span></span>
+            </div>
+          </div>
+          <div style="display: flex; flex: 1; flex-direction: row">
+            <div style="display: flex; flex: 1">
+              <span class="title">Purchase Order No. </span>
+            </div>
+            <div style="display: flex; flex: 1">
+              <span class="title">Dt. </span>
+            </div>
+          </div>
+          <div style="display: flex; flex: 1; flex-direction: row">
+            <div style="display: flex; flex: 1">
+              <span class="title">Challan No. </span>
+            </div>
+            <div style="display: flex; flex: 1">
+              <span class="title">Dt. </span>
+            </div>
+          </div>
+          <div style="display: flex; flex: 1; flex-direction: row">
+            <div style="display: flex; flex: 1">
+              <span class="title">L R No. </span>
+            </div>
+            <div style="display: flex; flex: 1">
+              <span class="title">Dt. </span>
+            </div>
+          </div>
+          <div style="display: flex; flex: 1; flex-direction: row">
+            <div style="display: flex; flex: 1">
+              <span class="title">Vehicle No. </span>
+            </div>
+            <div style="display: flex; flex: 1">
+              <span class="title">Slip No. </span>
+            </div>
+          </div>
+          <div style="display: flex; flex: 1; flex-direction: row">
+            <div style="display: flex; flex: 1">
+              <span class="title">Transporters Name </span>
+            </div>
+            <div style="display: flex; flex: 1">
+              <span class="title">Weightment Slip No. </span>
+            </div>
+          </div>
+        </div>
+        <div class="footer"></div>
+      </div>
+      <table class="details">
+        <tr>
+          <th>Supplier's Name and Address (Code)</th>
+          <td colspan="3"></td>
+          <th>MRN No.</th>
+          <td></td>
+          <th>Dt.</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>Indent No.</th>
+          <td></td>
+          <th>Dt.</th>
+          <td></td>
+          <th>Mtt. Entry Slip No.</th>
+          <td></td>
+          <th>Indenting Dept.</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>Purchase Order No.</th>
+          <td></td>
+          <th>Dt.</th>
+          <td></td>
+          <th>Challan No.</th>
+          <td></td>
+          <th>Dt.</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>L R No.</th>
+          <td></td>
+          <th>Dt.</th>
+          <td></td>
+          <th>Vehicle No.</th>
+          <td></td>
+          <th>Slip No.</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>GST No.</th>
+          <td></td>
+          <th>Transporter's Name</th>
+          <td></td>
+          <th>Weightment Slip No.</th>
+          <td></td>
+          <th>Way Bill No.</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>Invoice No.</th>
+          <td></td>
+          <th>Dt.</th>
+          <td></td>
+          <th colspan="4"></th>
+        </tr>
+      </table>
+
+      <table class="table">
+        <tr>
+          <th>Sl. No.</th>
+          <th>Description of Materials</th>
+          <th>Item Code</th>
+          <th>Unit</th>
+          <th>Quantity Recorded</th>
+          <th>Quantity Rejected</th>
+          <th>Quantity Accepted</th>
+          <th>Value in Rs.</th>
+          <th>Remarks</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <!-- Repeat as necessary -->
+      </table>
+
+      <div class="footer">
+        <div>GST Invoice Received: YES / No</div>
+        <div>RG 23A/C Part-II Entry No.:</div>
+        <div>Dt.:</div>
+        <div>Rejection Note No.:</div>
+      </div>
+
+      <div class="bottom">
+        <div>Prepared By</div>
+        <div>Checked By</div>
+        <div>Materials Inspected & Approved By</div>
+      </div>
+    </div>
+  </body>
+</html>
