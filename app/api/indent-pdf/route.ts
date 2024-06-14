@@ -1,7 +1,7 @@
 import { TIndent } from "@/lib/types";
 import { format } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
 //       However, this option will stay so when we migrate to full chromium it will work.
@@ -20,8 +20,7 @@ const LOCAL_CHROME_EXECUTABLE =
 export async function POST(request: NextRequest) {
   const { data } = (await request.json()) as { data: TIndent };
 
-  const executablePath =
-    (await chromium.executablePath()) || LOCAL_CHROME_EXECUTABLE;
+  const executablePath = LOCAL_CHROME_EXECUTABLE;
 
   // Generate HTML content
   const htmlContent = `
