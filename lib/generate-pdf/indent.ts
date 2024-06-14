@@ -45,31 +45,31 @@ export const generateIndentPdf = async (ref: RefObject<any>, name: string) => {
   const inputData = ref.current;
 
   const canvas = await html2canvas(inputData);
-  const img = canvas.toDataURL("image/png");
+  const img = canvas.toDataURL("image/webp");
 
   const doc = new jsPDF({ unit: "px", format: "a4" });
 
   const width = doc.internal.pageSize.width - 8;
   const height = (canvas.height * width) / canvas.width;
 
-  const elementHTML = document.querySelector("#indent-pdf")!;
-  doc.html(elementHTML as any, {
-    x: 0,
-    y: 0,
-    windowWidth: 1080,
-    width: 200,
-    filename: "Inter",
-    autoPaging: "text",
-    callback: function (doc) {
-      doc.save(`indent-${name}.pdf`);
-    },
-  });
-  // doc.addImage(img, "PNG", 4, 0, width, height);
+  // const elementHTML = document.querySelector("#indent-pdf")!;
+  // doc.html(elementHTML as any, {
+  //   x: 0,
+  //   y: 0,
+  //   windowWidth: 1080,
+  //   width: 200,
+  //   filename: "Inter",
+  //   autoPaging: "text",
+  //   callback: function (doc) {
+  //     doc.save(`indent-${name}.pdf`);
+  //   },
+  // });
+  doc.addImage(img, "PNG", 4, 0, width, height);
+  doc.save(`indent-${name}.pdf`);
   // var elementHTML = document.querySelector("#indent-pdf")!;
   // doc.html(elementHTML as any, {
   //   callback: function (doc) {
   //     // Save the PDF
-
   //   },
   //   // margin: [10, 10, 10, 10],
   //   // autoPaging: "text",

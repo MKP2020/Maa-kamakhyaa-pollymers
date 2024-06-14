@@ -77,8 +77,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
-              generatePdfWithApi(data);
-              // setSelectedIndent(true);
+              // generatePdfWithApi(data);
+              setSelectedIndent(true);
             }}
           >
             <DownloadCloud className="mr-2 h-4 w-4" /> Download PDF

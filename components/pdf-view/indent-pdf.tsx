@@ -2,6 +2,7 @@ import { TIndent } from "@/lib/types";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { useEffect, useRef } from "react";
 import { generateIndentPdf } from "@/lib/generate-pdf/indent";
+import { format } from "date-fns";
 
 type TIndentPdfProps = {
   data: TIndent;
@@ -61,18 +62,18 @@ export default function IndentPdf(props: TIndentPdfProps) {
             <div className="flex-1">
               <div>
                 <span className="font-bold">Indent raised by (Department)</span>
-                <span className="underline px-2">Washing</span>
+                <span className="underline px-2">{data.department.name}</span>
                 <span className="font-bold">Department</span>
               </div>
             </div>
             <div className="w-52">
               <div>
                 <span className="font-bold text-black">Sl. No.</span>
-                <span>17</span>
+                <span>{data.indentNumber}</span>
               </div>
               <div>
                 <span className="font-bold text-black">Date</span>
-                <span>12/03/24</span>
+                <span>{format(data.date, "dd/MM/yyyy")}</span>
               </div>
             </div>
           </div>
@@ -97,60 +98,25 @@ export default function IndentPdf(props: TIndentPdfProps) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="border text-black border-black px-2 py-1">1</td>
-                <td className="border text-black border-black px-2 py-1">
-                  Slogging Spanner 36 NO
-                </td>
-                <td className="border text-black border-black px-2 py-1">
-                  2 NOS
-                </td>
-                <td className="border text-black border-black px-2 py-1">
-                  2 NOS
-                </td>
-                <td className="border text-black border-black px-2 py-1"></td>
-              </tr>
-              <tr>
-                <td className="border text-black border-black px-2 py-1">2</td>
-                <td className="border text-black border-black px-2 py-1">
-                  {"PVC Pipe 6 x 20 (6 inch x 20 ft)"}
-                </td>
-                <td className="border text-black border-black px-2 py-1">
-                  01 NOS
-                </td>
-                <td className="border text-black border-black px-2 py-1">
-                  01 NOS
-                </td>
-                <td className="border text-black border-black px-2 py-1"></td>
-              </tr>
-              <tr>
-                <td className="border text-black border-black px-2 py-1">3</td>
-                <td className="border text-black border-black px-2 py-1">
-                  Grub Screw 4 x 10 mm
-                </td>
-                <td className="border text-black border-black px-2 py-1">
-                  20 NOS
-                </td>
-                <td className="border text-black border-black px-2 py-1">
-                  20 NOS
-                </td>
-                <td className="border text-black border-black px-2 py-1"></td>
-              </tr>
-              <tr>
-                <td className="border text-black text-black border-black px-2 py-1">
-                  4
-                </td>
-                <td className="border text-black text-black border-black px-2 py-1">
-                  Grub Screw 5 x 10 mm
-                </td>
-                <td className="border text-black border-black px-2 py-1">
-                  20 NOS
-                </td>
-                <td className="border text-black border-black px-2 py-1">
-                  20 NOS
-                </td>
-                <td className="border text-black border-black px-2 py-1"></td>
-              </tr>
+              {data.items.map((item, index) => {
+                return (
+                  <tr key={index.toString()}>
+                    <td className="border text-black text-center border-black px-2 py-1">
+                      {index + 1}
+                    </td>
+                    <td className="border text-black text-center border-black px-2 py-1">
+                      {item.item.name}
+                    </td>
+                    <td className="border text-black text-center border-black px-2 py-1">
+                      {item.indentedQty} {item.item.unit}
+                    </td>
+                    <td className="border text-black text-center border-black px-2 py-1">
+                      {item.approvedQty} {item.item.unit}
+                    </td>
+                    <td className="border text-black text-center border-black px-2 py-1"></td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
@@ -170,7 +136,7 @@ export default function IndentPdf(props: TIndentPdfProps) {
           </div>
 
           <div className="flex flex-row border  border-black border-t-0 min-h-10 p-2">
-            <span className="font-bold">Note</span>
+            <span className="font-bold">Note {data.note}</span>
           </div>
         </div>
       </DialogContent>
