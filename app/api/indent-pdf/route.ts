@@ -21,7 +21,9 @@ export async function POST(request: NextRequest) {
   const { data } = (await request.json()) as { data: TIndent };
 
   const executablePath =
-    (await chromium.executablePath()) || LOCAL_CHROME_EXECUTABLE;
+    (await chromium.executablePath(
+      "https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar"
+    )) || LOCAL_CHROME_EXECUTABLE;
 
   // Generate HTML content
   const htmlContent = `
