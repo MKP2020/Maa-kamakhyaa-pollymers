@@ -1,5 +1,6 @@
 "use client";
 import { deleteTableList } from "@/actions/table-list";
+import IndentPdf from "@/components/pdf-view/indent-pdf";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,7 +9,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { generateIndentPdf } from "@/lib/generate-pdf/indent";
+import {
+  generateIndentPdf,
+  generatePdfWithApi,
+} from "@/lib/generate-pdf/indent";
 import { TIndent } from "@/lib/types";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
@@ -24,16 +28,22 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const [selectedIndent, setSelectedIndent] = useState(false);
 
   const onConfirm = async () => {
     deleteTableList(data.id);
   };
 
-  const savePdf = () => {
-    generateIndentPdf(data);
-  };
   return (
     <>
+      <IndentPdf
+        onClose={() => {
+          setSelectedIndent(false);
+        }}
+        data={data}
+        visible={!!selectedIndent}
+      />
+
       {/* <AlertDialog open={open} onOpenChange={(opn) => setOpen(opn)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -65,7 +75,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Edit3 className="mr-2 h-4 w-4" /> View
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={savePdf}>
+          <DropdownMenuItem
+            onClick={() => {
+              generatePdfWithApi(data);
+              // setSelectedIndent(true);
+            }}
+          >
             <DownloadCloud className="mr-2 h-4 w-4" /> Download PDF
           </DropdownMenuItem>
         </DropdownMenuContent>

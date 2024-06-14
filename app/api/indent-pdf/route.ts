@@ -2,10 +2,27 @@ import { TIndent } from "@/lib/types";
 import { format } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
-import chromium from "@sparticuz/chromium-min";
+import chromium from "@sparticuz/chromium";
+
+//       However, this option will stay so when we migrate to full chromium it will work.
+chromium.setHeadlessMode = true;
+
+// Optional: If you'd like to disable webgl, true is the default.
+chromium.setGraphicsMode = false;
+
+// You may want to change this if you're developing
+// on a platform different from macOS.
+// See https://github.com/vercel/og-image for a more resilient
+// system-agnostic options for Puppeteeer.
+const LOCAL_CHROME_EXECUTABLE =
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
 export async function POST(request: NextRequest) {
   const { data } = (await request.json()) as { data: TIndent };
+
+  const executablePath =
+    (await chromium.executablePath()) || LOCAL_CHROME_EXECUTABLE;
+
   // Generate HTML content
   const htmlContent = `
     <!DOCTYPE html>
@@ -155,11 +172,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const browser = await puppeteer.launch({
+      executablePath: executablePath,
       args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
+      headless: false,
     });
     const page = await browser.newPage();
     await page.setContent(htmlContent);

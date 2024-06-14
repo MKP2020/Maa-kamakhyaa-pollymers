@@ -2,7 +2,6 @@ import { getCategories } from "@/actions/category";
 import { getVendorById } from "@/actions/vendor";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreteVendorForm } from "@/components/forms/create-vendor-form";
-// import { ProductForm } from "@/components/forms/product-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { canAccessPage } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs/server";

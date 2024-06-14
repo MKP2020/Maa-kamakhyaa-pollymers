@@ -2,17 +2,14 @@
 import { useMemo, useState } from "react";
 import { State, City } from "country-state-city";
 import { Loader2, Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { createUser } from "@/actions/users";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,7 +27,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { TCategory, TVendorsFull } from "@/lib/schema";
 import { getUserRole, getVendorType } from "@/lib/users";
-import { useToast } from "../ui/use-toast";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createVendor, deleteVendor } from "@/actions/vendor";
@@ -44,6 +40,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { useToast } from "../ui/use-toast";
 
 export const IMG_MAX_LIMIT = 3;
 
