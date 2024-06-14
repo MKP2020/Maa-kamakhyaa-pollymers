@@ -20,7 +20,8 @@ const LOCAL_CHROME_EXECUTABLE =
 export async function POST(request: NextRequest) {
   const { data } = (await request.json()) as { data: TIndent };
 
-  const executablePath = LOCAL_CHROME_EXECUTABLE;
+  const executablePath =
+    (await chromium.executablePath()) || LOCAL_CHROME_EXECUTABLE;
 
   // Generate HTML content
   const htmlContent = `
