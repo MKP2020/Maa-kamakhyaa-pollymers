@@ -1,5 +1,6 @@
 "use client";
 import { deleteTableList } from "@/actions/table-list";
+import PoPdf from "@/components/pdf-view/po-pdf";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,6 +25,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
+  const [pdfVisible, setPdfVisible] = useState(false);
   const onConfirm = async () => {
     deleteTableList(data.id);
   };
@@ -34,6 +36,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   return (
     <>
+      <PoPdf
+        onClose={() => {
+          setPdfVisible(false);
+        }}
+        data={data}
+        visible={pdfVisible}
+      />
       {/* <AlertDialog open={open} onOpenChange={(opn) => setOpen(opn)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -65,7 +74,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Edit3 className="mr-2 h-4 w-4" /> View
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={savePdf}>
+          <DropdownMenuItem
+            onClick={() => {
+              setPdfVisible(true);
+            }}
+          >
             <DownloadCloud className="mr-2 h-4 w-4" /> Download PDF
           </DropdownMenuItem>
         </DropdownMenuContent>

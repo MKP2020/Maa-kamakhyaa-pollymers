@@ -3,6 +3,7 @@ import {
   TInventoryFull,
   TQuantity,
   TVendors,
+  TVendorsFull,
   departments,
   grns,
   indentItems,
@@ -67,8 +68,9 @@ export type TNewPurchaseOrder = typeof purchaseOrders.$inferInsert;
 
 export type TPurchaseOrder = typeof purchaseOrders.$inferSelect & {
   vendor: TVendors;
-  items: TPurchaseOrderItem[];
-  seller: TVendors;
+  items: TPurchaseOrderItemFull[];
+  seller: TVendorsFull;
+  indent: TIndent;
 };
 
 export type TNewGRN = typeof grns.$inferInsert;

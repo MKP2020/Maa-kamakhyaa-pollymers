@@ -78,9 +78,13 @@ export const getPurchaseOrders = async (
       limit,
       offset,
       with: {
-        items: true,
+        items: { with: { item: { with: { item: true } } } },
         indent: true,
-        seller: true,
+        seller: {
+          with: {
+            address: true,
+          },
+        },
       },
     });
 

@@ -252,3 +252,75 @@ export const canAccessPage = (user: User | null, page: TAccessPages) => {
     }
   }
 };
+
+export function numberToWords(num: number) {
+  const lessThan20 = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ];
+  const tens = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+  ];
+  const scales = ["", "Thousand", "Lakh", "Crore"];
+
+  function helper(num: number): string {
+    if (num === 0) return "";
+    else if (num < 20) return lessThan20[num] + " ";
+    else if (num < 100)
+      return tens[Math.floor(num / 10)] + " " + helper(num % 10);
+    else
+      return (
+        lessThan20[Math.floor(num / 100)] + " Hundred " + helper(num % 100)
+      );
+  }
+
+  if (num === 0) return "Zero";
+
+  let word = "";
+  let scaleIndex = 0;
+
+  while (num > 0) {
+    let chunk = num % 1000;
+    if (scaleIndex === 2 || scaleIndex === 3) {
+      chunk = num % 100;
+      num = Math.floor(num / 100);
+    } else {
+      num = Math.floor(num / 1000);
+    }
+
+    if (chunk !== 0) {
+      word = helper(chunk) + scales[scaleIndex] + " " + word;
+    }
+
+    scaleIndex++;
+  }
+
+  return word.trim();
+}
