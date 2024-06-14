@@ -3,6 +3,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { CreateTableListForm } from "@/components/forms/create-table-list-form";
 // import { ProductForm } from "@/components/forms/product-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 import React from "react";
 
 const breadcrumbItems = [
@@ -17,6 +19,10 @@ type paramsProps = {
 };
 
 export default async function Page(props: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "table-list");
+
   const { params } = props;
 
   const tableListId = params?.id !== "new" ? params?.id : undefined;

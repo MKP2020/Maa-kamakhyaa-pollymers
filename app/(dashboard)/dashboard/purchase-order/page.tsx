@@ -2,6 +2,8 @@ import { getPurchaseOrders } from "@/actions/purchaseOrder";
 import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/purchase-order-tables/columns";
 import { PurchaseOrderTable } from "@/components/tables/purchase-order-tables/purchase-order-table";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 type paramsProps = {
   searchParams: {
@@ -14,6 +16,8 @@ const breadcrumbItems = [
 ];
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+  canAccessPage(aUser, "po");
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search || undefined;

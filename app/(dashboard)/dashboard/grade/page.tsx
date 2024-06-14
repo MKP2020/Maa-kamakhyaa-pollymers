@@ -2,6 +2,8 @@ import { getGrades } from "@/actions/grade";
 import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/grade-table/columns";
 import { GradeTable } from "@/components/tables/grade-table/grade-table";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const breadcrumbItems = [{ title: "Fabric", link: "/dashboard/grade" }];
 
@@ -12,6 +14,10 @@ type paramsProps = {
 };
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "grade");
+
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search || null;

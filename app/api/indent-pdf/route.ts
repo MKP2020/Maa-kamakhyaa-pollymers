@@ -2,6 +2,7 @@ import { TIndent } from "@/lib/types";
 import { format } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium-min";
 
 export async function POST(request: NextRequest) {
   const { data } = (await request.json()) as { data: TIndent };
@@ -153,7 +154,13 @@ export async function POST(request: NextRequest) {
   </html>`;
 
   try {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    });
     const page = await browser.newPage();
     await page.setContent(htmlContent);
     const pdfBuffer = await page.pdf({ format: "A4" });
@@ -174,6 +181,7 @@ export async function POST(request: NextRequest) {
     //   { status: 500 }
     // );
   } catch (error) {
+    console.log("error", error);
     return NextResponse.json(
       {
         message: "Error generating PDF",

@@ -2,6 +2,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { GRNTable } from "@/components/tables/grn-table/grn-table";
 import { columns } from "@/components/tables/grn-table/columns";
 import { getGrns } from "@/actions/grn";
+import { currentUser } from "@clerk/nextjs/server";
+import { canAccessPage } from "@/lib/utils";
 
 type paramsProps = {
   searchParams: {
@@ -12,6 +14,10 @@ type paramsProps = {
 const breadcrumbItems = [{ title: "GRN", link: "/dashboard/grn" }];
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "grn");
+
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search || undefined;

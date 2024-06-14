@@ -2,6 +2,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { TapePlantTable } from "@/components/tables/tape-plant-table/tape-plant-table";
 import { columns } from "@/components/tables/tape-plant-table/columns";
 import { getTapePlantList } from "@/actions/tapePlant";
+import { currentUser } from "@clerk/nextjs/server";
+import { canAccessPage } from "@/lib/utils";
 
 const breadcrumbItems = [
   { title: "Tape Plant", link: "/dashboard/tape-plant" },
@@ -14,6 +16,9 @@ type paramsProps = {
 };
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+  canAccessPage(aUser, "tape-plant");
+
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
 

@@ -65,11 +65,12 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
   const toastMessage = initialData ? "User updated." : "User created.";
   const action = initialData ? "Save changes" : "Create";
 
+  console.log("initialData", initialData);
   const defaultValues = initialData
     ? {
         ...initialData,
         password: "",
-
+        department: initialData.departmentId.toString(),
         role: initialData.role.toString(),
       }
     : {
@@ -97,6 +98,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
           email: data.email,
           password: data.password,
           role: parseInt(data.role),
+          departmentId: Number(data.department),
         });
         // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
       } else {
@@ -104,9 +106,9 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
-
           password: data.password,
           role: parseInt(data.role),
+          departmentId: Number(data.department),
         });
       }
       router.refresh();
@@ -298,7 +300,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
                     </FormControl>
                     <SelectContent>
                       {/* @ts-ignore  */}
-                      {["0", "1", "2"].map((roleType) => (
+                      {["0", "1", "2", "3", "4"].map((roleType) => (
                         <SelectItem key={roleType} value={roleType}>
                           {getUserRole(Number(roleType))}
                         </SelectItem>

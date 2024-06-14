@@ -1,10 +1,11 @@
 import { getIndentById, getIndents } from "@/actions/indent";
 import { getPurchaseOrderById } from "@/actions/purchaseOrder";
-import { getVendors, getVendorsByType } from "@/actions/vendor";
+import { getVendorsByType } from "@/actions/vendor";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreatePurchaseOrder } from "@/components/forms/create-purchase-order-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { TIndent, TPurchaseOrder } from "@/lib/types";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 type paramsProps = {
   params: {
@@ -24,6 +25,8 @@ const getBreadcrumbItems = (id?: string) => [
 ];
 
 export default async function Page({ params }: paramsProps) {
+  const aUser = await currentUser();
+  canAccessPage(aUser, "po");
   const id = params.id === "new" ? undefined : (params.id as string);
 
   const breadcrumbItems = getBreadcrumbItems(id);
@@ -40,11 +43,15 @@ export default async function Page({ params }: paramsProps) {
       : await getIndentById(purchaseOrder.indentId)
     : undefined;
 
+  if (!aUser) return null;
+
+  const role = (aUser.publicMetadata.role as number) || 2;
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
         <CreatePurchaseOrder
+          canApprove={role !== 2}
           initialData={purchaseOrder as any}
           indents={!!id ? (!pIndent ? [] : [pIndent]) : indents}
           vendors={vendors}

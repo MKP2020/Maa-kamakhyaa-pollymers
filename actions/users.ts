@@ -2,7 +2,7 @@
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { TUser, getUserRole, type NewUser } from "@/lib/users";
-import { clerkClient } from "@clerk/nextjs";
+import { clerkClient } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 
 export const getAllUsers = async (): Promise<TUser[]> => {
@@ -27,6 +27,7 @@ export const createUser = async (
     firstName: firstName,
     lastName: lastName,
     emailAddress: [email],
+
     password,
     publicMetadata: {
       role: getUserRole(role),
@@ -64,8 +65,9 @@ export const updateUser = async (
     firstName: firstName,
     lastName: lastName,
     password,
+
     publicMetadata: {
-      role: getUserRole(role),
+      role: role,
     },
     skipPasswordChecks: true,
   });

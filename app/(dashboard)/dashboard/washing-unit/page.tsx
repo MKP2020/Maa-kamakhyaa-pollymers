@@ -2,7 +2,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/washin-unit-table/columns";
 import { getWashingUnits } from "@/actions/washingUnit";
 import { WashingUnitTable } from "@/components/tables/washin-unit-table/washing-unit-table";
-import { isValidShift } from "@/lib/utils";
+import { canAccessPage, isValidShift } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 type paramsProps = {
   searchParams: {
@@ -15,6 +16,8 @@ const breadcrumbItems = [
 ];
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+  canAccessPage(aUser, "washing-unit");
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const shift = (searchParams.shift || undefined) as any;

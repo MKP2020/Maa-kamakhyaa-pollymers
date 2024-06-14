@@ -12,7 +12,7 @@
     "db:seed": "node --loader esbuild-register/loader -r esbuild-register ./app/db/seed.ts"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.29.12",
+    "@clerk/nextjs": "^5.1.5",
     "@clerk/themes": "^1.7.12",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-accordion": "^1.1.2",
@@ -30,6 +30,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
+    "@sparticuz/chromium-min": "^123.0.1",
     "@tanstack/react-table": "^8.15.3",
     "@uploadthing/react": "^6.4.1",
     "@vercel/postgres": "^0.8.0",
@@ -45,6 +46,7 @@
     "next": "14.1.4",
     "next-themes": "^0.3.0",
     "puppeteer": "^22.7.1",
+    "puppeteer-core": "^22.11.0",
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",

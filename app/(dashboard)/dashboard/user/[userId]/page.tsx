@@ -4,6 +4,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { CreateUserForm } from "@/components/forms/create-user-form";
 // import { ProductForm } from "@/components/forms/product-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 import React from "react";
 
 const breadcrumbItems = [
@@ -12,6 +14,10 @@ const breadcrumbItems = [
 ];
 
 export default async function Page({ params }: any) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "user");
+
   const userId = params?.userId !== "new" ? params?.userId : undefined;
 
   const user = !!userId ? await getUserById(userId) : undefined;

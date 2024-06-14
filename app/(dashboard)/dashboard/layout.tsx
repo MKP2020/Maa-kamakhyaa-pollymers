@@ -1,7 +1,7 @@
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import type { Metadata } from "next";
-
+import {} from "@clerk/nextjs";
 export const metadata: Metadata = {
   title: "MKP CRM / Admin Dashboard",
   description: "admin dashboard",

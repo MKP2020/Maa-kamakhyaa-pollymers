@@ -1,5 +1,6 @@
 import BreadCrumb from "@/components/breadcrumb";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { currentUser } from "@clerk/nextjs/server";
 
 const getBreadcrumbItems = (id?: string) => [
   { title: "Indent", link: "/dashboard/indent" },

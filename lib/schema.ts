@@ -227,7 +227,7 @@ export const purchaseOrders = pgTable("purchaseOrders", {
   taxType: varchar("taxType", { length: 10 }).notNull(),
   taxPercentage: integer("taxPercentage").notNull(),
 
-  approvalStatus: integer("approvalStatus").default(0).notNull(),
+  approvalStatus: integer("approvalStatus").default(2).notNull(),
   status: integer("status").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

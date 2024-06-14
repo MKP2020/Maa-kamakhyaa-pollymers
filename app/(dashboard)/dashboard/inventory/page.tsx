@@ -2,6 +2,8 @@ import { getInventory } from "@/actions/inventory";
 import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/inventory-tables/columns";
 import { InventoryTable } from "@/components/tables/inventory-tables/inventory-table";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 type paramsProps = {
   searchParams: {
@@ -12,6 +14,10 @@ type paramsProps = {
 const breadcrumbItems = [{ title: "Inventory", link: "/dashboard/inventory" }];
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "inventory");
+
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search || undefined;

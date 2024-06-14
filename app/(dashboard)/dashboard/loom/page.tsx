@@ -2,6 +2,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/loom-table/columns";
 import { getLoomList } from "@/actions/loom";
 import { LoomTable } from "@/components/tables/loom-table/loom-table";
+import { currentUser } from "@clerk/nextjs/server";
+import { canAccessPage } from "@/lib/utils";
 
 const breadcrumbItems = [{ title: "Loom", link: "/dashboard/loom" }];
 
@@ -12,6 +14,8 @@ type paramsProps = {
 };
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+  canAccessPage(aUser, "loom");
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
 

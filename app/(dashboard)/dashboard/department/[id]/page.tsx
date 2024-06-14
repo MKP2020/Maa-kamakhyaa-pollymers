@@ -2,6 +2,8 @@ import { getDepartmentById } from "@/actions/department";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreateDepartmentForm } from "@/components/forms/create-department-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const breadcrumbItems = [
   { title: "Department", link: "/dashboard/department" },
@@ -15,6 +17,10 @@ type paramsProps = {
 };
 
 export default async function Page(props: paramsProps) {
+  const user = await currentUser();
+
+  canAccessPage(user, "department");
+
   const { params } = props;
 
   const departmentId = params?.id !== "new" ? params?.id : undefined;

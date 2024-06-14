@@ -6,7 +6,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { CreateTarpaulinForm } from "@/components/forms/create-tarpaulin-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TParamsProps } from "@/lib/types";
-import { GRADES_TYPES } from "@/lib/utils";
+import { GRADES_TYPES, canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const getBreadcrumbItems = (id?: string) => [
   { title: "Tarpaulin", link: "/dashboard/tarpaulin" },
@@ -17,6 +18,8 @@ const getBreadcrumbItems = (id?: string) => [
 ];
 
 export default async function Page({ params }: TParamsProps) {
+  const aUser = await currentUser();
+  canAccessPage(aUser, "tarpaulin");
   const id = params?.id === "new" ? undefined : (params?.id as string);
 
   const breadcrumbItems = getBreadcrumbItems(id);

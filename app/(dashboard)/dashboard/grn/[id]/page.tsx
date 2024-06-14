@@ -6,6 +6,8 @@ import {
 import BreadCrumb from "@/components/breadcrumb";
 import { CreateGRN } from "@/components/forms/create-grn-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 type paramsProps = {
   params: {
@@ -23,6 +25,10 @@ const getBreadcrumbItems = (id?: string) => [
 ];
 
 export default async function Page({ params }: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "grn");
+
   const id = params.id === "new" ? undefined : (params.id as string);
 
   const breadcrumbItems = getBreadcrumbItems(id);

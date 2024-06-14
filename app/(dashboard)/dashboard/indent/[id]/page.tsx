@@ -4,6 +4,8 @@ import { getIndentById } from "@/actions/indent";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreateIndentForm } from "@/components/forms/create-indent-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const getBreadcrumbItems = (id?: string) => [
   { title: "Indent", link: "/dashboard/indent" },
@@ -21,6 +23,10 @@ type paramsProps = {
 };
 
 export default async function Page({ params }: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "indent");
+
   const indentId = params?.id !== "new" ? params?.id : undefined;
 
   const breadcrumbItems = getBreadcrumbItems(indentId);

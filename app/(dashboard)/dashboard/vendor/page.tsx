@@ -2,6 +2,8 @@ import { getVendors } from "@/actions/vendor";
 import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/vendors-tables/columns";
 import { VendorTable } from "@/components/tables/vendors-tables/vendors-table";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const breadcrumbItems = [{ title: "Category", link: "/dashboard/vendor" }];
 
@@ -12,6 +14,10 @@ type paramsProps = {
 };
 
 export default async function Page({ searchParams }: paramsProps) {
+  const user = await currentUser();
+
+  canAccessPage(user, "vendor");
+
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
 

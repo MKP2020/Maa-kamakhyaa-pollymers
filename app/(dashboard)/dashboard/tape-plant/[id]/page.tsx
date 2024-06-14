@@ -7,7 +7,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { CreateTapePlantForm } from "@/components/forms/create-tape-plant-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TParamsProps } from "@/lib/types";
-import { GRADES_TYPES, GlobalQuantityObj } from "@/lib/utils";
+import { GRADES_TYPES, GlobalQuantityObj, canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const breadcrumbItems = [];
 
@@ -21,6 +22,8 @@ const getBreadcrumbItems = (id?: string) => [
 ];
 
 export default async function Page(props: TParamsProps) {
+  const aUser = await currentUser();
+  canAccessPage(aUser, "tape-plant");
   const id = !!props.params?.id
     ? props.params.id === "new"
       ? undefined

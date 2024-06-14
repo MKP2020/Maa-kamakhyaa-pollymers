@@ -2,6 +2,8 @@ import { getGradeById } from "@/actions/grade";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreateGradeForm } from "@/components/forms/create-grade-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const breadcrumbItems = [
   { title: "Fabric", link: "/dashboard/grade" },
@@ -15,6 +17,10 @@ type paramsProps = {
 };
 
 export default async function Page(props: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "grade");
+
   const { params } = props;
 
   const departmentId = params?.id !== "new" ? params?.id : undefined;

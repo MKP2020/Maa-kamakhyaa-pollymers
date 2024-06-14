@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { getYear } from "date-fns";
+import { redirect } from "next/navigation";
+import { User } from "@clerk/nextjs/server";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -28,9 +30,9 @@ export enum GRADES_TYPES {
 }
 
 const ApprovalStatusText: Record<number, string> = {
-  // 0: "Pending",
   0: "Approved",
   1: "Disapproved",
+  2: "Pending",
 };
 
 export const getApprovalStatusText = (index: number | string) => {
@@ -186,4 +188,67 @@ export const GRADE_TYPES: Record<number, string> = {
   1: "Tape",
   2: "Laminated Fabric",
   3: "Tarpaulin",
+};
+
+export enum UserType {
+  Super_Admin,
+  Admin,
+  Employee,
+  Manager,
+  Head,
+}
+
+export const USER_TYPES = [
+  "Super Admin",
+  "Admin",
+  "Employee",
+  "Manager",
+  "Head",
+];
+
+export const AccessMetrics = {
+  "0": ["all"],
+  "1": ["all"],
+  "2": ["table-list", "indent", "po", "grn", "inventory"],
+  "3": ["table-list", "indent", "po", "po-approve", "grn", "inventory"],
+  "4": ["washing-unit", "rp", "tape-plant", "loom", "lamination", "tarpaulin"],
+};
+
+type TAccessPages =
+  | "indent"
+  | "department"
+  | "grade"
+  | "category"
+  | "user"
+  | "vendor"
+  | "po"
+  | "grn"
+  | "po-approve"
+  | "table-list"
+  | "washing-unit"
+  | "rp"
+  | "tape-plant"
+  | "loom"
+  | "lamination"
+  | "tarpaulin"
+  | "inventory";
+
+export const canAccessPage = (user: User | null, page: TAccessPages) => {
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const role = user.publicMetadata.role as 0 | 1 | 2 | 3 | 4;
+
+  const metrics = AccessMetrics[role];
+
+  if (!metrics.includes("all")) {
+    if (metrics === undefined) {
+      redirect("/sign-in");
+    }
+
+    if (!metrics.includes(page)) {
+      redirect("/");
+    }
+  }
 };

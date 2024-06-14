@@ -2,6 +2,8 @@ import { getIndents } from "@/actions/indent";
 import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/indent-tables/columns";
 import { IndentTable } from "@/components/tables/indent-tables/indent-table";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const breadcrumbItems = [{ title: "Indent", link: "/dashboard/indent" }];
 
@@ -12,6 +14,10 @@ type paramsProps = {
 };
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "indent");
+
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search || undefined;

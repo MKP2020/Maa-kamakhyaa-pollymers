@@ -4,6 +4,8 @@ import { getInventoryById } from "@/actions/inventory";
 import BreadCrumb from "@/components/breadcrumb";
 import { CreateInventoryForm } from "@/components/forms/create-inventory-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 type paramsProps = {
   params: {
@@ -21,6 +23,10 @@ const getBreadcrumbItems = (id?: string) => [
 ];
 
 export default async function Page({ params }: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "inventory");
+
   const id = params.id === "new" ? undefined : (params.id as string);
 
   const breadcrumbItems = getBreadcrumbItems(id);

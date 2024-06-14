@@ -2,6 +2,8 @@ import { getDepartments } from "@/actions/department";
 import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/department-table/columns";
 import { DepartmentTable } from "@/components/tables/department-table/department-table";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const breadcrumbItems = [
   { title: "Departments", link: "/dashboard/department" },
@@ -14,6 +16,10 @@ type paramsProps = {
 };
 
 export default async function Page({ searchParams }: paramsProps) {
+  const user = await currentUser();
+
+  canAccessPage(user, "department");
+
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search || null;

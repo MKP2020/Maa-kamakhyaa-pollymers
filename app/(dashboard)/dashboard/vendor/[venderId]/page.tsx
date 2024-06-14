@@ -4,6 +4,8 @@ import BreadCrumb from "@/components/breadcrumb";
 import { CreteVendorForm } from "@/components/forms/create-vendor-form";
 // import { ProductForm } from "@/components/forms/product-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 import React from "react";
 
 const breadcrumbItems = [
@@ -18,6 +20,10 @@ type paramsProps = {
 };
 
 export default async function Page(props: paramsProps) {
+  const user = await currentUser();
+
+  canAccessPage(user, "vendor");
+
   const { params } = props;
   const vendorId = params?.venderId !== "new" ? params?.venderId : undefined;
   const isUpdate = vendorId !== "new";

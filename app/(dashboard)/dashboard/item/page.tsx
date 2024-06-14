@@ -3,6 +3,8 @@ import { getTableList } from "@/actions/table-list";
 import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/table-list-tables/columns";
 import { TableListTable } from "@/components/tables/table-list-tables/table-list-table";
+import { canAccessPage } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 
 const breadcrumbItems = [{ title: "Item", link: "/dashboard/item" }];
 
@@ -13,6 +15,10 @@ type paramsProps = {
 };
 
 export default async function Page({ searchParams }: paramsProps) {
+  const aUser = await currentUser();
+
+  canAccessPage(aUser, "table-list");
+
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search || null;

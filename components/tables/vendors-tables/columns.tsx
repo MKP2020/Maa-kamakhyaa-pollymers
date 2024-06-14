@@ -44,56 +44,56 @@ export const columns: ColumnDef<TVendorsFull>[] = [
     accessorKey: "category.name",
     header: "Category",
   },
-  {
-    accessorKey: "pan",
-    header: "PAN",
-  },
-  { accessorKey: "gstNumber", header: "GSTN" },
-  {
-    // accessorFn: (data) =>
-    //   `${data.bankDerails.accountNumber}\n${data.bankDerails.ifsc}\n${data.bankDerails.ifsc}`,
-    cell: ({ row }) => {
-      return (
-        <>
-          <p className="text-sm font-medium leading-none">Account Number</p>
-          <p className="text-sm text-muted-foreground">
-            {row.original.bankDetails.accountNumber}
-          </p>
-          <p className="text-sm font-medium leading-none">IFSC</p>
-          <p className="text-sm text-muted-foreground">
-            {row.original.bankDetails.ifsc}
-          </p>
-          <p className="text-sm font-medium leading-none">Branch</p>
-          <p className="text-sm text-muted-foreground">
-            {row.original.bankDetails.branch}
-          </p>
-        </>
-      );
-    },
-    header: "Bank Details",
-  },
-  {
-    cell: ({ row }) => {
-      return (
-        <>
-          <p className="text-sm font-medium leading-none">Address</p>
-          <p className="text-sm text-muted-foreground">
-            {row.original.address.addressLine1}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {row.original.address.addressLine2},
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {row.original.address.city},{row.original.address.district}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {row.original.address.state},{row.original.address.pinCode}
-          </p>
-        </>
-      );
-    },
-    header: "Address",
-  },
+  // {
+  //   accessorKey: "pan",
+  //   header: "PAN",
+  // },
+  // { accessorKey: "gstNumber", header: "GSTN" },
+  // {
+  //   // accessorFn: (data) =>
+  //   //   `${data.bankDerails.accountNumber}\n${data.bankDerails.ifsc}\n${data.bankDerails.ifsc}`,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <>
+  //         <p className="text-sm font-medium leading-none">Account Number</p>
+  //         <p className="text-sm text-muted-foreground">
+  //           {row.original.bankDetails.accountNumber}
+  //         </p>
+  //         <p className="text-sm font-medium leading-none">IFSC</p>
+  //         <p className="text-sm text-muted-foreground">
+  //           {row.original.bankDetails.ifsc}
+  //         </p>
+  //         <p className="text-sm font-medium leading-none">Branch</p>
+  //         <p className="text-sm text-muted-foreground">
+  //           {row.original.bankDetails.branch}
+  //         </p>
+  //       </>
+  //     );
+  //   },
+  //   header: "Bank Details",
+  // },
+  // {
+  //   cell: ({ row }) => {
+  //     return (
+  //       <>
+  //         <p className="text-sm font-medium leading-none">Address</p>
+  //         <p className="text-sm text-muted-foreground">
+  //           {row.original.address.addressLine1}
+  //         </p>
+  //         <p className="text-sm text-muted-foreground">
+  //           {row.original.address.addressLine2},
+  //         </p>
+  //         <p className="text-sm text-muted-foreground">
+  //           {row.original.address.city},{row.original.address.district}
+  //         </p>
+  //         <p className="text-sm text-muted-foreground">
+  //           {row.original.address.state},{row.original.address.pinCode}
+  //         </p>
+  //       </>
+  //     );
+  //   },
+  //   header: "Address",
+  // },
   {
     accessorFn: (data) => format(data.createdAt!, "dd MMM yyyy"),
     accessorKey: "createdAt",

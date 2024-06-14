@@ -40,6 +40,7 @@ type TCreatePurchaseOrder = {
   initialData?: TPurchaseOrder;
   indents: TIndent[];
   vendors: TVendors[];
+  canApprove: boolean;
 };
 
 type TCreatePOFormTypes = {
@@ -57,7 +58,9 @@ const formSchema = z.object({
   date: z.date(),
   taxType: z.string().min(1, "Please select a tax type"),
   taxPercentage: z.string().regex(/^\d+\.?\d*$/),
-  approvalStatus: z.string().min(1, "Please select a approval status"),
+  approvalStatus: z
+    .string()
+    .regex(/^\d+\.?\d*$/, "Please select an approval status"),
   status: z.string(),
 
   items: z.array(
@@ -74,7 +77,7 @@ const formSchema = z.object({
 type NewPurchaseOrderFormValues = z.infer<typeof formSchema>;
 
 export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
-  const { initialData, indents, vendors } = props;
+  const { initialData, indents, vendors, canApprove } = props;
   const title = initialData ? "View Purchase Order" : "Create Purchase Order";
   const description = initialData
     ? "View Purchase Order details."
@@ -101,7 +104,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
         departmentId: initialData.toString(),
         status: initialData.status.toString(),
 
-        items: initialData.items.map((item) => ({
+        items: initialData.items.map((item: any) => ({
           itemId: item.itemId.toString(),
           price: item.price.toString(),
         })),
@@ -112,7 +115,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
         date: "",
         taxType: "",
         taxPercentage: "",
-        approvalStatus: "",
+        approvalStatus: "2",
         departmentId: "",
         status: "0",
         items: [] as any,
@@ -504,7 +507,9 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                 <FormItem inputMode="numeric">
                   <FormLabel>Approval Status</FormLabel>
                   <Select
-                    disabled={!!initialData && initialData.status === 1}
+                    disabled={
+                      !canApprove || (!!initialData && initialData.status === 1)
+                    }
                     // disabled={loading || isUpdate}
                     onValueChange={field.onChange}
                     value={field.value}
@@ -519,7 +524,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {["0", "1"].map((tType) => (
+                      {["0", "1", "2"].map((tType) => (
                         <SelectItem key={tType} value={tType}>
                           {getApprovalStatusText(tType)}
                         </SelectItem>
@@ -538,10 +543,14 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
               <FormMessage />
             </FormItem>
           </div>
-          <Button disabled={loading} className="ml-auto" type="submit">
-            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {action}
-          </Button>
+          {initialData && canApprove ? (
+            <Button disabled={loading} className="ml-auto" type="submit">
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {action}
+            </Button>
+          ) : null}
         </form>
       </Form>
     </>
