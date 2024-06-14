@@ -13,6 +13,8 @@ type paramsProps = {
   };
 };
 
+export const maxDuration = 300;
+
 export default async function Page({ searchParams }: paramsProps) {
   const aUser = await currentUser();
 

@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
+export const maxDuration = 300;
+
 //       However, this option will stay so when we migrate to full chromium it will work.
 chromium.setHeadlessMode = true;
 
