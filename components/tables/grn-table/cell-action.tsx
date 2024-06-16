@@ -1,5 +1,6 @@
 "use client";
 import { deleteTableList } from "@/actions/table-list";
+import GRNPdf from "@/components/pdf-view/grn-pdf";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -33,6 +34,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   return (
     <>
+      <GRNPdf
+        data={data}
+        visible={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+      />
       {/* <AlertDialog open={open} onOpenChange={(opn) => setOpen(opn)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -64,7 +72,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Edit3 className="mr-2 h-4 w-4" /> View
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={savePdf}>
+          <DropdownMenuItem
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
             <DownloadCloud className="mr-2 h-4 w-4" /> Download PDF
           </DropdownMenuItem>
         </DropdownMenuContent>

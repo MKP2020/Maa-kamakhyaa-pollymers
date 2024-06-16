@@ -79,4 +79,5 @@ export type TGRN = typeof grns.$inferSelect;
 
 export type TGRNFull = TGRN & {
   items: TInventoryFull[];
+  po: TPurchaseOrder;
 };

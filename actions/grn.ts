@@ -66,7 +66,7 @@ export const getGrns = async (
       limit,
       offset,
       with: {
-        po: true,
+        po: { with: { seller: { with: { address: true } }, indent: true } },
         items: true,
       },
     });
