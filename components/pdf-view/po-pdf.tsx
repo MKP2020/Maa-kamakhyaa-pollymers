@@ -35,8 +35,6 @@ export default function PoPdf(props: TPoPdfProps) {
     }
   }, [visible, data.poNumber, onClose]);
 
-  console.log("data.vendor", data);
-
   if (!visible) return null;
 
   let totalAmount = 0;

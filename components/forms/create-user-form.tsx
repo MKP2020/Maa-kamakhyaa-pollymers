@@ -65,7 +65,6 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
   const toastMessage = initialData ? "User updated." : "User created.";
   const action = initialData ? "Save changes" : "Create";
 
-  console.log("initialData", initialData);
   const defaultValues = initialData
     ? {
         ...initialData,

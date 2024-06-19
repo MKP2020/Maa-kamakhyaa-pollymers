@@ -36,7 +36,6 @@ export default function GRNPdf(props: TGRNPdfProps) {
 
   if (!visible || !data) return;
 
-  console.log("data.items", data);
   return (
     <Dialog
       onOpenChange={(open) => {

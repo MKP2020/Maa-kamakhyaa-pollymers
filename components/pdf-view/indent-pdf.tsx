@@ -18,7 +18,6 @@ export default function IndentPdf(props: TIndentPdfProps) {
     if (visible) {
       const interval = setInterval(async () => {
         const element = document.querySelector("#indent-pdf");
-        console.log("element", element);
         if (!element && !ref.current) {
           return;
         }

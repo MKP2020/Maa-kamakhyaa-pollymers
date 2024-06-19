@@ -84,7 +84,6 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
   const [poItems, setPoItems] = useState<TPurchaseOrderItemFull[]>(
     initialData ? initialData.po.items : []
   );
-  console.log("poItems", initialData);
 
   const defaultValues: typeof formSchema._type = !!initialData
     ? ({
