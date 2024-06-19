@@ -20,7 +20,7 @@ export default function PoPdf(props: TPoPdfProps) {
     if (visible) {
       const interval = setInterval(async () => {
         const element = document.querySelector("#po-pdf");
-        if (!element) {
+        if (!element && !ref.current) {
           return;
         }
         clearInterval(interval);

@@ -18,7 +18,8 @@ export default function GRNPdf(props: TGRNPdfProps) {
     if (visible) {
       const interval = setInterval(async () => {
         const element = document.querySelector("#grn-pdf");
-        if (!element) {
+
+        if (!element && !ref.current) {
           return;
         }
         clearInterval(interval);
