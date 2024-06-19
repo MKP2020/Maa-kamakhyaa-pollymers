@@ -4,7 +4,7 @@ import type {
   TPurchaseOrder,
   TPurchaseOrderItemFull,
 } from "@/lib/types";
-import { useCallback, useEffect, useMemo, useState, type FC } from "react";
+import { useCallback, useEffect, useState, type FC } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -81,7 +81,10 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
     initialData?.poId
   );
 
-  const [poItems, setPoItems] = useState<TPurchaseOrderItemFull[]>([]);
+  const [poItems, setPoItems] = useState<TPurchaseOrderItemFull[]>(
+    initialData ? initialData.po.items : []
+  );
+  console.log("poItems", initialData);
 
   const defaultValues: typeof formSchema._type = !!initialData
     ? ({
@@ -171,34 +174,49 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
     name: "items",
   });
 
-  const values = form.getValues();
+  const values = form.watch("items");
+  const taxValue = form.watch("taxPercentage");
 
-  const total = useMemo(() => {
+  const total = () => {
     let total = 0;
 
-    // const totalTax = (total * tacPercentageNumber) / 100;
+    if (!taxValue) return;
+    if (!poItems || poItems.length === 0) return;
+    const tacPercentageNumber = Number(taxValue);
+    if (isNaN(tacPercentageNumber)) return;
 
-    return (total + 0).toString();
-  }, [values]);
+    values.map((item, index) => {
+      const qNum = Number(item.quantity);
+      total += (isNaN(qNum) ? 0 : qNum) * poItems[index].price;
+    });
+    const totalTax = (total * tacPercentageNumber) / 100;
+
+    return (total + totalTax).toString();
+  };
 
   useEffect(() => {
     if (!selectedPo) return;
+    if (!!initialData) return;
 
     (async () => {
-      setPoItems([]);
-      form.setValue("items", []);
-      const response = await getPurchaseOrderItems(selectedPo);
-      setPoItems(response as any);
+      try {
+        setPoItems([]);
+        form.setValue("items", []);
+        const response = await getPurchaseOrderItems(selectedPo);
+        setPoItems(response as any);
 
-      form.setValue(
-        "items",
-        response.map((item) => ({
-          itemId: item.itemId.toString(),
-          quantity: "",
-        }))
-      );
+        form.setValue(
+          "items",
+          response.map((item) => ({
+            itemId: item.itemId.toString(),
+            quantity: "",
+          }))
+        );
+      } catch (error) {
+        console.log("error", error);
+      }
     })();
-  }, [selectedPo]);
+  }, [selectedPo, initialData]);
 
   return (
     <>
@@ -470,20 +488,22 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                     </FormItem>
                     <FormField
                       {...form.register(`items.${iIndex}.quantity` as any)}
-                      render={({ field }) => (
-                        <FormItem inputMode="numeric">
-                          <FormLabel>Received Quantity</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="Enter quantity"
-                              {...field}
-                              disabled={isDisabled}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      render={({ field: fField }) => {
+                        return (
+                          <FormItem inputMode="numeric">
+                            <FormLabel>Received Quantity</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Enter quantity"
+                                {...fField}
+                                disabled={isDisabled}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
                     />
                     <FormItem
                       defaultValue={poItems[iIndex]?.price}
@@ -549,6 +569,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                   <FormLabel>Tax Percentage</FormLabel>
                   <FormControl>
                     <Input
+                      max={100}
                       disabled={isDisabled}
                       type="number"
                       placeholder="Enter tax percentage"
@@ -567,7 +588,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                 <Input
                   disabled
                   type="number"
-                  value={total}
+                  value={total()}
                   placeholder="Enter tax percentage"
                   // value={form.getValues('')}
                 />

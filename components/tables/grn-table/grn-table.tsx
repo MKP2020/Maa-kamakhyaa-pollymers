@@ -93,6 +93,8 @@ export function GRNTable({
     to: pTo ? new Date(pTo) : undefined,
   });
 
+  console.log("data", data[data.length - 1]);
+
   // this can be used to get the selectedrows
 
   // Create query string

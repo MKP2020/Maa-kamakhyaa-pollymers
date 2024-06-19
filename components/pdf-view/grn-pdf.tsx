@@ -1,9 +1,8 @@
 import { TGRNFull } from "@/lib/types";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { useEffect, useRef } from "react";
-import { generateIndentPdf } from "@/lib/generate-pdf/indent";
 import { format } from "date-fns";
-import { Span } from "next/dist/trace";
+import { generateGrnPdf } from "@/lib/generate-pdf/grn";
 
 type TGRNPdfProps = {
   data: TGRNFull;
@@ -16,24 +15,27 @@ export default function GRNPdf(props: TGRNPdfProps) {
   const ref = useRef(null);
 
   useEffect(() => {
-    // if (visible) {
-    //   const interval = setInterval(async () => {
-    //     const element = document.querySelector("#grn-pdf");
-    //     if (!element) {
-    //       return;
-    //     }
-    //     clearInterval(interval);
-    //     await generateIndentPdf(ref, data.grnNumber);
-    //     onClose();
-    //   }, 1000);
-    //   return () => {
-    //     if (interval) {
-    //       clearInterval(interval);
-    //     }
-    //   };
-    // }
+    if (visible) {
+      const interval = setInterval(async () => {
+        const element = document.querySelector("#grn-pdf");
+        if (!element) {
+          return;
+        }
+        clearInterval(interval);
+        await generateGrnPdf(ref, data.grnNumber);
+        onClose();
+      }, 1000);
+      return () => {
+        if (interval) {
+          clearInterval(interval);
+        }
+      };
+    }
   }, [visible, data.grnNumber, onClose]);
 
+  if (!visible || !data) return;
+
+  console.log("data.items", data);
   return (
     <Dialog
       onOpenChange={(open) => {
@@ -42,18 +44,16 @@ export default function GRNPdf(props: TGRNPdfProps) {
       open={visible}
     >
       <DialogContent className="w-[100%] max-w-[1080px] h-[300px] max-h-[80vh] text-black">
-        <div
-          ref={ref}
-          id="indent-pdf"
-          className="flex-1 bg-white py-8 text-black"
-        >
+        <div ref={ref} id="grn-pdf" className="flex-1 bg-white py-8 text-black">
           <div className="container mx-auto p-5 box-border">
             <div className="text-center text-xl font-bold mb-4">
               MAA KAMAKHYAA POLLYMERS
               <br />
               <span className="text-lg">MATERIAL RECEIPT NOTE</span>
             </div>
-            <div className="text-right text-base mb-2">No: 896</div>
+            <div className="text-right text-base mb-2">
+              No: {data.grnNumber}
+            </div>
             <div className="flex flex-1 w-full gap-2 pb-8 border border-black">
               <div className="flex-[0.7] p-2">
                 <span className="font-bold">
@@ -92,9 +92,9 @@ export default function GRNPdf(props: TGRNPdfProps) {
                   </div>
                   <div className="flex-1 flex">
                     <span className="font-bold flex-1 text-sm">
-                      Mlt. Entry Slip No.{" "}
+                      Invoice No:{" "}
                       <span className="font-normal text-sm">
-                        {data.cnNumber}
+                        {data.invoiceNumber}
                       </span>
                     </span>
                   </div>
@@ -117,52 +117,80 @@ export default function GRNPdf(props: TGRNPdfProps) {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <span className="font-bold">Indenting Dept </span>
+                    <span className="font-bold flex-1 text-sm">
+                      Invoice Date:{" "}
+                      <span className="font-normal text-sm">
+                        {format(data.invoiceDate, "dd/MM/yyyy")}
+                      </span>
+                    </span>
                   </div>
                 </div>
                 <div className="flex mb-2">
                   <div className="flex-1">
-                    <span className="font-bold">Purchase Order No. </span>
-                  </div>
-                  <div className="flex-1">
-                    <span className="font-bold">Dt. </span>
-                  </div>
-                </div>
-                <div className="flex mb-2">
-                  <div className="flex-1">
-                    <span className="font-bold">Challan No. </span>
-                  </div>
-                  <div className="flex-1">
-                    <span className="font-bold">Dt. </span>
+                    <span className="font-bold">
+                      Purchase Order No.{" "}
+                      <span className="font-normal text-sm">
+                        {data.po.poNumber}
+                      </span>
+                    </span>
                   </div>
                 </div>
                 <div className="flex mb-2">
                   <div className="flex-1">
-                    <span className="font-bold">L R No. </span>
+                    <span className="font-bold">
+                      Challan No.{" "}
+                      <span className="font-normal text-sm">
+                        {data.cnNumber}
+                      </span>
+                    </span>
                   </div>
                   <div className="flex-1">
-                    <span className="font-bold">Dt. </span>
+                    <span className="font-bold">
+                      Challan No.{" "}
+                      <span className="font-normal text-sm">
+                        {data.cnNumber}
+                      </span>
+                    </span>
                   </div>
                 </div>
                 <div className="flex mb-2">
                   <div className="flex-1">
-                    <span className="font-bold">Vehicle No. </span>
+                    <span className="font-bold">
+                      Vehicle No.{" "}
+                      <span className="font-normal text-sm">
+                        {data.vehicleNumber}
+                      </span>
+                    </span>
                   </div>
                   <div className="flex-1">
-                    <span className="font-bold">Slip No. </span>
+                    <span className="font-bold">
+                      Mode of transport:{" "}
+                      <span className="font-normal text-sm">
+                        {data.transportMode}
+                      </span>
+                    </span>
                   </div>
                 </div>
                 <div className="flex">
                   <div className="flex-1">
-                    <span className="font-bold">Transporters Name </span>
+                    <span className="font-bold">
+                      Transporters Name{" "}
+                      <span className="font-normal text-sm">
+                        {data.transportName}
+                      </span>
+                    </span>
                   </div>
                   <div className="flex-1">
-                    <span className="font-bold">Weightment Slip No. </span>
+                    <span className="font-bold">
+                      Freight Amount:{" "}
+                      <span className="font-normal text-sm">
+                        {data.freightAmount}
+                      </span>
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
-
             <table className="w-full border-collapse mb-5">
               <thead className="bg-gray-200">
                 <tr>
@@ -170,53 +198,35 @@ export default function GRNPdf(props: TGRNPdfProps) {
                   <th className="border border-black p-2">
                     Description of Materials
                   </th>
-                  <th className="border border-black p-2">Item Code</th>
                   <th className="border border-black p-2">Unit</th>
-                  <th className="border border-black p-2">Quantity Recorded</th>
-                  <th className="border border-black p-2">Quantity Rejected</th>
-                  <th className="border border-black p-2">Quantity Accepted</th>
+                  <th className="border border-black p-2">Received Recorded</th>
                   <th className="border border-black p-2">Value in Rs.</th>
-                  <th className="border border-black p-2">Remarks</th>
                 </tr>
               </thead>
               <tbody>
                 {data.items.map((item, index) => (
                   <tr key={index}>
-                    <td className="border border-black p-2">{index + 1}</td>
-                    <td className="border border-black p-2">
+                    <td className="border text-center border-black p-2">
+                      {index + 1}
+                    </td>
+                    <td className="border text-center border-black p-2">
                       {item.item.name}
                     </td>
-                    <td className="border border-black p-2"></td>
-                    <td className="border border-black p-2">
+                    <td className="border text-center border-black p-2">
                       {item.item.unit}
                     </td>
-                    <td className="border border-black p-2">
-                      {item.inStockQuantity}
+                    <td className="border text-center border-black p-2">
+                      {item.inStockQuantity || 0}
                     </td>
+
                     <td className="border border-black p-2">
-                      {item.poItem.item.indentedQty -
-                        (item.poItem.item.approvedQty || 0)}
+                      {data.po?.items?.[index]?.price || ""}
                     </td>
-                    <td className="border border-black p-2">
-                      {item.poItem.item.approvedQty || 0}
-                    </td>
-                    <td className="border border-black p-2">
-                      {item.poItem.price}
-                    </td>
-                    <td className="border border-black p-2"></td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
-            <div className="flex justify-between mb-5">
-              <div>GST Invoice Received: YES / No</div>
-              <div>RG 23A/C Part-II Entry No.:</div>
-              <div>Dt.:</div>
-              <div>Rejection Note No.:</div>
-            </div>
-
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-8">
               <div className="flex-1 text-center">Prepared By</div>
               <div className="flex-1 text-center">Checked By</div>
               <div className="flex-1 text-center">

@@ -66,8 +66,14 @@ export const getGrns = async (
       limit,
       offset,
       with: {
-        po: { with: { seller: { with: { address: true } }, indent: true } },
-        items: true,
+        po: {
+          with: {
+            items: true,
+            seller: { with: { address: true } },
+            indent: true,
+          },
+        },
+        items: { with: { item: true, poItem: { with: { item: true } } } },
       },
     });
 
@@ -160,7 +166,7 @@ export const getGrnById = (id: number) => {
     where: eq(grns.id, id),
 
     with: {
-      po: true,
+      po: { with: { items: { with: { item: { with: { item: true } } } } } },
       items: {
         with: {
           item: true,
