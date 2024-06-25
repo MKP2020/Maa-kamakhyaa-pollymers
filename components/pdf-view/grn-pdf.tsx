@@ -57,7 +57,7 @@ export default function GRNPdf(props: TGRNPdfProps) {
             <div className="flex flex-1 w-full gap-2 pb-8 border border-black">
               <div className="flex-[0.7] p-2">
                 <span className="font-bold">
-                  Supplier's Name and Address (Code)
+                  {"Supplier's Name and Address (Code)"}
                 </span>
                 <br />
                 <span>{data.poId}</span>
