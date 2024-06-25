@@ -1,0 +1,1 @@
+ALTER TABLE "quantity-for" ALTER COLUMN "id" SET DATA TYPE bigserial;

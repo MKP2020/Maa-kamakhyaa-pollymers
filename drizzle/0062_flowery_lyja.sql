@@ -1,0 +1,1 @@
+ALTER TABLE "quantity-for" ADD COLUMN "date" timestamp DEFAULT now() NOT NULL;

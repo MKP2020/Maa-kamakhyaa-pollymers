@@ -7,6 +7,7 @@ import {
   TRpItem,
   inventory,
   quantity,
+  quantityFor,
   rp,
   rpItems,
 } from "@/lib/schemas";
@@ -19,7 +20,8 @@ import { and, count, eq, gte, lte } from "drizzle-orm";
 
 const updatedUsedQty = async (
   type: TGlobalQuantityType,
-  qty?: number | null
+  qty?: number | null,
+  date?: Date
 ) => {
   if (qty && (qty || 0) > 0) {
     const where = eq(quantity.id, GlobalQuantityObj[type]);
@@ -33,6 +35,13 @@ const updatedUsedQty = async (
         .set({ usedQty: res.usedQty + qty })
         .where(where);
     }
+
+    await db.insert(quantityFor).values({
+      date: date || new Date(),
+      for: GlobalQuantityObj[type],
+      type: "used",
+      qty,
+    });
   }
 };
 
@@ -70,10 +79,10 @@ export const createRp = async (
       }
 
       if (data.type === 4) {
-        await updatedUsedQty("Lam_Waste", data.lamQty);
-        await updatedUsedQty("Loom_Waste", data.loomQty);
-        await updatedUsedQty("Tape_Waste", data.tapeQty);
-        await updatedUsedQty("Tarp_Waste", data.tarpQty);
+        await updatedUsedQty("Lam_Waste", data.lamQty, rpData.date);
+        await updatedUsedQty("Loom_Waste", data.loomQty, rpData.date);
+        await updatedUsedQty("Tape_Waste", data.tapeQty, rpData.date);
+        await updatedUsedQty("Tarp_Waste", data.tarpQty, rpData.date);
       } else {
         const qData = await db.query.quantity.findFirst({
           where: eq(quantity.id, getRpProducedId(data.type.toString())),
@@ -83,6 +92,13 @@ export const createRp = async (
           .update(quantity)
           .set({ producedQty: (qData?.producedQty || 0) + rpData.producedQty })
           .where(eq(quantity.id, getRpProducedId(data.type.toString())));
+
+        await db.insert(quantityFor).values({
+          date: rpData.date,
+          for: getRpProducedId(data.type.toString()),
+          type: "produced",
+          qty: rpData.producedQty,
+        });
       }
       return { ...rpData, items: items };
     }
