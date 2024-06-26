@@ -543,7 +543,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
               <FormMessage />
             </FormItem>
           </div>
-          {initialData && canApprove ? (
+          {(!initialData ? true : initialData && canApprove) ? (
             <Button disabled={loading} className="ml-auto" type="submit">
               {loading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

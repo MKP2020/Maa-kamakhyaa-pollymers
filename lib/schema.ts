@@ -211,6 +211,7 @@ export const purchaseOrderItems = pgTable("purchaseOrderItems", {
     .notNull()
     .references(() => indentItems.id),
   price: integer("price").notNull(),
+  quantity: integer("quantity").notNull(),
 });
 
 export const purchaseOrders = pgTable("purchaseOrders", {
