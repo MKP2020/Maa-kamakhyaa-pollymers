@@ -155,6 +155,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
             items.map((item) => ({
               itemId: Number(item.itemId),
               price: Number(item.price),
+              quantity: 0,
             }))
           );
         } else {
