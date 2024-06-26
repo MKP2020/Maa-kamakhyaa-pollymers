@@ -79,7 +79,7 @@ export const getPurchaseOrders = async (
       offset,
       with: {
         items: { with: { item: { with: { item: true } } } },
-        indent: true,
+        indent: { with: { department: true } },
         seller: {
           with: {
             address: true,

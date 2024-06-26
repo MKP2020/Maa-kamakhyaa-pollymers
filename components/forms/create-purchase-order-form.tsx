@@ -1,6 +1,6 @@
 "use client";
 import type { TIndent, TPurchaseOrder } from "@/lib/types";
-import { useCallback, useMemo, useState, type FC } from "react";
+import { useCallback, useEffect, useMemo, useState, type FC } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { TVendors } from "@/lib/schema";
+import { TVendors, quantity } from "@/lib/schema";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { cn, getApprovalStatusText, getPONumber } from "@/lib/utils";
@@ -52,27 +52,67 @@ type TCreatePOFormTypes = {
   approvalStatus: string;
 };
 
-const formSchema = z.object({
-  sellerId: z.string().regex(/^\d+\.?\d*$/),
-  indentId: z.string().regex(/^\d+\.?\d*$/),
-  date: z.date(),
-  taxType: z.string().min(1, "Please select a tax type"),
-  taxPercentage: z.string().regex(/^\d+\.?\d*$/),
-  approvalStatus: z
-    .string()
-    .regex(/^\d+\.?\d*$/, "Please select an approval status"),
-  status: z.string(),
+const formSchema = z
+  .object({
+    sellerId: z.string().regex(/^\d+\.?\d*$/),
+    indentId: z.string().regex(/^\d+\.?\d*$/),
+    date: z.date(),
+    taxType: z.string().min(1, "Please select a tax type"),
+    sgst: z.string().optional().nullable(),
+    igst: z.string().optional().nullable(),
+    cgst: z.string().optional().nullable(),
+    approvalStatus: z
+      .string()
+      .regex(/^\d+\.?\d*$/, "Please select an approval status"),
+    status: z.string(),
 
-  items: z.array(
-    z.object({
-      itemId: z.string().regex(/^\d+\.?\d*$/),
-      price: z
-        .string()
-        .min(1, "Please enter some amount")
-        .regex(/^\d+\.?\d*$/),
-    })
-  ),
-});
+    items: z.array(
+      z.object({
+        itemId: z.string().regex(/^\d+\.?\d*$/),
+        quantity: z.string().regex(/^\d+\.?\d*$/),
+        price: z
+          .string()
+          .min(1, "Please enter some amount")
+          .regex(/^\d+\.?\d*$/),
+      })
+    ),
+  })
+  .refine(
+    ({ taxType, igst }) => {
+      if (taxType === "IGST") {
+        return !isNaN(Number(igst));
+      }
+      return true;
+    },
+    {
+      message: "Please enter IGST percentage",
+      path: ["igst"],
+    }
+  )
+  .refine(
+    ({ taxType, cgst }) => {
+      if (taxType === "CGST+SGST") {
+        return !isNaN(Number(cgst));
+      }
+      return true;
+    },
+    {
+      message: "Please enter CGST percentage",
+      path: ["cgst"],
+    }
+  )
+  .refine(
+    ({ taxType, sgst }) => {
+      if (taxType === "CGST+SGST") {
+        return !isNaN(Number(sgst));
+      }
+      return true;
+    },
+    {
+      message: "Please enter SGST percentage",
+      path: ["sgst"],
+    }
+  );
 
 type NewPurchaseOrderFormValues = z.infer<typeof formSchema>;
 
@@ -99,14 +139,17 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
         indentId: initialData.indentId.toString(),
         date: initialData.date,
         taxType: initialData.taxType,
-        taxPercentage: initialData.taxPercentage.toString(),
+        cgst: initialData.cgst?.toString(),
+        igst: initialData.igst?.toString(),
+        sgst: initialData.sgst?.toString(),
         approvalStatus: initialData.approvalStatus.toString(),
         departmentId: initialData.toString(),
         status: initialData.status.toString(),
 
-        items: initialData.items.map((item: any) => ({
+        items: initialData.items.map((item) => ({
           itemId: item.itemId.toString(),
           price: item.price.toString(),
+          quantity: item.quantity.toString(),
         })),
       } as any)
     : {
@@ -126,14 +169,18 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
     defaultValues,
   });
 
+  console.log("form", form.formState.errors);
   const isDisabled = !!initialData || loading;
   const onSubmit = useCallback(
     async (data: NewPurchaseOrderFormValues) => {
       const {
         items,
         indentId,
+        igst,
+        sgst,
+        cgst,
         sellerId,
-        taxPercentage,
+        taxType,
         approvalStatus,
         status,
         ...rest
@@ -148,14 +195,17 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
               indentId: Number(indentId),
               approvalStatus: Number(approvalStatus),
               status: Number(status),
-              taxPercentage: Number(taxPercentage),
+              taxType,
+              igst: taxType === "IGST" ? Number(igst) : null,
+              cgst: taxType !== "IGST" ? Number(cgst) : null,
+              sgst: taxType !== "IGST" ? Number(sgst) : null,
               poNumber: getPONumber(data.date),
               ...rest,
             },
             items.map((item) => ({
               itemId: Number(item.itemId),
               price: Number(item.price),
-              quantity: 0,
+              quantity: Number(item.quantity),
             }))
           );
         } else {
@@ -207,17 +257,15 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
 
   const values = form.getValues();
 
+  const taxType = form.watch("taxType");
+
   const total = useMemo(() => {
     let total = 0;
 
     if (!indent) return total.toString();
     if (!values.indentId) return total.toString();
 
-    if (!values.taxPercentage) return total.toString();
-
-    const tacPercentageNumber = Number(values.taxPercentage);
-
-    if (isNaN(tacPercentageNumber)) return total.toString();
+    if (!taxType) return total.toString();
 
     for (let index = 0; index < values.items.length; index++) {
       const element = values.items[index];
@@ -231,10 +279,30 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
       total += (indent.items[index].approvedQty || 0) * priceNumber;
     }
 
-    const totalTax = (total * tacPercentageNumber) / 100;
+    let totalTax = 0;
+    if (taxType === "IGST") {
+      if (!values.igst) {
+        return total.toString();
+      }
+
+      totalTax = (total * Number(values.igst)) / 100;
+    } else if (taxType !== "IGST") {
+      if (!(values.cgst && values.sgst)) {
+        return total.toString();
+      }
+      totalTax =
+        (total * Number(values.cgst)) / 100 +
+        (total * Number(values.sgst)) / 100;
+    }
 
     return (total + totalTax).toString();
-  }, [values, indent]);
+  }, [values, taxType, indent]);
+
+  useEffect(() => {
+    form.resetField("sgst");
+    form.resetField("cgst");
+    form.resetField("igst");
+  }, [taxType]);
 
   return (
     <>
@@ -304,6 +372,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                         itms.push({
                           price: "",
                           itemId: item.id.toString(),
+                          quantity: item.approvedQty?.toString() || "",
                         });
                       });
                       form.setValue("items", itms);
@@ -398,14 +467,20 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                     </FormControl>
                     <FormMessage />
                   </FormItem>
-                  <FormItem inputMode="numeric">
-                    <FormLabel>Quantity</FormLabel>
+                  <FormItem
+                    inputMode="numeric"
+                    {...form.register(`items.${iIndex}.quantity` as any)}
+                  >
+                    <FormLabel>
+                      Quantity (Indented -{" "}
+                      {indent.items[iIndex].approvedQty || 0})
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        defaultValue={indent.items[
-                          iIndex
-                        ]?.approvedQty?.toString()}
-                        disabled
+                        disabled={isDisabled}
+                        type="number"
+                        max={indent.items[iIndex].approvedQty || 0}
+                        min={0}
                       />
                     </FormControl>
                     <FormMessage />
@@ -456,7 +531,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {["CGST", "IGST", "SGST"].map((tType) => (
+                        {["CGST+SGST", "IGST"].map((tType) => (
                           <SelectItem key={tType} value={tType}>
                             {tType}
                           </SelectItem>
@@ -468,24 +543,71 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                 );
               }}
             />
-            <FormField
-              control={form.control}
-              name="taxPercentage"
-              render={({ field }) => (
-                <FormItem inputMode="numeric">
-                  <FormLabel>Tax Percentage</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={isDisabled}
-                      type="number"
-                      placeholder="Enter tax percentage"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {taxType === "IGST" ? (
+              <FormField
+                control={form.control}
+                name="igst"
+                render={({ field }) => (
+                  <FormItem inputMode="numeric">
+                    <FormLabel>Tax Percentage</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isDisabled}
+                        type="number"
+                        placeholder="Enter tax percentage"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {taxType == "CGST+SGST" ? (
+              <FormField
+                control={form.control}
+                name="sgst"
+                render={({ field }) => (
+                  <FormItem inputMode="numeric">
+                    <FormLabel>SGST Tax Percentage</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isDisabled}
+                        type="number"
+                        placeholder="Enter tax percentage"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {taxType === "CGST+SGST" ? (
+              <FormField
+                control={form.control}
+                name="cgst"
+                render={({ field }) => (
+                  <FormItem inputMode="numeric">
+                    <FormLabel>CGST Tax Percentage</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isDisabled}
+                        type="number"
+                        placeholder="Enter tax percentage"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
           </div>
           <div className="md:grid md:grid-cols-3 gap-8">
             <FormItem inputMode="numeric">

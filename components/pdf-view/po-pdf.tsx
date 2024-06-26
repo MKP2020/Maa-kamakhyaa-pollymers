@@ -45,7 +45,15 @@ export default function PoPdf(props: TPoPdfProps) {
     totalAmount += element.price * (element.item.approvedQty || 0);
   }
 
-  const totalTax = (totalAmount * Number(data.taxPercentage)) / 100;
+  let totalTax = 0;
+  if (data.taxType === "IGST") {
+    totalTax = (totalAmount * Number(data.igst)) / 100;
+  }
+  {
+    totalTax =
+      (totalAmount * Number(data.cgst)) / 100 +
+      (totalAmount * Number(data.sgst)) / 100;
+  }
 
   const totalAmountWithTax = totalAmount + totalTax;
 
@@ -141,7 +149,7 @@ export default function PoPdf(props: TPoPdfProps) {
                       {item.item.item.unit}
                     </td>
                     <td className="border border-black py-2 px-4">
-                      {item.item.indentedQty}
+                      {item.quantity}
                     </td>
                     <td className="border border-black py-2 px-4">30.15</td>
                     <td className="border border-black py-2 px-4">
@@ -165,7 +173,10 @@ export default function PoPdf(props: TPoPdfProps) {
                   colSpan={5}
                   className="border border-black py-2 px-4 text-right"
                 >
-                  {data.taxType.toUpperCase()} @{data.taxPercentage}%
+                  {data.taxType.toUpperCase()} @
+                  {data.taxType === "IDST"
+                    ? data.igst + "%"
+                    : data.sgst + "%+" + data.cgst + "%"}
                 </td>
                 <td className="border border-black py-2 px-4">{totalTax}</td>
               </tr>
@@ -209,18 +220,15 @@ export default function PoPdf(props: TPoPdfProps) {
               <p>N.B- Quantity and Quality verification at our side is final</p>
             </div>
             <div className="flex justify-between mt-10">
-              <div className="w-1/3 text-center">
-                <p>For, Maa Kamakhyaa Pollymers,</p>
-                <p>MAA KAMAKHYAA POLLYMERS</p>
+              <div className="w-1/3 text-center pt-8">
                 <p>
-                  <b>Anup Singh</b>
                   <br />
                   Authorised Signatory
                 </p>
               </div>
               <div className="w-1/3 text-center">
                 <p>Prepared By:</p>
-                <p>Purchase Department</p>
+                <p>{data.indent.department.name}</p>
               </div>
             </div>
             <div className="text-center bg-gray-200 p-2 mt-5">

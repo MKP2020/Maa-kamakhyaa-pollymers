@@ -34,7 +34,7 @@ export const generateIndentPdf = async (ref: RefObject<any>, name: string) => {
   const width = doc.internal.pageSize.width - 8;
   const height = (canvas.height * width) / canvas.width;
 
-  doc.addImage(img, "PNG", 4, 0, width, height);
+  doc.addImage(img, "webp", 4, 0, width, height);
   doc.save(`indent-${name}.pdf`);
   doc.close();
 };
