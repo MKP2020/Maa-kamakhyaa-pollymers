@@ -133,8 +133,10 @@ export const CreateIndentForm: React.FC<IndentFormProps> = ({
     setItems([]);
     (async () => {
       try {
-        for (let index = 0; index < fields.length; index++) {
-          form.setValue(`items.${index}.itemId`, "");
+        if (!initialData) {
+          for (let index = 0; index < fields.length; index++) {
+            form.setValue(`items.${index}.itemId`, "");
+          }
         }
         setIsLoadingItems(true);
         const data = await getTableListByCategory(Number(selectedCategory));
