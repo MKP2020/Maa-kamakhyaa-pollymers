@@ -158,7 +158,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
       /> */}
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
-        {initialData && (
+        {/* {initialData && (
           <Button
             disabled={loading}
             variant="destructive"
@@ -167,7 +167,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
           >
             <Trash className="h-4 w-4" />
           </Button>
-        )}
+        )} */}
       </div>
       <Separator />
       <Form {...form}>
