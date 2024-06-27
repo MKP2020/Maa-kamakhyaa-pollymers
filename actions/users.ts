@@ -6,7 +6,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 
 export const getAllUsers = async (): Promise<TUser[]> => {
-  return db.query.users.findMany({ with: { department: true } });
+  return db.query.users.findMany({});
 };
 
 export const createUser = async (
@@ -27,7 +27,6 @@ export const createUser = async (
     firstName: firstName,
     lastName: lastName,
     emailAddress: [email],
-
     password,
     publicMetadata: {
       role: getUserRole(role),
@@ -85,7 +84,6 @@ export const getUserById = async (id: number): Promise<TUser | undefined> => {
   try {
     const user = await db.query.users.findFirst({
       where: eq(users.id, id),
-      with: { department: true },
     });
     return user;
   } catch (error) {

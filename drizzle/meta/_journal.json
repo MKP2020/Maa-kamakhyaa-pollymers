@@ -463,6 +463,13 @@
       "when": 1719399800771,
       "tag": "0065_stale_thunderball",
       "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "6",
+      "when": 1719467618691,
+      "tag": "0066_jittery_molly_hayes",
+      "breakpoints": true
     }
   ]
 }

@@ -37,10 +37,10 @@ export const columns: ColumnDef<TUser>[] = [
     accessorKey: "email",
     header: "ROLE",
   },
-  {
-    accessorFn: (data) => data.department?.name,
-    header: "DEPARTMENT",
-  },
+  // {
+  //   accessorFn: (data) => data.department?.name,
+  //   header: "DEPARTMENT",
+  // },
   {
     accessorFn: (data) => getUserRole(data.role),
     header: "ROLE",

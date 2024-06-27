@@ -5,9 +5,7 @@ import { USER_TYPES } from "./utils";
 
 export type NewUser = typeof users.$inferInsert;
 
-export type TUser = typeof users.$inferSelect & {
-  department: TDepartment | null;
-};
+export type TUser = typeof users.$inferSelect & {};
 
 export const getUserRole = (role: number) => {
   return USER_TYPES[role];

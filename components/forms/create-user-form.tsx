@@ -38,7 +38,7 @@ const formSchema = z.object({
   firstName: z.string().min(1, { message: "Please enter a valid first name" }),
   lastName: z.string().min(1, { message: "Please enter a valid last name" }),
   email: z.string().email({ message: "Please enter a valid email" }),
-  department: z.string().regex(/^\d+\.?\d*$/, "Please select a department"),
+  // department: z.string().regex(/^\d+\.?\d*$/, "Please select a department"),
   password: z.string().min(4).max(10),
   role: z.string(),
 });
@@ -47,12 +47,12 @@ type UserFormValues = z.infer<typeof formSchema>;
 
 interface UserFormProps {
   initialData: any | null;
-  departments: TDepartment[];
+  // departments: TDepartment[];
 }
 
 export const CreateUserForm: React.FC<UserFormProps> = ({
   initialData,
-  departments,
+  // departments,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -69,7 +69,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
     ? {
         ...initialData,
         password: "",
-        department: initialData.departmentId.toString(),
+        // department: initialData.departmentId.toString(),
         role: initialData.role.toString(),
       }
     : {
@@ -88,6 +88,14 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
   const onSubmit = async (data: UserFormValues) => {
     try {
       setLoading(true);
+      console.log("data", {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        role: parseInt(data.role),
+        // departmentId: Number(data.department),
+      });
       if (!!initialData) {
         await updateUser({
           id: initialData.id,
@@ -97,7 +105,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
           email: data.email,
           password: data.password,
           role: parseInt(data.role),
-          departmentId: Number(data.department),
+          // departmentId: Number(data.department),
         });
         // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
       } else {
@@ -107,7 +115,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
           email: data.email,
           password: data.password,
           role: parseInt(data.role),
-          departmentId: Number(data.department),
+          // departmentId: Number(data.department),
         });
       }
       router.refresh();
@@ -240,7 +248,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
                 </FormItem>
               )}
             />
-            <FormField
+            {/*<FormField
               control={form.control}
               name="department"
               render={({ field }) => (
@@ -261,7 +269,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {/* @ts-ignore  */}
+                     
                       {departments.map((department) => (
                         <SelectItem
                           key={department.id.toString()}
@@ -275,7 +283,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            />*/}
 
             <FormField
               control={form.control}
