@@ -92,6 +92,8 @@ export default function PoPdf(props: TPoPdfProps) {
               <tr>
                 <th className="text-left py-1">To</th>
                 <td className="py-1 capitalize">
+                  {data.seller.name}
+                  <br />
                   {data.seller.address.addressLine1}
                   <br />
                   {data.seller.address.addressLine2}
@@ -151,9 +153,11 @@ export default function PoPdf(props: TPoPdfProps) {
                     <td className="border border-black py-2 px-4">
                       {item.quantity}
                     </td>
-                    <td className="border border-black py-2 px-4">30.15</td>
                     <td className="border border-black py-2 px-4">
                       {item.price}
+                    </td>
+                    <td className="border border-black py-2 px-4">
+                      {item.quantity * item.price}
                     </td>
                   </tr>
                 );
@@ -196,7 +200,7 @@ export default function PoPdf(props: TPoPdfProps) {
                   colSpan={6}
                   className="border border-black py-2 px-4 text-center"
                 >
-                  {numberToWords(totalAmountWithTax) + "Only"}
+                  {numberToWords(totalAmountWithTax) + " Only"}
                 </td>
               </tr>
             </table>

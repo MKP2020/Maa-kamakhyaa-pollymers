@@ -8,6 +8,7 @@ export default async function Sidebar() {
   const user = await currentUser();
   const role = user?.publicMetadata.role as number;
 
+  console.log("role", role);
   if (role === undefined) return;
 
   return (

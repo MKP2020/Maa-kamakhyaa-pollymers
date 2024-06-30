@@ -29,7 +29,7 @@ export const createUser = async (
     emailAddress: [email],
     password,
     publicMetadata: {
-      role: getUserRole(role),
+      role: role,
     },
     skipPasswordChecks: true,
   });
