@@ -45,7 +45,11 @@ export default async function Page({ params }: paramsProps) {
 
   if (!aUser) return null;
 
-  const role = (aUser.publicMetadata.role as number) || 2;
+  const role =
+    aUser.publicMetadata.role === null
+      ? 2
+      : (aUser.publicMetadata.role as number);
+
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">

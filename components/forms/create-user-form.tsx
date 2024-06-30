@@ -3,14 +3,13 @@ import * as z from "zod";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Loader2, Trash } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,12 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "../ui/use-toast";
 import { getUserRole } from "@/lib/users";
 import { createUser, updateUser } from "@/actions/users";
-import { TDepartment } from "@/lib/types";
-import { departments } from "@/lib/schemas";
 
 export const IMG_MAX_LIMIT = 3;
 
