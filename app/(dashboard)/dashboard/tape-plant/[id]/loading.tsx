@@ -6,7 +6,7 @@ const breadcrumbItems = [
   { title: "Tape Plant", link: "/dashboard/tape-plant" },
   {
     title: "View/Update",
-    link: "/dashboard/tape-plan/new",
+    link: "/dashboard/tape-plant/new",
   },
 ];
 
