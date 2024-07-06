@@ -220,7 +220,8 @@ export default function GRNPdf(props: TGRNPdfProps) {
                     </td>
 
                     <td className="border border-black p-2">
-                      {data.po?.items?.[index]?.price || ""}
+                      {(item.inStockQuantity || 0) *
+                        (data.po?.items?.[index]?.price || 0)}
                     </td>
                   </tr>
                 ))}

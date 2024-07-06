@@ -75,23 +75,27 @@ const formSchema = z
       .regex(/^\d+\.?\d*$/)
       .nullable(),
 
-    items: z.array(
-      z.object({
-        itemId: z.string().regex(/^\d+\.?\d*$/),
-        quantity: z
-          .string()
-          .min(1, "Please enter some quantity")
-          .regex(/^\d+\.?\d*$/),
+    items: z
+      .array(
+        z.object({
+          itemId: z.string().regex(/^\d+\.?\d*$/),
+          quantity: z
+            .string()
+            .min(1, "Please enter some quantity")
+            .regex(/^\d+\.?\d*$/),
 
-        categoryId: z.string().regex(/^\d+\.?\d*$/, "Please select a category"),
-        departmentId: z
-          .string()
-          .regex(/^\d+\.?\d*$/, "Please select a department"),
-        inventoryId: z
-          .string()
-          .regex(/^\d+\.?\d*$/, "Please select a inventory"),
-      })
-    ),
+          categoryId: z
+            .string()
+            .regex(/^\d+\.?\d*$/, "Please select a category"),
+          departmentId: z
+            .string()
+            .regex(/^\d+\.?\d*$/, "Please select a department"),
+          inventoryId: z
+            .string()
+            .regex(/^\d+\.?\d*$/, "Please select a inventory"),
+        })
+      )
+      .nullish(),
   })
   .refine(
     ({ type, consumedQty }) => {
@@ -372,18 +376,16 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
           )}
         />
 
-        {index !== 0 ? (
-          <div className="flex flex-col h-full items-start justify-end">
-            <Button
-              disabled={disabled}
-              variant="destructive"
-              onClick={onPressRemove}
-              type="button"
-            >
-              <Trash className="mr-2 h-4 w-4" /> Remove
-            </Button>
-          </div>
-        ) : null}
+        <div className="flex flex-col h-full items-start justify-end">
+          <Button
+            disabled={disabled}
+            variant="destructive"
+            onClick={onPressRemove}
+            type="button"
+          >
+            <Trash className="mr-2 h-4 w-4" /> Remove
+          </Button>
+        </div>
       </div>
       <Separator className="mt-8" />
     </div>
@@ -500,13 +502,13 @@ export const CreateRP: FC<
             date: data.date,
             rpLumps: Number(data.rpLumps),
           },
-          data.items.map((item) => ({
+          data.items?.map((item) => ({
             categoryId: Number(item.categoryId),
             departmentId: Number(item.departmentId),
             inventoryId: Number(item.inventoryId),
             itemId: Number(item.itemId),
             quantity: Number(item.quantity),
-          }))
+          })) || []
         );
         router.push(`/dashboard/rp?type=${type}`);
         router.refresh();
@@ -927,11 +929,7 @@ export const CreateRP: FC<
             </div>
           )}
           {!isDisabled ? (
-            <Button
-              disabled={loading || fields.length === 0}
-              className="ml-auto"
-              type="submit"
-            >
+            <Button disabled={loading} className="ml-auto" type="submit">
               {loading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
