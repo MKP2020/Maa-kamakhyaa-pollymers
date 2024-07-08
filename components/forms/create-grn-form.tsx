@@ -42,29 +42,67 @@ type TCreateGRN = {
   purchaseOrders: TPurchaseOrder[];
 };
 
-const formSchema = z.object({
-  poId: z.string().regex(/^\d+\.?\d*$/, "Please select a purchase order"),
-  receivedDate: z.date(),
-  invoiceNumber: z.string().regex(/^\d+\.?\d*$/),
-  invoiceDate: z.date(),
-  transportMode: z.string(),
-  transportName: z.string(),
-  cnNumber: z.string(),
-  vehicleNumber: z.string(),
-  freightAmount: z.string().regex(/^\d+\.?\d*$/),
-  taxType: z.string(),
-  taxPercentage: z.string().regex(/^\d+\.?\d*$/),
-
-  items: z.array(
-    z.object({
-      itemId: z.string().regex(/^\d+\.?\d*$/),
-      quantity: z
-        .string()
-        .min(1, "Please enter some quantity")
-        .regex(/^\d+\.?\d*$/),
-    })
-  ),
-});
+const formSchema = z
+  .object({
+    poId: z.string().regex(/^\d+\.?\d*$/, "Please select a purchase order"),
+    receivedDate: z.date(),
+    invoiceNumber: z.string().regex(/^\d+\.?\d*$/),
+    invoiceDate: z.date(),
+    transportMode: z.string(),
+    transportName: z.string(),
+    cnNumber: z.string(),
+    vehicleNumber: z.string(),
+    freightAmount: z.string().regex(/^\d+\.?\d*$/),
+    taxType: z.string().min(1, "Please select a tax type"),
+    sgst: z.string().optional().nullable(),
+    igst: z.string().optional().nullable(),
+    cgst: z.string().optional().nullable(),
+    items: z.array(
+      z.object({
+        itemId: z.string().regex(/^\d+\.?\d*$/),
+        quantity: z
+          .string()
+          .min(1, "Please enter some quantity")
+          .regex(/^\d+\.?\d*$/),
+      })
+    ),
+  })
+  .refine(
+    ({ taxType, igst }) => {
+      if (taxType === "IGST") {
+        return !isNaN(Number(igst));
+      }
+      return true;
+    },
+    {
+      message: "Please enter IGST percentage",
+      path: ["igst"],
+    }
+  )
+  .refine(
+    ({ taxType, cgst }) => {
+      if (taxType === "CGST+SGST") {
+        return !isNaN(Number(cgst));
+      }
+      return true;
+    },
+    {
+      message: "Please enter CGST percentage",
+      path: ["cgst"],
+    }
+  )
+  .refine(
+    ({ taxType, sgst }) => {
+      if (taxType === "CGST+SGST") {
+        return !isNaN(Number(sgst));
+      }
+      return true;
+    },
+    {
+      message: "Please enter SGST percentage",
+      path: ["sgst"],
+    }
+  );
 
 type NewGRNFormValues = z.infer<typeof formSchema>;
 
@@ -97,7 +135,9 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
         vehicleNumber: initialData.vehicleNumber,
         freightAmount: initialData.freightAmount.toString(),
         taxType: initialData.taxType,
-        taxPercentage: initialData.taxPercentage,
+        cgst: initialData.cgst?.toString(),
+        igst: initialData.igst?.toString(),
+        sgst: initialData.sgst?.toString(),
 
         items: initialData.items.map((item) => ({
           itemId: item.itemId.toString(),
@@ -114,7 +154,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
   const isDisabled = !!initialData || loading;
   const onSubmit = useCallback(
     async (data: NewGRNFormValues) => {
-      const {} = data;
+      const { igst, cgst, sgst, taxType } = data;
       try {
         setLoading(true);
 
@@ -127,8 +167,10 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
               transportMode: data.transportMode,
               transportName: data.transportName,
               cnNumber: data.cnNumber,
-              taxType: data.taxType,
-              taxPercentage: Number(data.taxPercentage),
+              taxType,
+              igst: taxType === "IGST" ? Number(igst) : null,
+              cgst: taxType !== "IGST" ? Number(cgst) : null,
+              sgst: taxType !== "IGST" ? Number(sgst) : null,
               vehicleNumber: data.vehicleNumber,
               freightAmount: Number(data.freightAmount),
               receivedDate: data.receivedDate!,
@@ -174,24 +216,45 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
   });
 
   const values = form.watch("items");
-  const taxValue = form.watch("taxPercentage");
+  const taxValues = form.getValues();
+  const taxType = form.watch("taxType");
 
   const total = () => {
     let total = 0;
 
-    if (!taxValue) return;
+    if (!taxType) return total.toString();
+
     if (!poItems || poItems.length === 0) return;
-    const tacPercentageNumber = Number(taxValue);
-    if (isNaN(tacPercentageNumber)) return;
+
+    let totalTax = 0;
+    if (taxType === "IGST") {
+      if (!taxValues.igst) {
+        return total.toString();
+      }
+
+      totalTax = (total * Number(taxValues.igst)) / 100;
+    } else if (taxType !== "IGST") {
+      if (!(taxValues.cgst && taxValues.sgst)) {
+        return total.toString();
+      }
+      totalTax =
+        (total * Number(taxValues.cgst)) / 100 +
+        (total * Number(taxValues.sgst)) / 100;
+    }
 
     values.map((item, index) => {
       const qNum = Number(item.quantity);
       total += (isNaN(qNum) ? 0 : qNum) * poItems[index].price;
     });
-    const totalTax = (total * tacPercentageNumber) / 100;
 
     return (total + totalTax).toString();
   };
+
+  useEffect(() => {
+    form.resetField("sgst");
+    form.resetField("cgst");
+    form.resetField("igst");
+  }, [taxType]);
 
   useEffect(() => {
     if (!selectedPo) return;
@@ -548,7 +611,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {["CGST", "IGST", "SGST"].map((tType) => (
+                        {["CGST+SGST", "IGST"].map((tType) => (
                           <SelectItem key={tType} value={tType}>
                             {tType}
                           </SelectItem>
@@ -560,25 +623,71 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                 );
               }}
             />
-            <FormField
-              control={form.control}
-              name="taxPercentage"
-              render={({ field }) => (
-                <FormItem inputMode="numeric">
-                  <FormLabel>Tax Percentage</FormLabel>
-                  <FormControl>
-                    <Input
-                      max={100}
-                      disabled={isDisabled}
-                      type="number"
-                      placeholder="Enter tax percentage"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {taxType === "IGST" ? (
+              <FormField
+                control={form.control}
+                name="igst"
+                render={({ field }) => (
+                  <FormItem inputMode="numeric">
+                    <FormLabel>Tax Percentage</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isDisabled}
+                        type="number"
+                        placeholder="Enter tax percentage"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {taxType == "CGST+SGST" ? (
+              <FormField
+                control={form.control}
+                name="sgst"
+                render={({ field }) => (
+                  <FormItem inputMode="numeric">
+                    <FormLabel>SGST Tax Percentage</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isDisabled}
+                        type="number"
+                        placeholder="Enter tax percentage"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {taxType === "CGST+SGST" ? (
+              <FormField
+                control={form.control}
+                name="cgst"
+                render={({ field }) => (
+                  <FormItem inputMode="numeric">
+                    <FormLabel>CGST Tax Percentage</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isDisabled}
+                        type="number"
+                        placeholder="Enter tax percentage"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
           </div>
           <div className="md:grid md:grid-cols-3 gap-8">
             <FormItem inputMode="numeric">

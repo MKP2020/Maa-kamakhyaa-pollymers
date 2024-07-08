@@ -273,7 +273,9 @@ export const grns = pgTable("grn", {
   vehicleNumber: varchar("vehicleNumber", { length: 30 }).notNull(),
   freightAmount: integer("freightAmount").notNull(),
   taxType: varchar("taxType", { length: 10 }).notNull(),
-  taxPercentage: integer("taxPercentage").notNull(),
+  sgst: integer("sgst").default(0),
+  igst: integer("igst").default(0),
+  cgst: integer("cgst").default(0),
 });
 
 export const grnNumbers = pgTable("grnNumbers", {

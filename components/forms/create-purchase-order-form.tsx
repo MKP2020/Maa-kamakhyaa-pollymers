@@ -218,9 +218,10 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
             return;
           }
 
-          await updatePurchaseOrder(initialData.id, {
+          const returned = await updatePurchaseOrder(initialData.id, {
             approvalStatus: Number(approvalStatus),
           });
+          console.log("returned", returned);
         }
         router.push(`/dashboard/purchase-order`);
         router.refresh();

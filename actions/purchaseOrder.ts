@@ -77,6 +77,7 @@ export const getPurchaseOrders = async (
       where,
       limit,
       offset,
+      orderBy: purchaseOrders.id,
       with: {
         items: { with: { item: { with: { item: true } } } },
         indent: { with: { department: true } },
