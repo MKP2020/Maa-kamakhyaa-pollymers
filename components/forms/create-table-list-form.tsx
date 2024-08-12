@@ -91,7 +91,7 @@ export const CreateTableListForm: React.FC<UserFormProps> = ({
       } else {
       }
       router.refresh();
-      router.push(`/dashboard/table-list`);
+      router.push(`/dashboard/item`);
       toast({
         title: toastMessage,
         description: !initialData
