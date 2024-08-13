@@ -4,9 +4,11 @@ import {
   pgTable,
   serial,
   text,
+  decimal,
   timestamp,
   varchar,
   index,
+  doublePrecision,
 } from "drizzle-orm/pg-core";
 import { departments, inventory } from "./schemas";
 export * from "./schemas";
@@ -200,7 +202,7 @@ export const purchaseOrderItems = pgTable("purchaseOrderItems", {
   itemId: integer("itemId")
     .notNull()
     .references(() => indentItems.id),
-  price: integer("price").notNull(),
+  price: doublePrecision("price").notNull(),
   quantity: integer("quantity").notNull(),
 });
 

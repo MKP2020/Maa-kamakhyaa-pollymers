@@ -110,7 +110,7 @@ export const getPurchaseOrderById = (id: number) => {
   return db.query.purchaseOrders.findFirst({
     where: eq(purchaseOrders.id, id),
     with: {
-      items: { with: { item: true } },
+      items: { with: { item: { with: { item: true } } } },
       indent: true,
       seller: true,
     },

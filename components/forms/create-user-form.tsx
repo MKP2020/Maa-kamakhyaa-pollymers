@@ -84,14 +84,7 @@ export const CreateUserForm: React.FC<UserFormProps> = ({
   const onSubmit = async (data: UserFormValues) => {
     try {
       setLoading(true);
-      console.log("data", {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password,
-        role: parseInt(data.role),
-        // departmentId: Number(data.department),
-      });
+
       if (!!initialData) {
         await updateUser({
           id: initialData.id,

@@ -169,7 +169,6 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
     defaultValues,
   });
 
-  console.log("form", form.formState.errors);
   const isDisabled = !!initialData || loading;
   const onSubmit = useCallback(
     async (data: NewPurchaseOrderFormValues) => {
@@ -221,7 +220,6 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
           const returned = await updatePurchaseOrder(initialData.id, {
             approvalStatus: Number(approvalStatus),
           });
-          console.log("returned", returned);
         }
         router.push(`/dashboard/purchase-order`);
         router.refresh();
@@ -493,6 +491,8 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                         <FormLabel>Item Price</FormLabel>
                         <FormControl>
                           <Input
+                            min={1}
+                            step={0.01}
                             type="number"
                             placeholder="Enter price"
                             {...field}
