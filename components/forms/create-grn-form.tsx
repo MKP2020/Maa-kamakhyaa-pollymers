@@ -223,15 +223,20 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
     let total = 0;
 
     if (!taxType) return total.toString();
-
     if (!poItems || poItems.length === 0) return;
 
+    // Calculate base total first
+    values.map((item, index) => {
+      const qNum = Number(item.quantity);
+      total += (isNaN(qNum) ? 0 : qNum) * poItems[index].price;
+    });
+
+    // Then calculate tax on the total
     let totalTax = 0;
     if (taxType === "IGST") {
       if (!taxValues.igst) {
         return total.toString();
       }
-
       totalTax = (total * Number(taxValues.igst)) / 100;
     } else if (taxType !== "IGST") {
       if (!(taxValues.cgst && taxValues.sgst)) {
@@ -241,11 +246,6 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
         (total * Number(taxValues.cgst)) / 100 +
         (total * Number(taxValues.sgst)) / 100;
     }
-
-    values.map((item, index) => {
-      const qNum = Number(item.quantity);
-      total += (isNaN(qNum) ? 0 : qNum) * poItems[index].price;
-    });
 
     return (total + totalTax).toString();
   };
