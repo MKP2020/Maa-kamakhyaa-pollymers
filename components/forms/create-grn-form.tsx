@@ -46,7 +46,7 @@ const formSchema = z
   .object({
     poId: z.string().regex(/^\d+\.?\d*$/, "Please select a purchase order"),
     receivedDate: z.date(),
-    invoiceNumber: z.string().regex(/^\d+\.?\d*$/),
+    invoiceNumber: z.string().min(4, "Please enter a valid invoice number"),
     invoiceDate: z.date(),
     transportMode: z.string(),
     transportName: z.string(),
@@ -374,7 +374,6 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                   <FormControl>
                     <Input
                       disabled={isDisabled}
-                      type="number"
                       placeholder="Enter invoice number"
                       {...field}
                     />
