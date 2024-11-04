@@ -72,7 +72,7 @@ const formSchema = z
         quantity: z.string().regex(/^\d+\.?\d*$/),
         price: z
           .string()
-          .min(1, "Please enter some amount")
+          .min(0.01, "Please enter some amount")
           .regex(/^\d+\.?\d*$/),
       })
     ),
@@ -491,7 +491,6 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                         <FormLabel>Item Price</FormLabel>
                         <FormControl>
                           <Input
-                            min={1}
                             step={0.01}
                             type="number"
                             placeholder="Enter price"
