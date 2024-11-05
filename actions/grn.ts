@@ -1,5 +1,5 @@
 "use server";
-import { db } from "@/lib/db";
+
 import {
   TInventory,
   TNewInventory,
@@ -8,9 +8,12 @@ import {
   inventory,
   purchaseOrders,
 } from "@/lib/schema";
-import { TNewGRN } from "@/lib/types";
-import { getYear } from "date-fns";
 import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
+
+import { TNewGRN } from "@/lib/types";
+import { db } from "@/lib/db";
+import { getYear } from "date-fns";
+import { revalidatePath } from "next/cache";
 
 export const getGrns = async (
   search?: string,
@@ -174,4 +177,11 @@ export const getGrnById = (id: number) => {
       },
     },
   });
+};
+
+export const deleteGrn = async (id: number) => {
+  await db.delete(grns).where(eq(grns.id, id));
+  await db.delete(inventory).where(eq(inventory.grnId, id));
+  revalidatePath("/dashboard/grn");
+  return;
 };

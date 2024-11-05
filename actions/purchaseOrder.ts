@@ -1,19 +1,23 @@
 "use server";
 
-import { db } from "@/lib/db";
-import {
-  purchaseOrderItems,
-  purchaseOrderNumbers,
-  purchaseOrders,
-} from "@/lib/schema";
 import {
   TNewPurchaseOrder,
   TNewPurchaseOrderItem,
   TPurchaseOrder,
   TPurchaseOrderItem,
 } from "@/lib/types";
+import { and, count, eq, gte, ilike, inArray, lte, not } from "drizzle-orm";
+import {
+  grns,
+  inventory,
+  purchaseOrderItems,
+  purchaseOrderNumbers,
+  purchaseOrders,
+} from "@/lib/schema";
+
+import { db } from "@/lib/db";
 import { getYear } from "date-fns";
-import { and, count, eq, not, gte, ilike, lte } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const getPurchaseOrders = async (
   search?: string,
@@ -211,4 +215,26 @@ export const getPurchaseOrderItems = (poId: number) => {
       },
     },
   });
+};
+
+export const deletePurchaseOrder = async (id: number) => {
+  const allGrns = await db.query.grns.findMany({
+    where: eq(grns.poId, id),
+  });
+
+  allGrns.forEach(async (grn) => {
+    await db.delete(grns).where(eq(grns.id, grn.id));
+  });
+
+  await db.delete(inventory).where(
+    inArray(
+      inventory.grnId,
+      allGrns.map((grn) => grn.id)
+    )
+  );
+
+  await db.delete(purchaseOrderItems).where(eq(purchaseOrderItems.poId, id));
+  await db.delete(purchaseOrders).where(eq(purchaseOrders.id, id));
+  revalidatePath("/dashboard/purchase-orders");
+  return;
 };
