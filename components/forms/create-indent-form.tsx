@@ -1,11 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
-import { CalendarIcon, Loader2, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useFieldArray, useForm } from "react-hook-form";
+
 import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
+import { CalendarIcon, Loader2, Trash } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -14,8 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Heading } from "@/components/ui/heading";
-import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Select,
   SelectContent,
@@ -23,18 +19,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TDepartment, TIndent, TTableList } from "@/lib/types";
+import { cn, getIndentNumber } from "@/lib/utils";
+import { createIndent, updateIndentApprovedQuantities } from "@/actions/indent";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
+import { Calendar } from "../ui/calendar";
+import { Heading } from "@/components/ui/heading";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { TCategory } from "@/lib/schema";
+import { format } from "date-fns";
+import { generatePdfWithApi } from "@/lib/generate-pdf/indent";
+import { getTableListByCategory } from "@/actions/table-list";
+import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TDepartment, TIndent, TTableList } from "@/lib/types";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn, getIndentNumber } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "../ui/calendar";
-import { createIndent, updateIndentApprovedQuantities } from "@/actions/indent";
-import { getTableListByCategory } from "@/actions/table-list";
-import { generatePdfWithApi } from "@/lib/generate-pdf/indent";
 
 export const IMG_MAX_LIMIT = 3;
 
@@ -384,7 +386,7 @@ export const CreateIndentForm: React.FC<IndentFormProps> = ({
           <h3>Indent Items</h3>
           {fields.map((item, index) => {
             return (
-              <div key={index}>
+              <div key={item.id}>
                 <div className="md:grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                   <FormField
                     {...form.register(`items.${index}.itemId` as any)}
@@ -474,7 +476,9 @@ export const CreateIndentForm: React.FC<IndentFormProps> = ({
                     <div className="flex flex-col h-full items-start justify-end">
                       <Button
                         variant="ghost"
-                        onClick={() => remove(index)}
+                        onClick={() => {
+                          remove(index);
+                        }}
                         type="button"
                       >
                         <Trash className="mr-2 h-4 w-4" /> Remove
