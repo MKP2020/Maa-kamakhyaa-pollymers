@@ -1,35 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
-import { State, City } from "country-state-city";
-import { Loader2, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+
 import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Heading } from "@/components/ui/heading";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { TCategory, TVendorsFull } from "@/lib/schema";
-import { getUserRole, getVendorType } from "@/lib/users";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createVendor, deleteVendor } from "@/actions/vendor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,7 +12,36 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { City, State } from "country-state-city";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Loader2, Trash } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { TCategory, TVendorsFull } from "@/lib/schema";
+import { createVendor, deleteVendor } from "@/actions/vendor";
+import { getUserRole, getVendorType } from "@/lib/users";
+import { useMemo, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const IMG_MAX_LIMIT = 3;
 
@@ -133,11 +134,15 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
     try {
       setLoading(true);
       if (!initialData) {
-        await createVendor({
+        const response = await createVendor({
           ...data,
           type: getVendorType(Number(data.type)),
           categoryId: data.category,
         });
+        console.log("response", response);
+        if (typeof response === "string") {
+          throw new Error(response);
+        }
         // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
       } else {
       }
@@ -150,10 +155,11 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
           : "Vendor successfully updated",
       });
     } catch (error: any) {
+      console.log("error", JSON.stringify(error));
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "There was a problem with your request.",
+        description: error?.message || "There was a problem with your request.",
       });
     } finally {
       setLoading(false);

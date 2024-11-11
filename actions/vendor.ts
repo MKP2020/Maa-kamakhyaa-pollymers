@@ -1,6 +1,5 @@
 "use server";
 
-import { db } from "@/lib/db";
 import {
   TVendors,
   TVendorsFull,
@@ -9,6 +8,8 @@ import {
   vendors,
 } from "@/lib/schema";
 import { and, count, eq, gte, lte } from "drizzle-orm";
+
+import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 export const getVendors = async (
@@ -80,58 +81,70 @@ type TNewVendor = {
   pan: string;
 };
 
-export const createVendor = async (newVendor: TNewVendor) => {
-  "use server";
-  const {
-    state,
-    city,
-    district,
-    pinCode,
-    addressLine1,
-    addressLine2,
-    accountNumber,
-    ifsc,
-    branch,
-    type,
-    category,
-    name,
-    contactNumber,
-    email,
-    gstNumber,
-    pan,
-  } = newVendor;
-  const newAddress = await db
-    .insert(addresses)
-    .values({
-      state: state,
-      city: city,
-      district: district,
-      pinCode: pinCode,
-      addressLine1: addressLine1,
-      addressLine2: addressLine2,
-    })
-    .returning();
+export const createVendor = (newVendor: TNewVendor) =>
+  new Promise<TVendors>(async (resolve, reject) => {
+    const {
+      state,
+      city,
+      district,
+      pinCode,
+      addressLine1,
+      addressLine2,
+      accountNumber,
+      ifsc,
+      branch,
+      type,
+      category,
+      name,
+      contactNumber,
+      email,
+      gstNumber,
+      pan,
+    } = newVendor;
 
-  const newBankingDetails = await db
-    .insert(bankDetails)
-    .values({
-      accountNumber: accountNumber,
-      ifsc: ifsc,
-      branch: branch,
-    })
-    .returning();
+    const hasEmail = await db
+      .select()
+      .from(vendors)
+      .where(eq(vendors.emailId, email));
 
-  const newSavedVendor = await db.insert(vendors).values({
-    name,
-    contactNumber,
-    emailId: email,
-    categoryId: parseInt(category),
-    addressId: newAddress[0].id,
-    bankDetailsId: newBankingDetails[0].id,
-    gstNumber,
-    pan,
+    if (hasEmail.length > 0) {
+      reject("Email already exists");
+      return;
+    }
+    const newAddress = await db
+      .insert(addresses)
+      .values({
+        state: state,
+        city: city,
+        district: district,
+        pinCode: pinCode,
+        addressLine1: addressLine1,
+        addressLine2: addressLine2,
+      })
+      .returning();
+
+    const newBankingDetails = await db
+      .insert(bankDetails)
+      .values({
+        accountNumber: accountNumber,
+        ifsc: ifsc,
+        branch: branch,
+      })
+      .returning();
+
+    const newSavedVendor = await db.insert(vendors).values({
+      name,
+      contactNumber,
+      emailId: email,
+      categoryId: parseInt(category),
+      addressId: newAddress[0].id,
+      bankDetailsId: newBankingDetails[0].id,
+      gstNumber,
+      pan,
+    });
+
+    resolve(newSavedVendor as any);
   });
-};
 
 export const getVendorById = async (vendorId: number) => {
   "use server";
