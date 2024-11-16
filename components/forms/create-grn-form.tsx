@@ -655,6 +655,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                       <Input
                         disabled={isDisabled}
                         type="number"
+                        
                         placeholder="Enter tax percentage"
                         {...field}
                         value={field.value || ""}

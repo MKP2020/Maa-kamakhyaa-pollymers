@@ -1,16 +1,18 @@
-import { relations } from "drizzle-orm";
 import {
+  decimal,
+  doublePrecision,
+  index,
   integer,
   pgTable,
   serial,
   text,
-  decimal,
   timestamp,
   varchar,
-  index,
-  doublePrecision,
 } from "drizzle-orm/pg-core";
 import { departments, inventory } from "./schemas";
+
+import { relations } from "drizzle-orm";
+
 export * from "./schemas";
 
 export const users = pgTable("users", {
@@ -218,9 +220,9 @@ export const purchaseOrders = pgTable("purchaseOrders", {
   date: timestamp("date").defaultNow().notNull(),
 
   taxType: varchar("taxType", { length: 10 }).notNull(),
-  sgst: integer("sgst").default(0),
-  igst: integer("igst").default(0),
-  cgst: integer("cgst").default(0),
+  sgst: doublePrecision("sgst").default(0),
+  igst: doublePrecision("igst").default(0),
+  cgst: doublePrecision("cgst").default(0),
 
   approvalStatus: integer("approvalStatus").default(2).notNull(),
   status: integer("status").default(0).notNull(),
@@ -275,9 +277,9 @@ export const grns = pgTable("grn", {
   vehicleNumber: varchar("vehicleNumber", { length: 30 }).notNull(),
   freightAmount: integer("freightAmount").notNull(),
   taxType: varchar("taxType", { length: 10 }).notNull(),
-  sgst: integer("sgst").default(0),
-  igst: integer("igst").default(0),
-  cgst: integer("cgst").default(0),
+  sgst: doublePrecision("sgst").default(0),
+  igst: doublePrecision("igst").default(0),
+  cgst: doublePrecision("cgst").default(0),
 });
 
 export const grnNumbers = pgTable("grnNumbers", {

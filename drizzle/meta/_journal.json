@@ -484,6 +484,13 @@
       "when": 1723543635474,
       "tag": "0068_past_corsair",
       "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "6",
+      "when": 1731768476433,
+      "tag": "0069_soft_sue_storm",
+      "breakpoints": true
     }
   ]
 }
