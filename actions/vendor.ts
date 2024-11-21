@@ -111,39 +111,47 @@ export const createVendor = (newVendor: TNewVendor) =>
       reject("Email already exists");
       return;
     }
-    const newAddress = await db
-      .insert(addresses)
-      .values({
-        state: state,
-        city: city,
-        district: district,
-        pinCode: pinCode,
-        addressLine1: addressLine1,
-        addressLine2: addressLine2,
-      })
-      .returning();
 
-    const newBankingDetails = await db
-      .insert(bankDetails)
-      .values({
-        accountNumber: accountNumber,
-        ifsc: ifsc,
-        branch: branch,
-      })
-      .returning();
+    try {
+      const newAddress = await db
+        .insert(addresses)
+        .values({
+          state: state,
+          city: city,
+          district: district,
+          pinCode: pinCode,
+          addressLine1: addressLine1,
+          addressLine2: addressLine2,
+        })
+        .returning();
 
-    const newSavedVendor = await db.insert(vendors).values({
-      name,
-      contactNumber,
-      emailId: email,
-      categoryId: parseInt(category),
-      addressId: newAddress[0].id,
-      bankDetailsId: newBankingDetails[0].id,
-      gstNumber,
-      pan,
-    });
+      const newBankingDetails = await db
+        .insert(bankDetails)
+        .values({
+          accountNumber: accountNumber,
+          ifsc: ifsc,
+          branch: branch,
+        })
+        .returning();
 
-    resolve(newSavedVendor as any);
+      const newSavedVendor = await db
+        .insert(vendors)
+        .values({
+          name,
+          contactNumber,
+          emailId: email,
+          categoryId: parseInt(category),
+          addressId: newAddress[0].id,
+          bankDetailsId: newBankingDetails[0].id,
+          gstNumber,
+          pan,
+        })
+        .returning();
+
+      resolve(newSavedVendor as any);
+    } catch (err) {
+      reject((err as any).message || "Failed to create vendor");
+    }
   });
 
 export const getVendorById = async (vendorId: number) => {

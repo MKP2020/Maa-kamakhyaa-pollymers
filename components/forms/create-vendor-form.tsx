@@ -139,7 +139,6 @@ export const CreteVendorForm: React.FC<UserFormProps> = ({
           type: getVendorType(Number(data.type)),
           categoryId: data.category,
         });
-        console.log("response", response);
         if (typeof response === "string") {
           throw new Error(response);
         }
