@@ -1,14 +1,4 @@
 import {
-  index,
-  integer,
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { grades } from "./grades";
-import {
   TCategory,
   TDepartment,
   TInventory,
@@ -18,8 +8,20 @@ import {
   inventory,
   tableList,
 } from "../schema";
-import { relations } from "drizzle-orm";
+import {
+  doublePrecision,
+  index,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
+
 import type { TGrade } from "../types";
+import { grades } from "./grades";
+import { relations } from "drizzle-orm";
 
 export const tarpaulin = pgTable(
   "tarpaulin",
@@ -30,13 +32,13 @@ export const tarpaulin = pgTable(
     lamFabricGradeId: integer("lamFabricGradeId")
       .references(() => grades.id)
       .notNull(),
-    lamFabricQty: integer("lamFabricQty").notNull(),
+    lamFabricQty: doublePrecision("lamFabricQty").notNull(),
     tarpaulinGradeId: integer("tarpaulinGradeId")
       .references(() => grades.id)
       .notNull(),
-    tarpaulinQty: integer("tarpaulinQty").notNull(),
+    tarpaulinQty: doublePrecision("tarpaulinQty").notNull(),
     tarpaulinSize: text("tarpaulinSize").notNull(),
-    tarpWaste: integer("tarpWaste").notNull(),
+    tarpWaste: doublePrecision("tarpWaste").notNull(),
   },
   (item) => ({
     tarpShiftIdx: index("tarpShiftIdx").on(item.shift),
@@ -64,7 +66,7 @@ export const tarpaulinItem = pgTable(
     itemId: integer("itemId")
       .notNull()
       .references(() => tableList.id),
-    quantity: integer("quantity").notNull(),
+    quantity: doublePrecision("quantity").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   (item) => ({

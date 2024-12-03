@@ -115,7 +115,7 @@ export const tableList = pgTable(
       .notNull()
       .references(() => categories.id),
     name: text("name").notNull().unique(),
-    minQuantity: integer("minQuantity").notNull(),
+    minQuantity: doublePrecision("minQuantity").notNull(),
     unit: varchar("unit", { length: 256 }).notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
@@ -149,8 +149,8 @@ export const indentItems = pgTable("indentItems", {
     .notNull()
     .references(() => tableList.id),
 
-  indentedQty: integer("indentedQty").notNull(),
-  approvedQty: integer("approvedQty"),
+  indentedQty: doublePrecision("indentedQty").notNull(),
+  approvedQty: doublePrecision("approvedQty"),
 });
 
 export const indents = pgTable("indents", {
@@ -205,7 +205,7 @@ export const purchaseOrderItems = pgTable("purchaseOrderItems", {
     .notNull()
     .references(() => indentItems.id),
   price: doublePrecision("price").notNull(),
-  quantity: integer("quantity").notNull(),
+  quantity: doublePrecision("quantity").notNull(),
 });
 
 export const purchaseOrders = pgTable("purchaseOrders", {

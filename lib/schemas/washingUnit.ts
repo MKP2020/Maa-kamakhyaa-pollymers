@@ -1,13 +1,3 @@
-import { relations } from "drizzle-orm";
-import {
-  integer,
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  varchar,
-  index,
-} from "drizzle-orm/pg-core";
 import {
   TCategory,
   TDepartment,
@@ -17,7 +7,19 @@ import {
   inventory,
   tableList,
 } from "../schema";
+import {
+  doublePrecision,
+  index,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
+
 import { TTableList } from "../types";
+import { relations } from "drizzle-orm";
 
 export const washingUnit = pgTable(
   "washingUnit",
@@ -26,7 +28,7 @@ export const washingUnit = pgTable(
     date: timestamp("date").defaultNow().notNull(),
     note: text("note").default(""),
     shift: varchar("shift", { length: 1 }).notNull(),
-    bhusaQuantity: integer("bhusaQuantity"),
+    bhusaQuantity: doublePrecision("bhusaQuantity"),
   },
   (consumption) => ({
     consumptionShiftIdx: index("consumptionShiftIdx").on(consumption.shift),
@@ -53,8 +55,8 @@ export const washingUnitItems = pgTable(
     itemId: integer("itemId")
       .notNull()
       .references(() => tableList.id),
-    reqQty: integer("reqQty").notNull(),
-    issueQuantity: integer("issueQuantity").notNull(),
+    reqQty: doublePrecision("reqQty").notNull(),
+    issueQuantity: doublePrecision("issueQuantity").notNull(),
   },
   (washingUnitItems) => ({
     washingUnitItemsUnitIdx: index("washingUnitItemsUnitIdx").on(

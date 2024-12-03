@@ -1,12 +1,4 @@
 import {
-  index,
-  integer,
-  pgTable,
-  serial,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
-import {
   TCategory,
   TDepartment,
   TInventory,
@@ -15,8 +7,18 @@ import {
   inventory,
   tableList,
 } from "../schema";
-import { relations } from "drizzle-orm";
+import {
+  doublePrecision,
+  index,
+  integer,
+  pgTable,
+  serial,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
+
 import { TTableList } from "../types";
+import { relations } from "drizzle-orm";
 
 export const rp = pgTable(
   "rp",
@@ -26,16 +28,16 @@ export const rp = pgTable(
     shift: varchar("shift", { length: 1 }).notNull(),
     type: integer("type").notNull(),
 
-    consumedQty: integer("consumedQty"),
-    producedQty: integer("producedQty").notNull(),
+    consumedQty: doublePrecision("consumedQty"),
+    producedQty: doublePrecision("producedQty").notNull(),
 
-    loomQty: integer("loomQty"),
-    lamQty: integer("lamQty"),
-    tapeQty: integer("tapeQty"),
-    tarpQty: integer("tarpQty"),
+    loomQty: doublePrecision("loomQty"),
+    lamQty: doublePrecision("lamQty"),
+    tapeQty: doublePrecision("tapeQty"),
+    tarpQty: doublePrecision("tarpQty"),
 
-    plantWasteConsumed: integer("plantWasteConsumed"),
-    rpLumps: integer("rpLumps"),
+    plantWasteConsumed: doublePrecision("plantWasteConsumed"),
+    rpLumps: doublePrecision("rpLumps"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   (item) => ({
@@ -65,7 +67,7 @@ export const rpItems = pgTable(
     itemId: integer("itemId")
       .notNull()
       .references(() => tableList.id),
-    quantity: integer("quantity").notNull(),
+    quantity: doublePrecision("quantity").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   (item) => ({

@@ -20,7 +20,7 @@ export const getVendors = async (
 ) => {
   const total = await db.select({ count: count() }).from(vendors);
 
-  // const query = db.select().from(vendors);
+  // const query = db.s elect().from(vend ors);
 
   // if (from && !to) {
   //   query.where(gte(vendors.createdAt, new Date(from)));

@@ -1,14 +1,4 @@
 import {
-  index,
-  integer,
-  pgTable,
-  serial,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { grades } from "./grades";
-import { relations } from "drizzle-orm";
-import {
   TCategory,
   TDepartment,
   TInventory,
@@ -18,6 +8,18 @@ import {
   tableList,
 } from "../schema";
 import { TGrade, TTableList } from "../types";
+import {
+  doublePrecision,
+  index,
+  integer,
+  pgTable,
+  serial,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
+
+import { grades } from "./grades";
+import { relations } from "drizzle-orm";
 
 export const tapePlant = pgTable(
   "tapePlant",
@@ -29,9 +31,9 @@ export const tapePlant = pgTable(
     tapeGradeId: integer("tapeGradeId")
       .notNull()
       .references(() => grades.id),
-    tapeQty: integer("tapeQty").notNull(),
-    tapeWaste: integer("tapeWaste").notNull(),
-    tapeLumps: integer("tapeLumps").notNull(),
+    tapeQty: doublePrecision("tapeQty").notNull(),
+    tapeWaste: doublePrecision("tapeWaste").notNull(),
+    tapeLumps: doublePrecision("tapeLumps").notNull(),
   },
   (item) => ({
     tapePlantDateIdx: index("tapePlantDateIdx").on(item.date),
@@ -46,7 +48,7 @@ export const tapePlantConsumedItem = pgTable("tapePlantConsumedItem", {
     .notNull()
     .references(() => tapePlant.id),
   rpType: integer("rpType").notNull(),
-  qty: integer("qty").notNull(),
+  qty: doublePrecision("qty").notNull(),
 });
 
 export const tapePlantConsumedItemRelation = relations(
@@ -79,7 +81,7 @@ export const tapeItem = pgTable(
     itemId: integer("itemId")
       .notNull()
       .references(() => tableList.id),
-    quantity: integer("quantity").notNull(),
+    quantity: doublePrecision("quantity").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   (item) => ({

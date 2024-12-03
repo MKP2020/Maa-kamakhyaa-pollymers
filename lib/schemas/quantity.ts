@@ -1,20 +1,21 @@
 import {
-  bigint,
+  bigserial,
+  doublePrecision,
   integer,
   pgEnum,
   pgTable,
   serial,
-  bigserial,
   timestamp,
 } from "drizzle-orm/pg-core";
+
+import type { TGrade } from "../types";
 import { grades } from "./grades";
 import { relations } from "drizzle-orm";
-import type { TGrade } from "../types";
 
 export const quantity = pgTable("quantity", {
   id: serial("id").primaryKey().notNull(),
-  producedQty: bigint("producedQty", { mode: "number" }).default(0).notNull(),
-  usedQty: bigint("usedQty", { mode: "number" }).default(0).notNull(),
+  producedQty: doublePrecision("producedQty").default(0).notNull(),
+  usedQty: doublePrecision("usedQty").default(0).notNull(),
   gradeId: integer("gradeId").references(() => grades.id),
 });
 
@@ -38,7 +39,7 @@ export const quantityFor = pgTable("quantity-for", {
   for: integer("for").notNull(),
   type: typeEnum("type").notNull(),
   date: timestamp("date").defaultNow().notNull(),
-  qty: bigint("usedQty", { mode: "number" }).default(0).notNull(),
+  qty: doublePrecision("usedQty").default(0).notNull(),
   gradeId: integer("gradeId").references(() => grades.id),
 });
 
