@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@/lib/db";
+import { GlobalQuantityObj, getRpProducedId } from "@/lib/utils";
 import {
   TNewTape,
   TNewTapeConsumedItem,
@@ -14,9 +14,10 @@ import {
   tapePlant,
   tapePlantConsumedItem,
 } from "@/lib/schemas";
-import { GlobalQuantityObj, getRpProducedId } from "@/lib/utils";
 import { and, count, eq, gte, lte, sql } from "drizzle-orm";
+
 import { addProducedQty } from "./quantity";
+import { db } from "@/lib/db";
 
 export const getTapePlantList = async (
   shift?: string,
@@ -98,9 +99,12 @@ export const createTapePlant = async (
         where: eq(inventory.id, resp[0].inventoryId),
       });
 
-      await db.update(inventory).set({
-        usedQuantity: inventoryData!.usedQuantity + resp[0].quantity,
-      });
+      await db
+        .update(inventory)
+        .set({
+          usedQuantity: inventoryData!.usedQuantity + resp[0].quantity,
+        })
+        .where(eq(inventory.id, inventoryData!.id));
 
       items.push(resp[0]);
     }

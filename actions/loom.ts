@@ -1,5 +1,5 @@
 "use server";
-import { db } from "@/lib/db";
+
 import {
   TLoomItem,
   TNewLoom,
@@ -9,9 +9,11 @@ import {
   loomItem,
   quantity,
 } from "@/lib/schemas";
-import { and, eq, sql, gte, lte, count } from "drizzle-orm";
-import { addProducedQty } from "./quantity";
+import { and, count, eq, gte, lte, sql } from "drizzle-orm";
+
 import { GlobalQuantityObj } from "@/lib/utils";
+import { addProducedQty } from "./quantity";
+import { db } from "@/lib/db";
 
 export const getLoomList = async (
   shift?: string,
@@ -83,9 +85,12 @@ export const createLoom = async (
         where: eq(inventory.id, resp[0].inventoryId),
       });
 
-      await db.update(inventory).set({
-        usedQuantity: inventoryData!.usedQuantity + resp[0].quantity,
-      });
+      await db
+        .update(inventory)
+        .set({
+          usedQuantity: inventoryData!.usedQuantity + resp[0].quantity,
+        })
+        .where(eq(inventory.id, inventoryData!.id));
 
       items.push(resp[0]);
     }

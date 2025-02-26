@@ -86,9 +86,12 @@ export const createLam = async (
         where: eq(inventory.id, resp[0].inventoryId),
       });
 
-      await db.update(inventory).set({
-        usedQuantity: inventoryData!.usedQuantity + resp[0].quantity,
-      });
+      await db
+        .update(inventory)
+        .set({
+          usedQuantity: inventoryData!.usedQuantity + resp[0].quantity,
+        })
+        .where(eq(inventory.id, inventoryData!.id));
 
       items.push(resp[0]);
     }

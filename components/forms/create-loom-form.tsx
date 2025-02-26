@@ -1,7 +1,7 @@
 "use client";
+
+import { CalendarIcon, Loader2, Trash } from "lucide-react";
 import { FC, useCallback, useEffect, useState } from "react";
-import { Heading } from "../ui/heading";
-import { Separator } from "../ui/separator";
 import {
   Form,
   FormControl,
@@ -10,14 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { z } from "zod";
-import { UseFormReturn, useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Button } from "../ui/button";
-import { format } from "date-fns";
-import { CalendarIcon, Loader2, Trash } from "lucide-react";
-import { Calendar } from "../ui/calendar";
 import { SHIFT, cn } from "@/lib/utils";
 import {
   Select,
@@ -26,19 +19,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import type { TInventoryFull } from "@/lib/schemas/inventory";
-import { getInventoryBy } from "@/actions/inventory";
 import type {
   TDepartment,
   TLoomFull,
   TLoomItem,
   TLoomItemFull,
 } from "@/lib/schemas";
-import { TCategory } from "@/lib/schema";
-import { Input } from "../ui/input";
-import { useRouter } from "next/navigation";
 import { TGrade, TGradeWithQuantity } from "@/lib/types";
+import { UseFormReturn, useFieldArray, useForm } from "react-hook-form";
+
+import { Button } from "../ui/button";
+import { Calendar } from "../ui/calendar";
+import { Heading } from "../ui/heading";
+import { Input } from "../ui/input";
+import { Separator } from "../ui/separator";
+import { TCategory } from "@/lib/schema";
+import type { TInventoryFull } from "@/lib/schemas/inventory";
 import { createLoom } from "@/actions/loom";
+import { format } from "date-fns";
+import { getInventoryBy } from "@/actions/inventory";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   date: z.date(),
