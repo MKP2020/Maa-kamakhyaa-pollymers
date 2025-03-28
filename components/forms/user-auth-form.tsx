@@ -1,4 +1,10 @@
 "use client";
+import { Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -8,13 +14,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useSignIn } from "@clerk/nextjs";
 import { Input } from "@/components/ui/input";
+import { useSignIn } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+
 import {
   Card,
   CardContent,
@@ -22,11 +25,10 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address" }),
-  password: z.string().min(4).max(10),
+  password: z.string().min(4).max(15),
 });
 
 type UserFormValue = z.infer<typeof formSchema>;

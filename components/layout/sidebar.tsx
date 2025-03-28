@@ -1,7 +1,8 @@
-import { DashboardNav } from "@/components/dashboard-nav";
-import { navItems } from "@/constants/data";
-import { ScrollArea } from "../ui/scroll-area";
-import { currentUser } from "@clerk/nextjs/server";
+import { DashboardNav } from '@/components/dashboard-nav';
+import { navItems } from '@/constants/data';
+import { currentUser } from '@clerk/nextjs/server';
+
+import { ScrollArea } from '../ui/scroll-area';
 
 export default async function Sidebar() {
   const user = await currentUser();
