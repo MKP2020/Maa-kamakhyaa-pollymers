@@ -1,8 +1,10 @@
 import { Metadata } from "next";
 import Link from "next/link";
+
 import UserAuthForm from "@/components/forms/user-auth-form";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
 // import { auth } from "@clerk/nextjs/server";
 // import { redirect } from "next/navigation";
 
@@ -44,7 +46,7 @@ export default function AuthenticationPage() {
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
-          Logo
+          MKP
         </div>
         <div className="relative z-20 mt-auto">
           {/* <blockquote className="space-y-2">
