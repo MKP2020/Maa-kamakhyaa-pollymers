@@ -1,42 +1,33 @@
 "use client";
 
-import * as z from "zod";
+import { format } from 'date-fns';
+import { CalendarIcon, Loader2, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import * as z from 'zod';
 
-import { CalendarIcon, Loader2, Trash } from "lucide-react";
+import { createIndent, updateIndentApprovedQuantities } from '@/actions/indent';
+import { getTableListByCategory } from '@/actions/table-list';
+import { Button } from '@/components/ui/button';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+    Form, FormControl, FormField, FormItem, FormLabel, FormMessage
+} from '@/components/ui/form';
+import { Heading } from '@/components/ui/heading';
+import { Input } from '@/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { TDepartment, TIndent, TTableList } from "@/lib/types";
-import { cn, getIndentNumber } from "@/lib/utils";
-import { createIndent, updateIndentApprovedQuantities } from "@/actions/indent";
-import { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+    Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { generatePdfWithApi } from '@/lib/generate-pdf/indent';
+import { TCategory } from '@/lib/schema';
+import { TDepartment, TIndent, TTableList } from '@/lib/types';
+import { cn, getIndentNumber } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "../ui/calendar";
-import { Heading } from "@/components/ui/heading";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { TCategory } from "@/lib/schema";
-import { format } from "date-fns";
-import { generatePdfWithApi } from "@/lib/generate-pdf/indent";
-import { getTableListByCategory } from "@/actions/table-list";
-import { useRouter } from "next/navigation";
-import { useToast } from "../ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Calendar } from '../ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { useToast } from '../ui/use-toast';
 
 export const IMG_MAX_LIMIT = 3;
 
@@ -438,10 +429,11 @@ export const CreateIndentForm: React.FC<IndentFormProps> = ({
                     defaultValue={item.indentedQty}
                     control={form.control}
                     render={({ field }) => (
-                      <FormItem inputMode="numeric">
+                      <FormItem inputMode="decimal">
                         <FormLabel>Indented Quantity</FormLabel>
                         <FormControl>
                           <Input
+                            step={0.01}
                             type="number"
                             placeholder="Enter Indented Quantity"
                             {...field}
@@ -458,10 +450,11 @@ export const CreateIndentForm: React.FC<IndentFormProps> = ({
                     defaultValue={item.approvedQty}
                     control={form.control}
                     render={({ field }) => (
-                      <FormItem inputMode="numeric">
+                      <FormItem inputMode="decimal">
                         <FormLabel>Approved Quantity</FormLabel>
                         <FormControl>
                           <Input
+                            step={0.01}
                             disabled={!canUpdate}
                             type="number"
                             placeholder="Enter Approved Quantity"

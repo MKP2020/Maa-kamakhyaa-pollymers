@@ -1,40 +1,26 @@
 "use client";
 import type { TIndent, TPurchaseOrder } from "@/lib/types";
-import { useCallback, useEffect, useMemo, useState, type FC } from "react";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Heading } from "../ui/heading";
-import { Separator } from "../ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { TVendors, quantity } from "@/lib/schema";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Button } from "../ui/button";
-import { cn, getApprovalStatusText, getPONumber } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { Calendar } from "../ui/calendar";
-import { Input } from "../ui/input";
-import { toast } from "../ui/use-toast";
-import {
-  createPurchaseOrder,
-  updatePurchaseOrder,
-} from "@/actions/purchaseOrder";
+import { format } from 'date-fns';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { createPurchaseOrder, updatePurchaseOrder } from '@/actions/purchaseOrder';
+import { quantity, TVendors } from '@/lib/schema';
+import { cn, getApprovalStatusText, getPONumber } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Button } from '../ui/button';
+import { Calendar } from '../ui/calendar';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Heading } from '../ui/heading';
+import { Input } from '../ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Separator } from '../ui/separator';
+import { toast } from '../ui/use-toast';
 
 type TCreatePurchaseOrder = {
   initialData?: TPurchaseOrder;
@@ -467,7 +453,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                     <FormMessage />
                   </FormItem>
                   <FormItem
-                    inputMode="numeric"
+                    inputMode="decimal"
                     {...form.register(`items.${iIndex}.quantity` as any)}
                   >
                     <FormLabel>
@@ -478,6 +464,7 @@ export const CreatePurchaseOrder: FC<TCreatePurchaseOrder> = (props) => {
                       <Input
                         disabled={isDisabled}
                         type="number"
+                        step={0.01}
                         max={indent.items[iIndex].approvedQty || 0}
                         min={0}
                       />
