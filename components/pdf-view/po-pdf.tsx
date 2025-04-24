@@ -1,10 +1,12 @@
-import { TPurchaseOrder } from "@/lib/types";
-import { Dialog, DialogContent } from "../ui/dialog";
-import { useEffect, useRef } from "react";
-import { generateIndentPdf } from "@/lib/generate-pdf/indent";
 import { format } from "date-fns";
+import { useEffect, useRef } from "react";
+
+import { generateIndentPdf } from "@/lib/generate-pdf/indent";
 import { generatePoPdf } from "@/lib/generate-pdf/po";
+import { TPurchaseOrder } from "@/lib/types";
 import { numberToWords } from "@/lib/utils";
+
+import { Dialog, DialogContent } from "../ui/dialog";
 
 type TPoPdfProps = {
   data: TPurchaseOrder;
@@ -178,7 +180,7 @@ export default function PoPdf(props: TPoPdfProps) {
                   className="border border-black py-2 px-4 text-right"
                 >
                   {data.taxType.toUpperCase()} @
-                  {data.taxType === "IDST"
+                  {data.taxType === "IGST"
                     ? data.igst + "%"
                     : data.sgst + "%+" + data.cgst + "%"}
                 </td>

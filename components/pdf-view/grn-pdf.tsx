@@ -1,8 +1,11 @@
-import { TGRNFull } from "@/lib/types";
-import { Dialog, DialogContent } from "../ui/dialog";
-import { useEffect, useRef } from "react";
 import { format } from "date-fns";
+import { useEffect, useRef } from "react";
+
 import { generateGrnPdf } from "@/lib/generate-pdf/grn";
+import { TGRNFull } from "@/lib/types";
+import { numberToWords } from "@/lib/utils";
+
+import { Dialog, DialogContent } from "../ui/dialog";
 
 type TGRNPdfProps = {
   data: TGRNFull;
@@ -35,6 +38,26 @@ export default function GRNPdf(props: TGRNPdfProps) {
   }, [visible, data.grnNumber, onClose]);
 
   if (!visible || !data) return;
+
+  let totalAmount = 0;
+
+  for (let index = 0; index < data.items.length; index++) {
+    const element = data.items[index];
+
+    totalAmount +=
+      (element.inStockQuantity || 0) * (data.po?.items?.[index]?.price || 0);
+  }
+
+  let totalTax = 0;
+
+  if (data.taxType === "IGST") {
+    totalTax = (totalAmount * Number(data.igst)) / 100;
+  }
+  totalTax =
+    (totalAmount * Number(data.cgst)) / 100 +
+    (totalAmount * Number(data.sgst)) / 100;
+
+  const totalAmountWithTax = totalAmount + totalTax;
 
   return (
     <Dialog
@@ -219,12 +242,54 @@ export default function GRNPdf(props: TGRNPdfProps) {
                       {item.inStockQuantity || 0}
                     </td>
 
-                    <td className="border border-black p-2">
+                    <td className="border border-black py-2 px-4">
                       {(item.inStockQuantity || 0) *
                         (data.po?.items?.[index]?.price || 0)}
                     </td>
                   </tr>
                 ))}
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="border border-black py-2 px-4 text-right"
+                  >
+                    Taxable Amount
+                  </td>
+                  <td className="border border-black py-2 px-4">
+                    {totalAmount}
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="border border-black py-2 px-4 text-right"
+                  >
+                    {data.taxType.toUpperCase()} @
+                    {data.taxType === "IGST"
+                      ? data.igst + "%"
+                      : data.sgst + "%+" + data.cgst + "%"}
+                  </td>
+                  <td className="border border-black py-2 px-4">{totalTax}</td>
+                </tr>
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="border border-black py-2 px-4 text-right"
+                  >
+                    Net Amount
+                  </td>
+                  <td className="border border-black py-2 px-4">
+                    {totalAmountWithTax}
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="border border-black py-2 px-4 text-center"
+                  >
+                    {numberToWords(totalAmountWithTax) + " Only"}
+                  </td>
+                </tr>
               </tbody>
             </table>
             <div className="flex justify-between pt-8">
