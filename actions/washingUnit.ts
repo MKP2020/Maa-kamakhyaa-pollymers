@@ -1,19 +1,20 @@
 "use server";
 
+import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
+import { WashingMachine } from "lucide-react";
+
 import { db } from "@/lib/db";
 import {
+  inventory,
+  quantity,
   TNewWashingUnit,
   TNewWashingUnitItem,
   TWashingUnitItem,
-  inventory,
-  quantity,
   washingUnit,
   washingUnitItems,
 } from "@/lib/schemas";
 import { getIdForType } from "@/lib/utils";
 import { sql } from "@vercel/postgres";
-import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
-import { WashingMachine } from "lucide-react";
 
 export const getWashingUnits = async (
   search?: string,
@@ -173,9 +174,13 @@ export const createWashingUnit = async (
       const inventoryItem = await db.query.inventory.findFirst({
         where: eq(inventory.id, element.inventoryId),
       });
-      await db.update(inventory).set({
-        usedQuantity: inventoryItem!.usedQuantity + element.issueQuantity,
-      });
+
+      await db
+        .update(inventory)
+        .set({
+          usedQuantity: inventoryItem!.usedQuantity + element.issueQuantity,
+        })
+        .where(eq(inventory.id, element.inventoryId));
       newItems.push(itemRes[0]);
     }
 

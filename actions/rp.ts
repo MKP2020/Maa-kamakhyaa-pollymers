@@ -1,22 +1,23 @@
 "use server";
 
+import { and, count, eq, gte, lte } from "drizzle-orm";
+
 import { db } from "@/lib/db";
 import {
-  TNewRp,
-  TNewRpItem,
-  TRpItem,
   inventory,
   quantity,
   quantityFor,
   rp,
   rpItems,
+  TNewRp,
+  TNewRpItem,
+  TRpItem,
 } from "@/lib/schemas";
 import {
+  getRpProducedId,
   GlobalQuantityObj,
   TGlobalQuantityType,
-  getRpProducedId,
 } from "@/lib/utils";
-import { and, count, eq, gte, lte } from "drizzle-orm";
 
 const updatedUsedQty = async (
   type: TGlobalQuantityType,
@@ -71,9 +72,12 @@ export const createRp = async (
         const inventoryData = await db.query.inventory.findFirst({
           where: eq(inventory.id, resp[0].inventoryId),
         });
-        await db.update(inventory).set({
-          usedQuantity: inventoryData!.usedQuantity + resp[0].quantity,
-        });
+        await db
+          .update(inventory)
+          .set({
+            usedQuantity: inventoryData!.usedQuantity + resp[0].quantity,
+          })
+          .where(eq(inventory.id, inventoryData!.id));
 
         items.push(resp[0]);
       }
