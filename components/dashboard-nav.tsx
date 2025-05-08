@@ -1,12 +1,13 @@
 "use client";
 
+import { log } from "console";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
 
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { NavItem } from "@/types";
-import { Dispatch, SetStateAction } from "react";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 interface DashboardNavProps {
@@ -20,7 +21,6 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   if (!items?.length) {
     return null;
   }
-
   return (
     <nav className="grid items-start gap-2">
       {items.map((item, index) => {

@@ -1,7 +1,8 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { ClassValue, clsx } from "clsx";
 import { getYear } from "date-fns";
 import { redirect } from "next/navigation";
+import { twMerge } from "tailwind-merge";
+
 import { User } from "@clerk/nextjs/server";
 
 export function cn(...inputs: ClassValue[]) {

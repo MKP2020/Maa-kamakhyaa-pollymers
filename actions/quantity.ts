@@ -1,9 +1,10 @@
 "use server";
 
+import { and, eq, or, sql } from "drizzle-orm";
+
 import { db } from "@/lib/db";
 import { quantity } from "@/lib/schemas/quantity";
 import { GlobalQuantityObj } from "@/lib/utils";
-import { and, eq, or, sql } from "drizzle-orm";
 
 export const createQuantity = async (gradeId?: number) => {
   return db.insert(quantity).values({ gradeId });
@@ -28,5 +29,9 @@ export const addProducedQty = async (qty: number, id: number) => {
 };
 
 export const getAllQuantities = () => {
-  return db.query.quantity.findMany();
+  return db.query.quantity.findMany({
+    with: {
+      grade: true,
+    },
+  });
 };
