@@ -659,7 +659,7 @@ export const CreateLoomForm: FC<
                       disabled={isDisabled}
                       placeholder="Enter quantity"
                       {...field}
-                      min={0.1}
+                      min={0}
                       step={0.1}
                       max={
                         !tapeGrade
