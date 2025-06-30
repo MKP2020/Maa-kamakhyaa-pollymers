@@ -4,39 +4,29 @@ import type {
   TPurchaseOrder,
   TPurchaseOrderItemFull,
 } from "@/lib/types";
-import { useCallback, useEffect, useState, type FC } from "react";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Heading } from "../ui/heading";
-import { Separator } from "../ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Button } from "../ui/button";
-import { cn, getGRNNumber } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { Calendar } from "../ui/calendar";
-import { Input } from "../ui/input";
-import { toast } from "../ui/use-toast";
-import { getPurchaseOrderItems } from "@/actions/purchaseOrder";
-import { createGrn } from "@/actions/grn";
+import { format } from 'date-fns';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
+import { createGrn } from '@/actions/grn';
+import { getPurchaseOrderItems } from '@/actions/purchaseOrder';
+import { cn, getGRNNumber } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Button } from '../ui/button';
+import { Calendar } from '../ui/calendar';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Heading } from '../ui/heading';
+import { Input } from '../ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Separator } from '../ui/separator';
+import { toast } from '../ui/use-toast';
+
+import type { FC } from "react";
 type TCreateGRN = {
   initialData?: TGRNFull;
   purchaseOrders: TPurchaseOrder[];
@@ -176,14 +166,19 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
               receivedDate: data.receivedDate!,
               invoiceDate: data.invoiceDate!,
             },
-            data.items.map((item, index) => ({
-              categoryId: poItems[index].item.indent.categoryId,
-              itemId: Number(poItems[index].item.itemId),
-              poItemId: Number(poItems[index].item.itemId),
-              usedQuantity: 0,
-              inStockQuantity: Number(item.quantity),
-              departmentId: poItems[index].item.indent.departmentId,
-            }))
+            data.items.map((item, index) => {
+              const _item = poItems.find(
+                (i) => i.itemId === Number(item.itemId)
+              )!;
+              return {
+                categoryId: _item.item.indent.categoryId,
+                itemId: Number(_item.item.itemId),
+                poItemId: Number(_item.item.itemId),
+                usedQuantity: 0,
+                inStockQuantity: Number(item.quantity),
+                departmentId: _item.item.indent.departmentId,
+              };
+            })
           );
         } else {
         }
@@ -210,7 +205,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
     [initialData, poItems]
   );
 
-  const { fields } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control: form.control,
     name: "items",
   });
@@ -580,6 +575,26 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                       </FormControl>
                       <FormMessage />
                     </FormItem>
+                    {/* Remove Button */}
+                    {!isDisabled && (
+                      <div className="flex items-end">
+                        <Button
+                          variant="destructive"
+                          type="button"
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                "Are you sure you want to remove this item?"
+                              )
+                            ) {
+                              remove(iIndex);
+                            }
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -655,7 +670,6 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                       <Input
                         disabled={isDisabled}
                         type="number"
-                        
                         placeholder="Enter tax percentage"
                         {...field}
                         value={field.value || ""}
