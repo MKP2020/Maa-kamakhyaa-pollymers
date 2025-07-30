@@ -1,3 +1,4 @@
+import { log } from "console";
 import { format } from "date-fns";
 import { useEffect, useRef } from "react";
 
@@ -16,6 +17,8 @@ type TGRNPdfProps = {
 export default function GRNPdf(props: TGRNPdfProps) {
   const { data, visible, onClose } = props;
   const ref = useRef(null);
+
+  console.log("data", data);
 
   useEffect(() => {
     if (visible) {
@@ -51,11 +54,14 @@ export default function GRNPdf(props: TGRNPdfProps) {
   let totalTax = 0;
 
   if (data.taxType === "IGST") {
+    console.log("totalAmount", totalAmount, Number(data.igst));
+
     totalTax = (totalAmount * Number(data.igst)) / 100;
+  } else {
+    totalTax =
+      (totalAmount * Number(data.cgst)) / 100 +
+      (totalAmount * Number(data.sgst)) / 100;
   }
-  totalTax =
-    (totalAmount * Number(data.cgst)) / 100 +
-    (totalAmount * Number(data.sgst)) / 100;
 
   const totalAmountWithTax = totalAmount + totalTax;
 
