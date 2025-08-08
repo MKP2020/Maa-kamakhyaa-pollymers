@@ -4,27 +4,41 @@ import type {
   TPurchaseOrder,
   TPurchaseOrderItemFull,
 } from "@/lib/types";
-import { format } from 'date-fns';
-import { CalendarIcon, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { log } from "console";
+import { format } from "date-fns";
+import { CalendarIcon, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { createGrn } from '@/actions/grn';
-import { getPurchaseOrderItems } from '@/actions/purchaseOrder';
-import { cn, getGRNNumber } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { createGrn } from "@/actions/grn";
+import { getPurchaseOrderItems } from "@/actions/purchaseOrder";
+import { cn, getGRNNumber } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from '../ui/button';
-import { Calendar } from '../ui/calendar';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
-import { Heading } from '../ui/heading';
-import { Input } from '../ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Separator } from '../ui/separator';
-import { toast } from '../ui/use-toast';
+import { Button } from "../ui/button";
+import { Calendar } from "../ui/calendar";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { Heading } from "../ui/heading";
+import { Input } from "../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Separator } from "../ui/separator";
+import { toast } from "../ui/use-toast";
 
 import type { FC } from "react";
 type TCreateGRN = {
@@ -222,8 +236,15 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
 
     // Calculate base total first
     values.map((item, index) => {
-      const qNum = Number(item.quantity);
-      total += (isNaN(qNum) ? 0 : qNum) * poItems[index].price;
+      if (item.quantity !== "") {
+        const qNum = Number(item.quantity);
+
+        const it = poItems.find(
+          (_item) => _item.itemId === Number(item.itemId)
+        );
+
+        total += (isNaN(qNum) ? 0 : qNum) * (it?.price || 0);
+      }
     });
 
     // Then calculate tax on the total
