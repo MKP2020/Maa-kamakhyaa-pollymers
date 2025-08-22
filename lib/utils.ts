@@ -254,7 +254,31 @@ export const canAccessPage = (user: User | null, page: TAccessPages) => {
   }
 };
 
-export function numberToWords(num: number) {
+export function numberToWordsIndian(
+  n: number | string,
+  options?: {
+    // If true, speak fractional digits individually: "Point Three Four"
+    spellFractionDigits?: boolean;
+    // If provided, format like currency: "Rupees Two Hundred Thirty Four and Paise Thirty Four"
+    currency?: { major: string; minor: string }; // e.g., { major: "Rupees", minor: "Paise" }
+  }
+) {
+  const { spellFractionDigits = true, currency } = options || {};
+
+  // Normalize input
+  const num = Number(n);
+  if (!isFinite(num)) throw new Error("Invalid number");
+  if (num === 0) return currency ? `${currency.major} Zero` : "Zero";
+
+  const negative = num < 0;
+  const abs = Math.abs(num);
+
+  // Split integer and fractional parts
+  const [intStr, fracStrRaw] = abs.toString().split(".");
+  const intPart = Number(intStr);
+  const fracStr = (fracStrRaw || "").replace(/0+$/, ""); // trim trailing zeros for cleaner wording
+
+  // Core dictionaries
   const lessThan20 = [
     "",
     "One",
@@ -289,39 +313,180 @@ export function numberToWords(num: number) {
     "Eighty",
     "Ninety",
   ];
-  const scales = ["", "Thousand", "Lakh", "Crore"];
+  // Extendable scales for Indian system
+  const scales = ["", "Thousand", "Lakh", "Crore", "Arab", "Kharab"];
 
-  function helper(num: number): string {
-    if (num === 0) return "";
-    else if (num < 20) return lessThan20[num] + " ";
-    else if (num < 100)
-      return tens[Math.floor(num / 10)] + " " + helper(num % 10);
-    else
-      return (
-        lessThan20[Math.floor(num / 100)] + " Hundred " + helper(num % 100)
-      );
+  function twoDigits(n: number): string {
+    if (n === 0) return "";
+    if (n < 20) return lessThan20[n];
+    const t = Math.floor(n / 10);
+    const r = n % 10;
+    return tens[t] + (r ? " " + lessThan20[r] : "");
   }
+
+  function threeDigits(n: number): string {
+    if (n === 0) return "";
+    if (n < 100) return twoDigits(n);
+    const h = Math.floor(n / 100);
+    const r = n % 100;
+    return lessThan20[h] + " Hundred" + (r ? " " + twoDigits(r) : "");
+  }
+
+  // Integer part to words (Indian grouping: 3, then 2-2-2...)
+  function intToWordsIndian(n: number): string {
+    if (n === 0) return "Zero";
+
+    const parts: number[] = [];
+    const last3 = n % 1000;
+    parts.push(last3);
+    n = Math.floor(n / 1000);
+
+    while (n > 0) {
+      parts.push(n % 100); // 2-digit groups
+      n = Math.floor(n / 100);
+    }
+
+    const words: string[] = [];
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const chunk = parts[i];
+      if (!chunk) continue;
+
+      if (i === 0) {
+        words.push(threeDigits(chunk));
+      } else {
+        const segWord = twoDigits(chunk);
+        const scale = scales[i] || ""; // guard for very large numbers
+        if (segWord) words.push(scale ? `${segWord} ${scale}` : segWord);
+      }
+    }
+
+    return words.join(" ").trim();
+  }
+
+  const intWords = intToWordsIndian(intPart);
+
+  // Fraction handling
+  let result: string;
+  if (currency) {
+    // Currency phrasing: Major for integer, Minor for fractional (two digits typical for paise)
+    const major = `${currency.major} ${intWords}`;
+    if (!fracStr) {
+      result = major;
+    } else {
+      // Use up to two digits for currency minor units; pad if needed
+      const paise2 = (fracStr + "0").slice(0, 2);
+      const paiseNum = Number(paise2);
+      const minorWords = intToWordsIndian(paiseNum);
+      result = `${major} and ${currency.minor} ${minorWords}`;
+    }
+  } else {
+    // Plain numeric phrasing
+    if (!fracStr) {
+      result = intWords;
+    } else if (spellFractionDigits) {
+      const digitWords = fracStr
+        .split("")
+        .map((d) => lessThan20[Number(d)])
+        .join(" ");
+      result = `${intWords} Point ${digitWords}`; // e.g., "Two Hundred Thirty Four Point Three Four"
+    } else {
+      // Speak fractional as a number (not digit-by-digit)
+      const fracNum = Number(fracStr);
+      const fracWords = intToWordsIndian(fracNum);
+      result = `${intWords} Point ${fracWords}`;
+    }
+  }
+
+  return negative ? `Minus ${result}` : result;
+}
+
+export function numberToWords(_num: number) {
+  let num = Number(_num.toFixed(0));
 
   if (num === 0) return "Zero";
 
-  let word = "";
-  let scaleIndex = 0;
+  const lessThan20 = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ];
 
-  while (num > 0) {
-    let chunk = num % 1000;
-    if (scaleIndex === 2 || scaleIndex === 3) {
-      chunk = num % 100;
-      num = Math.floor(num / 100);
-    } else {
-      num = Math.floor(num / 1000);
-    }
+  const tens = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+  ];
 
-    if (chunk !== 0) {
-      word = helper(chunk) + scales[scaleIndex] + " " + word;
-    }
+  const scales = ["", "Thousand", "Lakh", "Crore"];
 
-    scaleIndex++;
+  function twoDigits(n: number): string {
+    if (n === 0) return "";
+    if (n < 20) return lessThan20[n];
+    const t = Math.floor(n / 10);
+    const r = n % 10;
+    return tens[t] + (r ? " " + lessThan20[r] : "");
   }
 
-  return word.trim();
+  function threeDigits(n: number): string {
+    if (n === 0) return "";
+    if (n < 100) return twoDigits(n);
+    const h = Math.floor(n / 100);
+    const r = n % 100;
+    return lessThan20[h] + " Hundred" + (r ? " " + twoDigits(r) : "");
+  }
+
+  // Split number per Indian system: last 3 digits, then groups of 2
+  const parts: number[] = [];
+  const last3 = num % 1000;
+  parts.push(last3);
+  num = Math.floor(num / 1000);
+
+  while (num > 0) {
+    parts.push(num % 100); // next 2-digit group
+    num = Math.floor(num / 100);
+  }
+
+  // parts: [units(0-999), thousand(0-99), lakh(0-99), crore(0-99), ...]
+  const words: string[] = [];
+
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const chunk = parts[i];
+    if (!chunk) continue;
+
+    if (i === 0) {
+      // units segment (0..999)
+      words.push(threeDigits(chunk));
+    } else {
+      // higher segments are 0..99 (two-digit)
+      const segWord = twoDigits(chunk);
+      const scale = scales[i] || ""; // guard if number exceeds defined scales
+      if (segWord) words.push(segWord + (scale ? " " + scale : ""));
+    }
+  }
+
+  return words.join(" ").trim();
 }

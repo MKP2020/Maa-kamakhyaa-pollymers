@@ -1,10 +1,12 @@
 "use client";
+import { formatInTimeZone } from "date-fns-tz";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import type { ColumnDef } from "@tanstack/react-table";
-import type { TTableListFull } from "@/lib/schema";
-import { format } from "date-fns";
+
 import { CellAction } from "./cell-action";
 
+import type { ColumnDef } from "@tanstack/react-table";
+import type { TTableListFull } from "@/lib/schema";
 export const columns: ColumnDef<TTableListFull>[] = [
   {
     id: "select",
@@ -47,7 +49,8 @@ export const columns: ColumnDef<TTableListFull>[] = [
   },
 
   {
-    accessorFn: (data) => format(data.createdAt!, "dd MMM yyyy"),
+    accessorFn: (data) =>
+      formatInTimeZone(data.createdAt!, "UTC", "dd MMM yyyy"),
     accessorKey: "createdAt",
     header: "Created At",
   },

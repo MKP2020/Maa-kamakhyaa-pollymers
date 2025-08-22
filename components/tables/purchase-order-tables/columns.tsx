@@ -1,11 +1,13 @@
 "use client";
+import { formatInTimeZone } from "date-fns-tz";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { CellAction } from "./cell-action";
-import { type TPurchaseOrder } from "@/lib/types";
+import { TPurchaseOrder } from "@/lib/types";
 import { getApprovalStatusText, getPOStatusText } from "@/lib/utils";
 
+import { CellAction } from "./cell-action";
+
+import type { ColumnDef } from "@tanstack/react-table";
 export const columns: ColumnDef<TPurchaseOrder>[] = [
   {
     id: "select",
@@ -31,7 +33,7 @@ export const columns: ColumnDef<TPurchaseOrder>[] = [
     header: "PO Number",
   },
   {
-    accessorFn: (data) => format(data.date!, "dd MMM yyyy"),
+    accessorFn: (data) => formatInTimeZone(data.date!, "UTC", "dd MMM yyyy"),
     header: "Date",
   },
   {

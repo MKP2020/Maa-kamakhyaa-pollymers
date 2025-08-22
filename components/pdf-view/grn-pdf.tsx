@@ -1,10 +1,10 @@
 import { log } from "console";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { useEffect, useRef } from "react";
 
 import { generateGrnPdf } from "@/lib/generate-pdf/grn";
 import { TGRNFull } from "@/lib/types";
-import { numberToWords } from "@/lib/utils";
+import { numberToWordsIndian } from "@/lib/utils";
 
 import { Dialog, DialogContent } from "../ui/dialog";
 
@@ -17,8 +17,6 @@ type TGRNPdfProps = {
 export default function GRNPdf(props: TGRNPdfProps) {
   const { data, visible, onClose } = props;
   const ref = useRef(null);
-
-  console.log("data", data);
 
   useEffect(() => {
     if (visible) {
@@ -54,8 +52,6 @@ export default function GRNPdf(props: TGRNPdfProps) {
   let totalTax = 0;
 
   if (data.taxType === "IGST") {
-    console.log("totalAmount", totalAmount, Number(data.igst));
-
     totalTax = (totalAmount * Number(data.igst)) / 100;
   } else {
     totalTax =
@@ -115,7 +111,11 @@ export default function GRNPdf(props: TGRNPdfProps) {
                     <span className="font-bold text-sm">
                       Dt:{" "}
                       <span className="font-normal text-sm">
-                        {format(data.receivedDate, "dd/MM/yyyy")}
+                        {formatInTimeZone(
+                          data.receivedDate!,
+                          "UTC",
+                          "dd/MM/yyyy"
+                        )}
                       </span>
                     </span>
                   </div>
@@ -140,7 +140,11 @@ export default function GRNPdf(props: TGRNPdfProps) {
                       <span className="font-bold text-sm">
                         Dt:{" "}
                         <span className="font-normal text-sm">
-                          {format(data.po.indent.date, "dd/MM/yyyy")}
+                          {formatInTimeZone(
+                            data.po.indent.date!,
+                            "UTC",
+                            "dd/MM/yyyy"
+                          )}
                         </span>
                       </span>
                     </div>
@@ -149,7 +153,11 @@ export default function GRNPdf(props: TGRNPdfProps) {
                     <span className="font-bold flex-1 text-sm">
                       Invoice Date:{" "}
                       <span className="font-normal text-sm">
-                        {format(data.invoiceDate, "dd/MM/yyyy")}
+                        {formatInTimeZone(
+                          data.invoiceDate!,
+                          "UTC",
+                          "dd/MM/yyyy"
+                        )}
                       </span>
                     </span>
                   </div>
@@ -293,7 +301,7 @@ export default function GRNPdf(props: TGRNPdfProps) {
                     colSpan={5}
                     className="border border-black py-2 px-4 text-center"
                   >
-                    {numberToWords(totalAmountWithTax) + " Only"}
+                    {numberToWordsIndian(totalAmountWithTax) + " Only"}
                   </td>
                 </tr>
               </tbody>

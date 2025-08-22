@@ -2,6 +2,7 @@
 
 import { and, count, eq, gte, lte } from "drizzle-orm";
 
+import { getEndDate, getStartDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import {
   inventory,
@@ -123,12 +124,8 @@ export const getRpList = async (
   const where = and(
     type !== undefined ? eq(rp.type, type) : undefined,
     !!shift ? eq(rp.shift, shift) : undefined,
-    !!from
-      ? gte(rp.date, new Date(new Date(from).setHours(0, 0, 0, 0)))
-      : undefined,
-    !!to
-      ? lte(rp.date, new Date(new Date(to).setHours(23, 59, 59, 999)))
-      : undefined
+    !!from ? gte(rp.date, getStartDate(from)) : undefined,
+    !!to ? lte(rp.date, getEndDate(to)) : undefined
   );
   const data = await db.query.rp.findMany({
     where: where,

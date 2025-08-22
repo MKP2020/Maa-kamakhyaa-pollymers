@@ -1,8 +1,10 @@
 "use server";
+import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
+
+import { getEndDate, getStartDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { categories, purchaseOrderItems, tableList } from "@/lib/schema";
-import { TNewInventory, departments, inventory } from "@/lib/schemas";
-import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
+import { departments, inventory, TNewInventory } from "@/lib/schemas";
 
 export const getInventory = async (
   search?: string,
@@ -16,18 +18,8 @@ export const getInventory = async (
   try {
     const res = await db.query.inventory.findMany({
       where: and(
-        !from
-          ? undefined
-          : gte(
-              inventory.createdAt,
-              new Date(new Date(from).setHours(0, 0, 0, 0))
-            ),
-        !to
-          ? undefined
-          : lte(
-              inventory.createdAt,
-              new Date(new Date(to).setHours(23, 59, 59, 999))
-            )
+        !from ? undefined : gte(inventory.createdAt, getStartDate(from)),
+        !to ? undefined : lte(inventory.createdAt, getEndDate(to))
       ),
       with: {
         category: true,
@@ -53,18 +45,8 @@ export const getInventory = async (
           (search || "").length === 0
             ? undefined
             : ilike(tableList.name, search + "%"),
-          !from
-            ? undefined
-            : gte(
-                inventory.createdAt,
-                new Date(new Date(from).setHours(0, 0, 0, 0))
-              ),
-          !to
-            ? undefined
-            : lte(
-                inventory.createdAt,
-                new Date(new Date(to).setHours(23, 59, 59, 999))
-              )
+          !from ? undefined : gte(inventory.createdAt, getStartDate(from)),
+          !to ? undefined : lte(inventory.createdAt, getEndDate(to))
         )
       );
 

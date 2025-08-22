@@ -1,19 +1,21 @@
 "use server";
 
+import { and, count, eq, gte, lte, sql } from "drizzle-orm";
+
+import { getEndDate, getStartDate } from "@/lib/dates";
+import { db } from "@/lib/db";
 import {
-  TLoomItem,
-  TNewLoom,
-  TNewLoomItem,
   inventory,
   loom,
   loomItem,
   quantity,
+  TLoomItem,
+  TNewLoom,
+  TNewLoomItem,
 } from "@/lib/schemas";
-import { and, count, eq, gte, lte, sql } from "drizzle-orm";
-
 import { GlobalQuantityObj } from "@/lib/utils";
+
 import { addProducedQty } from "./quantity";
-import { db } from "@/lib/db";
 
 export const getLoomList = async (
   shift?: string,
@@ -24,12 +26,8 @@ export const getLoomList = async (
 ) => {
   const where = and(
     !!shift ? eq(loom.shift, shift) : undefined,
-    !!from
-      ? gte(loom.date, new Date(new Date(from).setHours(0, 0, 0, 0)))
-      : undefined,
-    !!to
-      ? lte(loom.date, new Date(new Date(to).setHours(23, 59, 59, 999)))
-      : undefined
+    !!from ? gte(loom.date, getStartDate(from)) : undefined,
+    !!to ? lte(loom.date, getEndDate(to)) : undefined
   );
   const data = await db.query.loom.findMany({
     where: where,

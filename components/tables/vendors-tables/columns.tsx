@@ -1,7 +1,8 @@
 "use client";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { TVendorsFull } from "@/lib/schema";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
+
 import { CellAction } from "./cell-action";
 
 export const columns: ColumnDef<TVendorsFull>[] = [
@@ -95,7 +96,8 @@ export const columns: ColumnDef<TVendorsFull>[] = [
   //   header: "Address",
   // },
   {
-    accessorFn: (data) => format(data.createdAt!, "dd MMM yyyy"),
+    accessorFn: (data) =>
+      formatInTimeZone(data.createdAt!, "UTC", "dd MMM yyyy"),
     accessorKey: "createdAt",
     header: "Created At",
   },

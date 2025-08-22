@@ -1,11 +1,13 @@
 "use client";
+import { formatInTimeZone } from "date-fns-tz";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { CellAction } from "./cell-action";
-import { type TGrade } from "@/lib/types";
+import { TGrade } from "@/lib/types";
 import { GRADE_TYPES } from "@/lib/utils";
 
+import { CellAction } from "./cell-action";
+
+import type { ColumnDef } from "@tanstack/react-table";
 export const columns: ColumnDef<TGrade>[] = [
   {
     id: "select",
@@ -39,7 +41,8 @@ export const columns: ColumnDef<TGrade>[] = [
     header: "Fabric Grade",
   },
   {
-    accessorFn: (data) => format(data.createdAt!, "dd MMM yyyy"),
+    accessorFn: (data) =>
+      formatInTimeZone(data.createdAt!, "UTC", "dd MMM yyyy"),
     accessorKey: "createdAt",
     header: "Created At",
   },

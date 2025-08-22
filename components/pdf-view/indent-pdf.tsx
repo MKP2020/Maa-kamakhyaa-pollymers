@@ -1,8 +1,10 @@
-import { TIndent } from "@/lib/types";
-import { Dialog, DialogContent } from "../ui/dialog";
+import { formatInTimeZone } from "date-fns-tz";
 import { useEffect, useRef } from "react";
+
 import { generateIndentPdf } from "@/lib/generate-pdf/indent";
-import { format } from "date-fns";
+import { TIndent } from "@/lib/types";
+
+import { Dialog, DialogContent } from "../ui/dialog";
 
 type TIndentPdfProps = {
   data: TIndent;
@@ -72,7 +74,7 @@ export default function IndentPdf(props: TIndentPdfProps) {
               </div>
               <div>
                 <span className="font-bold text-black">Date</span>
-                <span>{format(data.date, "dd/MM/yyyy")}</span>
+                <span>{formatInTimeZone(data.date!, "UTC", "dd/MM/yyyy")}</span>
               </div>
             </div>
           </div>

@@ -1,19 +1,20 @@
 "use server";
+import { and, count, eq, gte, lte, sql } from "drizzle-orm";
+
+import { getEndDate, getStartDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import {
-  type TNewTarpaulinItem,
-  type TNewTarpaulin,
-  type TTarpaulinItem,
   inventory,
   quantity,
   tarpaulin,
   tarpaulinItem,
+  TNewTarpaulin,
+  TNewTarpaulinItem,
+  TTarpaulinItem,
 } from "@/lib/schemas";
-import { and, eq, sql, gte, lte, count } from "drizzle-orm";
-import { addProducedQty } from "./quantity";
 import { GlobalQuantityObj } from "@/lib/utils";
-import autoTable from "jspdf-autotable";
-import jsPDF from "jspdf";
+
+import { addProducedQty } from "./quantity";
 
 export const getTarpaulinList = async (
   shift?: string,
@@ -24,12 +25,8 @@ export const getTarpaulinList = async (
 ) => {
   const where = and(
     !!shift ? eq(tarpaulin.shift, shift) : undefined,
-    !!from
-      ? gte(tarpaulin.date, new Date(new Date(from).setHours(0, 0, 0, 0)))
-      : undefined,
-    !!to
-      ? lte(tarpaulin.date, new Date(new Date(to).setHours(23, 59, 59, 999)))
-      : undefined
+    !!from ? gte(tarpaulin.date, getStartDate(from)) : undefined,
+    !!to ? lte(tarpaulin.date, getEndDate(to)) : undefined
   );
   const data = await db.query.tarpaulin.findMany({
     where: where,

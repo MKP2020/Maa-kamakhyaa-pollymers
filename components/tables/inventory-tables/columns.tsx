@@ -1,10 +1,13 @@
 "use client";
-import { Checkbox } from "@/components/ui/checkbox";
-import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { CellAction } from "./cell-action";
+import { formatInTimeZone } from "date-fns-tz";
+
+import { Checkbox } from "@/components/ui/checkbox";
 import { TInventoryFull } from "@/lib/schemas";
 
+import { CellAction } from "./cell-action";
+
+import type { ColumnDef } from "@tanstack/react-table";
 export const columns: ColumnDef<TInventoryFull>[] = [
   {
     id: "select",
@@ -33,7 +36,8 @@ export const columns: ColumnDef<TInventoryFull>[] = [
     header: "Item Name",
   },
   {
-    accessorFn: (data) => format(data.createdAt!, "dd MMM yyyy"),
+    accessorFn: (data) =>
+      formatInTimeZone(data.createdAt!, "UTC", "dd MMM yyyy"),
     header: "Created At",
   },
   {

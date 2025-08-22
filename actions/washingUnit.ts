@@ -3,6 +3,7 @@
 import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
 import { WashingMachine } from "lucide-react";
 
+import { getEndDate, getStartDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import {
   inventory,
@@ -29,11 +30,8 @@ export const getWashingUnits = async (
     if (!!date) {
       if (!shift) {
         where = and(
-          gte(washingUnit.date, new Date(date)),
-          lte(
-            washingUnit.date,
-            new Date(new Date(date).setUTCHours(23, 59, 59, 999))
-          )
+          gte(washingUnit.date, getStartDate(date)),
+          lte(washingUnit.date, getEndDate(date))
         );
       } else {
         where = and(
@@ -55,20 +53,14 @@ export const getWashingUnits = async (
       if (!shift) {
         where = and(
           ilike(washingUnit.id, "%" + search + "%"),
-          gte(washingUnit.date, new Date(date)),
-          lte(
-            washingUnit.date,
-            new Date(new Date(date).setUTCHours(23, 59, 59, 999))
-          )
+          gte(washingUnit.date, getStartDate(date)),
+          lte(washingUnit.date, getEndDate(date))
         );
       } else {
         where = and(
           ilike(washingUnit.id, "%" + search + "%"),
-          gte(washingUnit.date, new Date(date)),
-          lte(
-            washingUnit.date,
-            new Date(new Date(date).setUTCHours(23, 59, 59, 999))
-          ),
+          gte(washingUnit.date, getStartDate(date)),
+          lte(washingUnit.date, getEndDate(date)),
           eq(washingUnit.shift, shift)
         );
       }

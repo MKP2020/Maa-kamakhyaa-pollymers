@@ -1,10 +1,12 @@
 "use client";
+import { formatInTimeZone } from "date-fns-tz";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import type { ColumnDef } from "@tanstack/react-table";
-import type { TWashingUnitFull } from "@/lib/schema";
-import { format } from "date-fns";
+
 import { CellAction } from "./cell-action";
 
+import type { ColumnDef } from "@tanstack/react-table";
+import type { TWashingUnitFull } from "@/lib/schema";
 export const columns: ColumnDef<TWashingUnitFull, any>[] = [
   {
     id: "select",
@@ -30,7 +32,7 @@ export const columns: ColumnDef<TWashingUnitFull, any>[] = [
     header: "ID",
   },
   {
-    accessorFn: (data) => format(data.date!, "dd MMM yyyy"),
+    accessorFn: (data) => formatInTimeZone(data.date!, "UTC", "dd MMM yyyy"),
     header: "Date",
   },
   {

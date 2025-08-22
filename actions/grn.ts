@@ -1,19 +1,20 @@
 "use server";
 
+import { getYear } from "date-fns";
+import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+
+import { getEndDate, getStartDate } from "@/lib/dates";
+import { db } from "@/lib/db";
 import {
-  TInventory,
-  TNewInventory,
   grnNumbers,
   grns,
   inventory,
   purchaseOrders,
+  TInventory,
+  TNewInventory,
 } from "@/lib/schema";
-import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
-
 import { TNewGRN } from "@/lib/types";
-import { db } from "@/lib/db";
-import { getYear } from "date-fns";
-import { revalidatePath } from "next/cache";
 
 export const getGrns = async (
   search?: string,
@@ -22,47 +23,12 @@ export const getGrns = async (
   offset?: number,
   limit?: number
 ) => {
-  let where: any = undefined;
-
-  if ((search || "").length === 0) {
-    if (!!from && !!to) {
-      where = and(
-        gte(grns.receivedDate, new Date(new Date(from).setHours(0, 0, 0, 0))),
-        lte(grns.receivedDate, new Date(new Date(to).setHours(23, 59, 59, 999)))
-      );
-    } else if (!!from && !to) {
-      where = gte(
-        grns.receivedDate,
-        new Date(new Date(from).setHours(0, 0, 0, 0))
-      );
-    } else if (!from && !!to) {
-      where = gte(
-        grns.receivedDate,
-        new Date(new Date(to).setHours(23, 59, 59, 999))
-      );
-    }
-  } else {
-    if (!!from && !!to) {
-      where = and(
-        ilike(grns.grnNumber, search + "%"),
-        gte(grns.receivedDate, new Date(new Date(from).setHours(0, 0, 0, 0))),
-        lte(grns.receivedDate, new Date(new Date(to).setHours(23, 59, 59, 999)))
-      );
-    } else if (!!from && !to) {
-      where = and(
-        ilike(grns.grnNumber, search + "%"),
-        gte(grns.receivedDate, new Date(new Date(from).setHours(0, 0, 0, 0)))
-      );
-    } else if (!from && !!to) {
-      where = and(
-        ilike(grns.grnNumber, search + "%"),
-        gte(grns.receivedDate, new Date(new Date(to).setHours(23, 59, 59, 999)))
-      );
-    } else {
-      where = ilike(grns.grnNumber, search + "%");
-    }
-  }
-
+  const where = and(
+    search ? ilike(grns.grnNumber, search + "%") : undefined,
+    from ? gte(grns.receivedDate, getStartDate(from)) : undefined,
+    to ? lte(grns.receivedDate, getEndDate(to)) : undefined
+  );
+  // console.log("where", from, getStartDate(from));
   try {
     const data = await db.query.grns.findMany({
       where,

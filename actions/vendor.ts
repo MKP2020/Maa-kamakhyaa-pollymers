@@ -1,16 +1,17 @@
 "use server";
 
+import { and, count, eq, gte, lte } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+
+import { getEndDate, getStartDate } from "@/lib/dates";
+import { db } from "@/lib/db";
 import {
-  TVendors,
-  TVendorsFull,
   addresses,
   bankDetails,
+  TVendors,
+  TVendorsFull,
   vendors,
 } from "@/lib/schema";
-import { and, count, eq, gte, lte } from "drizzle-orm";
-
-import { db } from "@/lib/db";
-import { revalidatePath } from "next/cache";
 
 export const getVendors = async (
   limit: number,
@@ -39,12 +40,12 @@ export const getVendors = async (
       ? undefined
       : (vendors, { gte, lte, and }) =>
           from && !to
-            ? gte(vendors.createdAt, new Date(from))
+            ? gte(vendors.createdAt, getStartDate(from))
             : to && !from
-            ? lte(vendors.createdAt, new Date(to))
+            ? lte(vendors.createdAt, getEndDate(to))
             : and(
-                gte(vendors.createdAt, new Date(from)),
-                lte(vendors.createdAt, new Date(to))
+                gte(vendors.createdAt, getStartDate(from)),
+                lte(vendors.createdAt, getEndDate(to))
               ),
     with: { address: true, bankDetails: true, category: true },
     limit: limit,

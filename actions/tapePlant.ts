@@ -1,23 +1,25 @@
 "use server";
 
-import { GlobalQuantityObj, getRpProducedId } from "@/lib/utils";
+import { and, count, eq, gte, lte, sql } from "drizzle-orm";
+
+import { getEndDate, getStartDate } from "@/lib/dates";
+import { db } from "@/lib/db";
 import {
+  inventory,
+  quantity,
+  tapeItem,
+  tapePlant,
+  tapePlantConsumedItem,
   TNewTape,
   TNewTapeConsumedItem,
   TNewTapeItem,
   TTape,
   TTapeConsumedItem,
   TTapeItem,
-  inventory,
-  quantity,
-  tapeItem,
-  tapePlant,
-  tapePlantConsumedItem,
 } from "@/lib/schemas";
-import { and, count, eq, gte, lte, sql } from "drizzle-orm";
+import { getRpProducedId, GlobalQuantityObj } from "@/lib/utils";
 
 import { addProducedQty } from "./quantity";
-import { db } from "@/lib/db";
 
 export const getTapePlantList = async (
   shift?: string,
@@ -28,12 +30,8 @@ export const getTapePlantList = async (
 ) => {
   const where = and(
     !!shift ? eq(tapePlant.shift, shift) : undefined,
-    !!from
-      ? gte(tapePlant.date, new Date(new Date(from).setHours(0, 0, 0, 0)))
-      : undefined,
-    !!to
-      ? lte(tapePlant.date, new Date(new Date(to).setHours(23, 59, 59, 999)))
-      : undefined
+    !!from ? gte(tapePlant.date, getStartDate(from)) : undefined,
+    !!to ? lte(tapePlant.date, getEndDate(to)) : undefined
   );
   const data = await db.query.tapePlant.findMany({
     where: where,

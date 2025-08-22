@@ -1,6 +1,7 @@
 "use server";
 import { and, count, eq, gte, lte, sql } from "drizzle-orm";
 
+import { getEndDate, getStartDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import {
   inventory,
@@ -24,12 +25,8 @@ export const getLamList = async (
 ) => {
   const where = and(
     !!shift ? eq(lamination.shift, shift) : undefined,
-    !!from
-      ? gte(lamination.date, new Date(new Date(from).setHours(0, 0, 0, 0)))
-      : undefined,
-    !!to
-      ? lte(lamination.date, new Date(new Date(to).setHours(23, 59, 59, 999)))
-      : undefined
+    !!from ? gte(lamination.date, getStartDate(from)) : undefined,
+    !!to ? lte(lamination.date, getEndDate(to)) : undefined
   );
   const data = await db.query.lamination.findMany({
     where: where,

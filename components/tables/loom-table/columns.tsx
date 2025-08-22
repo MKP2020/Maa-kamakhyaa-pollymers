@@ -1,12 +1,13 @@
 "use client";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { TLoomFull } from "@/lib/schema";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
+
 import { CellAction } from "./cell-action";
 
 export const columns: ColumnDef<TLoomFull>[] = [
   {
-    accessorFn: (data) => format(data.date!, "dd MMM yyyy"),
+    accessorFn: (data) => formatInTimeZone(data.date!, "UTC", "dd MMM yyyy"),
     header: "Created At",
   },
   {

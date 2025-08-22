@@ -4,6 +4,7 @@ import { getYear } from "date-fns";
 import { and, count, eq, gte, ilike, inArray, lte, not } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+import { getEndDate, getStartDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import {
   grns,
@@ -31,45 +32,30 @@ export const getPurchaseOrders = async (
   if ((search || "").length === 0) {
     if (!!from && !!to) {
       where = and(
-        gte(purchaseOrders.date, new Date(new Date(from).setHours(0, 0, 0, 0))),
-        lte(
-          purchaseOrders.date,
-          new Date(new Date(to).setHours(23, 59, 59, 999))
-        )
+        gte(purchaseOrders.date, getStartDate(from)),
+        lte(purchaseOrders.date, getEndDate(to))
       );
     } else if (!!from && !to) {
-      where = gte(
-        purchaseOrders.date,
-        new Date(new Date(from).setHours(0, 0, 0, 0))
-      );
+      where = gte(purchaseOrders.date, getStartDate(from));
     } else if (!from && !!to) {
-      where = gte(
-        purchaseOrders.date,
-        new Date(new Date(to).setHours(23, 59, 59, 999))
-      );
+      where = gte(purchaseOrders.date, getEndDate(to));
     }
   } else {
     if (!!from && !!to) {
       where = and(
         ilike(purchaseOrders.poNumber, search + "%"),
-        gte(purchaseOrders.date, new Date(new Date(from).setHours(0, 0, 0, 0))),
-        lte(
-          purchaseOrders.date,
-          new Date(new Date(to).setHours(23, 59, 59, 999))
-        )
+        gte(purchaseOrders.date, getStartDate(from)),
+        lte(purchaseOrders.date, getEndDate(to))
       );
     } else if (!!from && !to) {
       where = and(
         ilike(purchaseOrders.poNumber, search + "%"),
-        gte(purchaseOrders.date, new Date(new Date(from).setHours(0, 0, 0, 0)))
+        gte(purchaseOrders.date, getStartDate(from))
       );
     } else if (!from && !!to) {
       where = and(
         ilike(purchaseOrders.poNumber, search + "%"),
-        gte(
-          purchaseOrders.date,
-          new Date(new Date(to).setHours(23, 59, 59, 999))
-        )
+        gte(purchaseOrders.date, getEndDate(to))
       );
     } else {
       where = ilike(purchaseOrders.poNumber, search + "%");

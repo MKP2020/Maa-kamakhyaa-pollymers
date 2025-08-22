@@ -1,9 +1,11 @@
 "use client";
-import { ColumnDef } from "@tanstack/react-table";
-import { CellAction } from "./cell-action";
+import { formatInTimeZone } from "date-fns-tz";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import { format } from "date-fns";
-import { type TUser, getUserRole } from "@/lib/users";
+import { getUserRole, TUser } from "@/lib/users";
+import { ColumnDef } from "@tanstack/react-table";
+
+import { CellAction } from "./cell-action";
 
 export const columns: ColumnDef<TUser>[] = [
   {
@@ -47,7 +49,8 @@ export const columns: ColumnDef<TUser>[] = [
   },
 
   {
-    accessorFn: (data) => format(data.createdAt!, "dd MMM yyyy"),
+    accessorFn: (data) =>
+      formatInTimeZone(data.createdAt!, "UTC", "dd MMM yyyy"),
     header: "CREATED AT",
   },
   {

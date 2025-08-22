@@ -1,11 +1,14 @@
 "use client";
-import { Checkbox } from "@/components/ui/checkbox";
-import type { ColumnDef } from "@tanstack/react-table";
-import type { TTableListFull } from "@/lib/schema";
 import { format } from "date-fns";
-import { CellAction } from "./cell-action";
+import { formatInTimeZone } from "date-fns-tz";
+
+import { Checkbox } from "@/components/ui/checkbox";
 import { TIndent } from "@/lib/types";
 
+import { CellAction } from "./cell-action";
+
+import type { ColumnDef } from "@tanstack/react-table";
+import type { TTableListFull } from "@/lib/schema";
 export const columns: ColumnDef<TIndent>[] = [
   {
     id: "select",
@@ -31,7 +34,7 @@ export const columns: ColumnDef<TIndent>[] = [
     header: "Indent Number",
   },
   {
-    accessorFn: (data) => format(data.date!, "dd MMM yyyy"),
+    accessorFn: (data) => formatInTimeZone(data.date!, "UTC", "dd MMM yyyy"),
     header: "Date",
   },
   {

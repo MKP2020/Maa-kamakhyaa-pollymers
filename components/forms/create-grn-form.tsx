@@ -49,9 +49,9 @@ type TCreateGRN = {
 const formSchema = z
   .object({
     poId: z.string().regex(/^\d+\.?\d*$/, "Please select a purchase order"),
-    receivedDate: z.date(),
+    receivedDate: z.date().default(new Date()),
     invoiceNumber: z.string().min(4, "Please enter a valid invoice number"),
-    invoiceDate: z.date(),
+    invoiceDate: z.date().default(new Date()),
     transportMode: z.string(),
     transportName: z.string(),
     cnNumber: z.string(),
@@ -148,7 +148,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
           quantity: item.inStockQuantity.toString(),
         })),
       } as any)
-    : {};
+    : { receivedDate: new Date() };
 
   const form = useForm<NewGRNFormValues>({
     resolver: zodResolver(formSchema),
@@ -350,7 +350,7 @@ export const CreateGRN: FC<TCreateGRN> = (props) => {
                 <FormItem className="flex flex-col">
                   <FormLabel>Received Date</FormLabel>
                   <Popover>
-                    <PopoverTrigger disabled={isDisabled} asChild>
+                    <PopoverTrigger disabled={true} asChild>
                       <FormControl>
                         <Button
                           variant={"outline"}

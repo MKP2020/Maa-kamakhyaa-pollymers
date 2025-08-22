@@ -2,6 +2,7 @@
 import { getYear } from "date-fns";
 import { and, count, eq, gte, lte } from "drizzle-orm";
 
+import { getEndDate, getStartDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { indentItems, indentNumbers, indents } from "@/lib/schema";
 import { TIndentItem, TNewIndent, TNewIndentItem } from "@/lib/types";
@@ -105,37 +106,37 @@ export const getIndents = async (
         if (hasSearch && !!from && !!to) {
           return and(
             eq(fields.indentNumber, search),
-            gte(fields.date, new Date(from)),
-            lte(fields.date, new Date(to))
+            gte(fields.date, getStartDate(from)),
+            lte(fields.date, getEndDate(to))
           );
         }
 
         if (hasSearch && !!from && !to) {
           return and(
             eq(fields.indentNumber, search),
-            gte(fields.date, new Date(from))
+            gte(fields.date, getStartDate(from))
           );
         }
 
         if (hasSearch && !from && !!to) {
           return and(
             eq(fields.indentNumber, search),
-            lte(fields.date, new Date(to))
+            lte(fields.date, getEndDate(to))
           );
         }
 
         if (from && !to) {
-          return gte(fields.date, new Date(from));
+          return gte(fields.date, getStartDate(from));
         }
 
         if (to && !from) {
-          return lte(fields.date, new Date(to));
+          return lte(fields.date, getEndDate(to));
         }
 
         if (!!from && !!to) {
           return and(
-            gte(fields.date, new Date(from)),
-            lte(fields.date, new Date(to))
+            gte(fields.date, getStartDate(from)),
+            lte(fields.date, getEndDate(to))
           );
         }
 

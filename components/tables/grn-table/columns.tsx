@@ -1,11 +1,14 @@
 "use client";
+
+import { formatInTimeZone } from "date-fns-tz";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { CellAction } from "./cell-action";
-import { type TGRNFull } from "@/lib/types";
+import { TGRNFull } from "@/lib/types";
 import { getApprovalStatusText, getPOStatusText } from "@/lib/utils";
 
+import { CellAction } from "./cell-action";
+
+import type { ColumnDef } from "@tanstack/react-table";
 export const columns: ColumnDef<TGRNFull>[] = [
   {
     id: "select",
@@ -31,7 +34,8 @@ export const columns: ColumnDef<TGRNFull>[] = [
     header: "GRN Number",
   },
   {
-    accessorFn: (data) => format(data.receivedDate!, "dd MMM yyyy"),
+    accessorFn: (data) =>
+      formatInTimeZone(data.receivedDate, "UTC", "dd MMM yyyy"),
     header: "Received Date",
   },
   {
@@ -44,7 +48,8 @@ export const columns: ColumnDef<TGRNFull>[] = [
   },
 
   {
-    accessorFn: (item) => format(item.invoiceDate, "dd MMM yyyy"),
+    accessorFn: (item) =>
+      formatInTimeZone(item.invoiceDate, "UTC", "dd MMM yyyy"),
     header: "Invoice Date",
   },
   {

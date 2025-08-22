@@ -1,11 +1,13 @@
 "use client";
+import { formatInTimeZone } from "date-fns-tz";
+
 import { Checkbox } from "@/components/ui/checkbox";
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { CellAction } from "./cell-action";
-import { type TRpFull } from "@/lib/schemas";
+import { TRpFull } from "@/lib/schemas";
 import { RP_CONSUMED_Table_TITLE, RP_PRODUCED_Table_TITLE } from "@/lib/utils";
 
+import { CellAction } from "./cell-action";
+
+import type { ColumnDef } from "@tanstack/react-table";
 export const columns: (type: string) => ColumnDef<TRpFull>[] = (type) => {
   const data: ColumnDef<TRpFull>[] = [
     {
@@ -28,7 +30,7 @@ export const columns: (type: string) => ColumnDef<TRpFull>[] = (type) => {
       enableHiding: false,
     },
     {
-      accessorFn: (data) => format(data.date!, "dd MMM yyyy"),
+      accessorFn: (data) => formatInTimeZone(data.date!, "UTC", "dd MMM yyyy"),
       header: "Date",
     },
     {

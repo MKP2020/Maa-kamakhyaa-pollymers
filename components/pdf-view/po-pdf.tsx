@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { useEffect, useRef } from "react";
 
 import { generateIndentPdf } from "@/lib/generate-pdf/indent";
@@ -104,7 +104,9 @@ export default function PoPdf(props: TPoPdfProps) {
                   {data.seller.address.state}, {data.seller.address.pinCode},
                 </td>
                 <th className="text-left py-1">Date</th>
-                <td className="py-1">{format(data.date, "dd/MM/yyyy")}</td>
+                <td className="py-1">
+                  {formatInTimeZone(data.date!, "UTC", "dd/MM/yyyy")}
+                </td>
               </tr>
               <tr>
                 <th className="text-left py-1">Indent No</th>
