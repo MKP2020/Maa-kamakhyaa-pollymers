@@ -1,17 +1,26 @@
 "use client";
+import { format } from "date-fns";
 import {
-  ColumnDef,
-  PaginationState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Download,
+  Plus,
+} from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
+import { DateRange } from "react-day-picker";
+import * as XLSX from "xlsx";
 
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -19,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -27,29 +37,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TGRNFull } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
 import {
-  CalendarIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Plus,
-} from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { TGRNFull } from "@/lib/types";
-import { DateRange } from "react-day-picker";
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  PaginationState,
+  useReactTable,
+} from "@tanstack/react-table";
 
 interface DataTableProps {
   columns: ColumnDef<TGRNFull, any>[];
@@ -153,6 +155,28 @@ export function GRNTable({
     (searchParams.get("search") as any) || ""
   );
 
+  const exportToExcel = React.useCallback(() => {
+    try {
+      const currentSearch = searchParams?.get("search") || "";
+      const fromStr = date?.from ? format(date?.from, "yyyy-MM-dd") : "";
+      const toStr = date?.to ? format(date?.to, "yyyy-MM-dd") : "";
+
+      const url = new URL(`/api/grn/export`, window.location.origin);
+      if (currentSearch) url.searchParams.set("search", currentSearch);
+      if (fromStr) url.searchParams.set("from", fromStr);
+      if (toStr) url.searchParams.set("to", toStr);
+
+      const link = document.createElement("a");
+      link.href = url.toString();
+      link.download = "grn.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error("Export failed", e);
+    }
+  }, [searchParams, date?.from, date?.to]);
+
   return (
     <>
       <div id="table-indent" className="flex items-start justify-between">
@@ -220,6 +244,9 @@ export function GRNTable({
           </Button>
         </div>
         <div className="flex items-center gap-4">
+          <Button onClick={exportToExcel}>
+            <Download className="mr-2 h-4 w-4" /> Export
+          </Button>
           <Button
             className="text-xs md:text-sm"
             onClick={() => router.push(`/dashboard/grn/new`)}
