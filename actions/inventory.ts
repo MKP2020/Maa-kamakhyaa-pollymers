@@ -1,10 +1,10 @@
 "use server";
-import { and, count, eq, gte, ilike, lte } from "drizzle-orm";
+import { and, count, eq, gte, ilike, lte } from 'drizzle-orm';
 
-import { getEndDate, getStartDate } from "@/lib/dates";
-import { db } from "@/lib/db";
-import { categories, purchaseOrderItems, tableList } from "@/lib/schema";
-import { departments, inventory, TNewInventory } from "@/lib/schemas";
+import { getEndDate, getStartDate } from '@/lib/dates';
+import { db } from '@/lib/db';
+import { categories, purchaseOrderItems, tableList } from '@/lib/schema';
+import { departments, inventory, TNewInventory } from '@/lib/schemas';
 
 export const getInventory = async (
   search?: string,
@@ -13,46 +13,58 @@ export const getInventory = async (
   offset?: number,
   limit?: number
 ) => {
-  let where: any = undefined;
-
   try {
-    const res = await db.query.inventory.findMany({
-      where: and(
-        !from ? undefined : gte(inventory.createdAt, getStartDate(from)),
-        !to ? undefined : lte(inventory.createdAt, getEndDate(to))
-      ),
-      with: {
-        category: true,
-        department: true,
-        poItem: true,
-        item: {
-          where:
-            (search || "").length === 0
-              ? undefined
-              : ilike(tableList.name, search + "%"),
-        } as any,
-      },
-      offset,
-      limit,
-    });
+    const hasSearch = (search || "").trim().length > 0;
+
+    const whereCond = and(
+      !from ? undefined : gte(inventory.createdAt, getStartDate(from)),
+      !to ? undefined : lte(inventory.createdAt, getEndDate(to)),
+      !hasSearch ? undefined : ilike(tableList.name, `%${search}%`)
+    );
+
+    const baseQuery = db
+      .select({
+        inventory,
+        item: tableList,
+        category: categories,
+        department: departments,
+        poItem: purchaseOrderItems,
+      })
+      .from(inventory)
+      .innerJoin(tableList, eq(tableList.id, inventory.itemId))
+      .leftJoin(categories, eq(categories.id, inventory.categoryId))
+      .leftJoin(departments, eq(departments.id, inventory.departmentId))
+      .leftJoin(
+        purchaseOrderItems,
+        eq(purchaseOrderItems.id, inventory.poItemId)
+      )
+      .where(whereCond);
+
+    const rows = await (typeof limit === "number" && typeof offset === "number"
+      ? (baseQuery as any).limit(limit).offset(offset)
+      : typeof limit === "number"
+      ? (baseQuery as any).limit(limit)
+      : typeof offset === "number"
+      ? (baseQuery as any).offset(offset)
+      : baseQuery);
+
+    const res = rows.map((r: any) => ({
+      ...r.inventory,
+      item: r.item,
+      category: r.category,
+      department: r.department,
+      poItem: r.poItem as any,
+    }));
 
     const totalC = await db
       .select({ count: count() })
       .from(inventory)
       .innerJoin(tableList, eq(tableList.id, inventory.itemId))
-      .where(
-        and(
-          (search || "").length === 0
-            ? undefined
-            : ilike(tableList.name, search + "%"),
-          !from ? undefined : gte(inventory.createdAt, getStartDate(from)),
-          !to ? undefined : lte(inventory.createdAt, getEndDate(to))
-        )
-      );
+      .where(whereCond);
 
     return {
-      data: res.filter((d) => !!d.item),
-      total: totalC[0].count,
+      data: res,
+      total: totalC[0]?.count ?? 0,
     };
   } catch (error) {
     return {
