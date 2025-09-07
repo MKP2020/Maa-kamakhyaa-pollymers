@@ -12,18 +12,12 @@ export async function GET(req: NextRequest) {
     const to = searchParams.get("to") || undefined;
 
     // Fetch a large page to include all results matching filters
-    const { data } = await getGrns(
-      search as any,
-      from as any,
-      to as any,
-      0,
-      100000
-    );
+    const { data } = await getGrns(search as any, from as any, to as any);
 
     const summaryRows: Record<string, any>[] = [];
     const itemRows: Record<string, any>[] = [];
 
-    data.forEach((grn: any) => {
+    data.forEach((grn) => {
       // Compute amounts
       const baseTotal = (grn.items || []).reduce((sum: number, inv: any) => {
         const qty = Number(inv?.inStockQuantity || 0);
@@ -67,6 +61,7 @@ export async function GET(req: NextRequest) {
         "Base Amount": baseTotal,
         "Tax Amount": taxAmount,
         "Net Amount": netAmount,
+        "Vendor Name": grn?.po?.seller?.name || "",
       });
 
       (grn.items || []).forEach((inv: any) => {

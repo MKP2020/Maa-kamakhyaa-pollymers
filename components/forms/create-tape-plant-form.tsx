@@ -1,45 +1,34 @@
 "use client";
-import { FC, useCallback, useEffect, useState } from "react";
-import { Heading } from "../ui/heading";
-import { Separator } from "../ui/separator";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { z } from "zod";
-import { UseFormReturn, useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Button } from "../ui/button";
-import { format } from "date-fns";
-import { CalendarIcon, Loader2, Trash } from "lucide-react";
-import { Calendar } from "../ui/calendar";
-import { SHIFT, cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { format } from 'date-fns';
+import { CalendarIcon, Loader2, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
+
+import { getInventoryForForms } from '@/actions/inventory';
+import { createTapePlant } from '@/actions/tapePlant';
+import { TCategory } from '@/lib/schema';
+import { TGrade } from '@/lib/types';
+import { cn, SHIFT } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Button } from '../ui/button';
+import { Calendar } from '../ui/calendar';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Heading } from '../ui/heading';
+import { Input } from '../ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Separator } from '../ui/separator';
+
 import type { TInventoryFull } from "@/lib/schemas/inventory";
-import { getInventoryBy } from "@/actions/inventory";
 import type {
   TDepartment,
   TTTapeItemFull,
   TTapeConsumedItem,
   TTapeFull,
 } from "@/lib/schemas";
-import { TCategory } from "@/lib/schema";
-import { Input } from "../ui/input";
-import { useRouter } from "next/navigation";
-import { TGrade } from "@/lib/types";
-import { createTapePlant } from "@/actions/tapePlant";
-
 const formSchema = z.object({
   date: z.date(),
 
@@ -123,7 +112,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
     (async () => {
       try {
         setIsLoading(true);
-        const items = await getInventoryBy(
+        const items = await getInventoryForForms(
           selectedCategory,
           selectedDepartment
         );
@@ -288,7 +277,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                   ? ""
                   : !!inventory
                   ? ` (Available ${
-                      inventory.inStockQuantity - inventory.usedQuantity
+                      inventory.availableQuantity
                     }${inventory.item.unit})`
                   : ""}
               </FormLabel>
@@ -299,7 +288,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                   min={1}
                   max={
                     !!inventory
-                      ? inventory.inStockQuantity - inventory.usedQuantity
+                      ? inventory.availableQuantity
                       : undefined
                   }
                   disabled={disabled}

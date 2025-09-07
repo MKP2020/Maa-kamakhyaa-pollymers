@@ -1,14 +1,15 @@
 "use client";
-import { format } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
+import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { TInventoryFull } from "@/lib/schemas";
+import { Checkbox } from '@/components/ui/checkbox';
+import { TInventoryAggregated } from '@/types';
 
-import { CellAction } from "./cell-action";
+import { CellAction } from './cell-action';
 
 import type { ColumnDef } from "@tanstack/react-table";
-export const columns: ColumnDef<TInventoryFull>[] = [
+
+export const columns: ColumnDef<TInventoryAggregated>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -32,13 +33,7 @@ export const columns: ColumnDef<TInventoryFull>[] = [
     accessorFn: (data) => {
       return data.item.name;
     },
-    // accessorKey: "data.item.item.item.name",
     header: "Item Name",
-  },
-  {
-    accessorFn: (data) =>
-      formatInTimeZone(data.createdAt!, "UTC", "dd MMM yyyy"),
-    header: "Created At",
   },
   {
     accessorKey: "category.name",
@@ -50,15 +45,49 @@ export const columns: ColumnDef<TInventoryFull>[] = [
   },
   {
     accessorFn: (data) => {
-      return data.inStockQuantity;
+      return `${data.inStockQuantity} ${data.item.unit}`;
     },
-    header: "In Stock",
+    header: "Record In Stock",
   },
   {
     accessorFn: (data) => {
-      return data.usedQuantity;
+      return `${data.usedQuantity} ${data.item.unit}`;
     },
-    header: "Used Qty",
+    header: "Record Used",
+  },
+  {
+    accessorFn: (data) => {
+      return `${data.totalInStock} ${data.item.unit}`;
+    },
+    header: "Total In Stock",
+  },
+  {
+    accessorFn: (data) => {
+      return `${data.totalUsed} ${data.item.unit}`;
+    },
+    header: "Total Used",
+  },
+  {
+    accessorFn: (data) => {
+      return `${data.availableQuantity} ${data.item.unit}`;
+    },
+    header: "Total Available",
+  },
+  {
+    accessorFn: (data) => {
+      return data.inventoryCount;
+    },
+    header: "Total Records",
+  },
+  {
+    accessorFn: (data) =>
+      formatInTimeZone(data.createdAt, "UTC", "dd MMM yyyy"),
+    header: "Record Created",
+  },
+  {
+    accessorFn: (data) =>
+      formatInTimeZone(data.updatedAt, "UTC", "dd MMM yyyy"),
+    header: "Record Updated",
   },
   {
     id: "actions",

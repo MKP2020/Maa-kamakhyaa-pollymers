@@ -1,40 +1,27 @@
 "use client";
 
-import { format } from "date-fns";
-import { CalendarIcon, Loader2, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { FC, useCallback, useEffect, useState } from "react";
-import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
-import { z } from "zod";
+import { format } from 'date-fns';
+import { CalendarIcon, Loader2, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
 
-import { getInventoryBy } from "@/actions/inventory";
-import { createLoom } from "@/actions/loom";
-import { TCategory } from "@/lib/schema";
-import { TGrade, TGradeWithQuantity } from "@/lib/types";
-import { cn, SHIFT } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { getInventoryForForms } from '@/actions/inventory';
+import { createLoom } from '@/actions/loom';
+import { TCategory } from '@/lib/schema';
+import { TGrade, TGradeWithQuantity } from '@/lib/types';
+import { cn, SHIFT } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Button } from "../ui/button";
-import { Calendar } from "../ui/calendar";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Heading } from "../ui/heading";
-import { Input } from "../ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Separator } from "../ui/separator";
+import { Button } from '../ui/button';
+import { Calendar } from '../ui/calendar';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Heading } from '../ui/heading';
+import { Input } from '../ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Separator } from '../ui/separator';
 
 import type {
   TDepartment,
@@ -112,7 +99,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
     (async () => {
       try {
         setIsLoading(true);
-        const items = await getInventoryBy(
+        const items = await getInventoryForForms(
           selectedCategory,
           selectedDepartment
         );
@@ -277,7 +264,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                   ? ""
                   : !!inventory
                   ? ` (Available ${
-                      inventory.inStockQuantity - inventory.usedQuantity
+                      inventory.availableQuantity
                     }${inventory.item.unit})`
                   : ""}
               </FormLabel>
@@ -289,7 +276,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
                   step={0.1}
                   max={
                     !!inventory
-                      ? inventory.inStockQuantity - inventory.usedQuantity
+                      ? inventory.availableQuantity
                       : undefined
                   }
                   disabled={disabled}

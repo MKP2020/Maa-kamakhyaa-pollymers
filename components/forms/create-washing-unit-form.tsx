@@ -4,38 +4,31 @@ import type {
   TPurchaseOrder,
   TPurchaseOrderItemFull,
 } from "@/lib/types";
-import { useCallback, useEffect, useMemo, useState, type FC } from "react";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { UseFormReturn, useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Heading } from "../ui/heading";
-import { Separator } from "../ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Button } from "../ui/button";
-import { SHIFT, cn, getGRNNumber } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon, Loader2, Trash } from "lucide-react";
-import { Calendar } from "../ui/calendar";
-import { Input } from "../ui/input";
-import { toast } from "../ui/use-toast";
-import { getPurchaseOrderItems } from "@/actions/purchaseOrder";
-import { createGrn } from "@/actions/grn";
+import { format } from 'date-fns';
+import { CalendarIcon, Loader2, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { FC, type, useCallback, useEffect, useMemo, useState } from 'react';
+import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
+
+import { createGrn } from '@/actions/grn';
+import { getInventory, getInventoryForForms } from '@/actions/inventory';
+import { getPurchaseOrderItems } from '@/actions/purchaseOrder';
+import { createWashingUnit, updateWashingUnit } from '@/actions/washingUnit';
+import { cn, getGRNNumber, SHIFT } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Button } from '../ui/button';
+import { Calendar } from '../ui/calendar';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Heading } from '../ui/heading';
+import { Input } from '../ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Separator } from '../ui/separator';
+import { Textarea } from '../ui/textarea';
+import { toast } from '../ui/use-toast';
+
 import type {
   TCategory,
   TDepartment,
@@ -44,10 +37,6 @@ import type {
   TWashingUnitFull,
   TWashingUnitItemFull,
 } from "@/lib/schema";
-import { getInventory, getInventoryBy } from "@/actions/inventory";
-import { Textarea } from "../ui/textarea";
-import { createWashingUnit, updateWashingUnit } from "@/actions/washingUnit";
-
 type TCreateWashingUnit = {
   initialData?: TWashingUnitFull;
   categories: TCategory[];
@@ -126,7 +115,7 @@ const UnitFormItem: FC<TUnitFormItemProps> = (props) => {
     (async () => {
       try {
         setIsLoading(true);
-        const items = await getInventoryBy(
+        const items = await getInventoryForForms(
           selectedCategory,
           selectedDepartment
         );

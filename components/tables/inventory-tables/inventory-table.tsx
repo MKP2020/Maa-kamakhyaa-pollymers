@@ -1,17 +1,35 @@
 "use client";
+import { format } from "date-fns";
 import {
-  ColumnDef,
-  PaginationState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+  CalendarIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Download,
+  FileSpreadsheet,
+  Loader2,
+  Plus,
+} from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
+import { DateRange } from "react-day-picker";
 
+import { getInventory } from "@/actions/inventory";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -19,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -27,38 +46,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { generateExcel } from "@/lib/generate-excel/inventory";
+import { generatePdf } from "@/lib/generate-pdf/inventory";
+import { TIndent, TPurchaseOrder } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { TInventoryAggregated } from "@/types";
 import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
 import {
-  CalendarIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Download,
-  Loader2,
-  Plus,
-} from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { TIndent, TPurchaseOrder } from "@/lib/types";
-import { TInventory, TInventoryFull } from "@/lib/schemas";
-import { DateRange } from "react-day-picker";
-import { generatePdf } from "@/lib/generate-pdf/inventory";
-import { getInventory } from "@/actions/inventory";
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  PaginationState,
+  useReactTable,
+} from "@tanstack/react-table";
 
 interface DataTableProps {
-  columns: ColumnDef<TPurchaseOrder, any>[];
-  data: TInventoryFull[];
+  columns: ColumnDef<TInventoryAggregated, any>[];
+  data: TInventoryAggregated[];
   searchKey: string;
   pageNo: number;
   total: number;
@@ -226,27 +235,53 @@ export function InventoryTable({
           </Button>
         </div>
         <div className="flex items-center gap-4">
-          <Button
-            className="text-xs md:text-sm"
-            onClick={async () => {
-              setDownloading(true);
-              const { data } = await getInventory(
-                search,
-                date?.from ? format(date?.from, "yyyy-MM-dd") : undefined,
-                date?.to ? format(date?.to, "yyyy-MM-dd") : undefined
-              );
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="text-xs md:text-sm" disabled={downloading}>
+                {downloading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="mr-2 h-4 w-4" />
+                )}
+                Download
+                <ChevronDownIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={async () => {
+                  setDownloading(true);
+                  const { data } = await getInventory(
+                    search,
+                    date?.from ? format(date?.from, "yyyy-MM-dd") : undefined,
+                    date?.to ? format(date?.to, "yyyy-MM-dd") : undefined
+                  );
 
-              await generatePdf(data as any);
-              setDownloading(false);
-            }}
-          >
-            {downloading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="mr-2 h-4 w-4" />
-            )}{" "}
-            Download
-          </Button>
+                  await generatePdf(data as any);
+                  setDownloading(false);
+                }}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download as PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={async () => {
+                  setDownloading(true);
+                  const { data } = await getInventory(
+                    search,
+                    date?.from ? format(date?.from, "yyyy-MM-dd") : undefined,
+                    date?.to ? format(date?.to, "yyyy-MM-dd") : undefined
+                  );
+
+                  await generateExcel(data as any);
+                  setDownloading(false);
+                }}
+              >
+                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                Download as Excel
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {/* <Button
             className="text-xs md:text-sm"
             onClick={() => router.push(`/dashboard/inventory/new`)}
@@ -256,7 +291,7 @@ export function InventoryTable({
         </div>
       </div>
 
-      <ScrollArea className="rounded-md border h-[calc(80vh-220px)]">
+      <ScrollArea className="rounded-md border h-[calc(80vh-110px)]">
         <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
